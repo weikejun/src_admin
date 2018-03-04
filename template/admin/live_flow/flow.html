@@ -1,0 +1,178 @@
+{%extends file="admin/framework.tpl"%}
+{%block name="head" append%}
+    {%$allForms=[]%}
+    {%$allForms[]=$form%}
+    {%$css_code=Form::getHeadCSS($allForms)%}
+    {%eval var=$css_code%}
+	<link href="/winphp/metronic/media/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
+{%/block%}
+{%block name="content"%}
+
+<div class="row-fluid">
+    <div class="span12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box light-grey">
+            <div class="portlet-title">
+                <div class="caption"><i class="icon-globe"></i>{%$executeInfo.controllerName%}直播流</div>
+            </div>
+            <div class="portlet-body">
+                </div>
+            <div class="portlet-body">
+                <div class="clearfix">
+                    <!-- BEGIN FORM-->
+                    <form name="main" action="{%$pageAdmin->getUrl()%}" method="post" class="form-horizontal">
+                        {%if $__is_new%}
+                        <input type=hidden name="action" value="create">
+                        {%else%}
+                        <input type=hidden name="action" value="update">
+                        <input type=hidden name="id" value="{%$modelData->mId%}">
+                        {%/if%}
+                        <input type=hidden name="__success_url" value="{%$__success_url%}">
+                        
+                        {%$form->to_html($__is_new)%}
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn blue">新增图文<i class="icon-plus"></i></button>
+                            <!--button type="button" class="btn">返回</button-->
+                        </div>
+                    </form>
+                    <!-- END FORM-->  
+                </div>
+                <div id="sample_1_wrapper" class="dataTables_wrapper form-inline" role="grid">
+                    <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
+                        <thead>
+                            <tr role="row">
+                                {%foreach from=$pageAdmin->list_display item=list_item%}
+                                <th>
+                                    {%if is_string($list_item)%}
+                                    {%$list_item%}
+                                    {%elseif isset($list_item['label'])%}
+                                    {%$list_item.label%}
+                                    {%else%}
+                                    {%strval($list_item)%}
+                                    {%/if%}
+                                </th>
+                                {%/foreach%}
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {%foreach from=$modelDataList item=modelData%}
+                        <tr class="gradeX {%cycle values="odd,even"%}">
+                            {%foreach from=$pageAdmin->list_display item=list_item%}
+                            <td>
+
+                                {%if is_array($list_item)&&isset($list_item.label)%}
+                                {%$list_item=$list_item.field%}
+                                {%/if%}
+
+                                {%if is_string($list_item) %}
+                                {%$modelData->getData($list_item)%}
+                                {%elseif is_callable($list_item)%}
+                                {%call_user_func($list_item,$modelData,$pageAdmin,$modelDataList)%}
+                                {%else%}
+                                {%strval($list_item)%}
+                                {%/if%}
+
+
+                            </td>
+                            {%/foreach%}
+                            <td>
+                                {%if strtolower(get_class($modelData)) != 'stock' %}
+                                <a href="/admin/liveFlow?action=read&id={%$modelData->mId%}">编辑</a><br />
+                                <a confirm="你确定要删除么？" href="/admin/liveFlow?action=delete&id={%$modelData->mId%}">删除</a><br />
+                                {%else%}
+                                <a href="/admin/stock?action=read&id={%$modelData->mId%}">编辑</a><br />
+                                {%/if%}
+                                <a class="add_flow" href="#top">新增图文</a>
+                                {%foreach from=$pageAdmin->single_actions item=action%}
+                                {%if !$action.enable||(is_callable($action.enable)&&call_user_func($action.enable,$modelData,$pageAdmin)) %}
+                                <a {%if $action.target%}target="{%$action.target%}"{%/if%} href="{%strip%}
+                                    {%if is_string($action.action)%}
+                                    {%$action.action%}
+                                    {%elseif is_callable($action.action)%}
+                                    {%call_user_func($action.action,$modelData,$pageAdmin)%}
+                                    {%else%}
+                                    {%strval($action.action)%}
+                                    {%/if%}
+                                    {%/strip%}">{%$action.label%}</a>
+                                {%/if%}
+                                {%/foreach%}
+                            </td>
+                        </tr>
+                        {%/foreach%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+{%*include file="admin/base/top_msg.html"*%}
+{%/block%}
+
+{%block name="footjs" append%}
+{%include file="admin/base/_filter_js.html" inline%}
+<script>
+(function(){
+    var __libs={
+        ckeditor:"/winphp/ckeditor/ckeditor.js",
+        "ckeditor.jquery":"/winphp/ckeditor/adapters/jquery.js",
+        jquery_form:"/winphp/js/jquery.form.js",
+        suggest:"/winphp/js/jquery.smartbox.js",
+        popup:"/winphp/js/jquery.bpopup-0.9.4.min.js",
+        ckfinder:"/winphp/ckfinder/ckfinder.js"
+    };
+    var defers={};
+    window.use=function(lib,callback){
+        if(__libs.hasOwnProperty(lib)){
+            var defer;
+            if(defers.hasOwnProperty(lib)){
+                defer=defers[lib];
+            }else{
+                defer=defers[lib]=$.ajax({
+                    type:'get',
+                    crossDomain:true,
+                    url:__libs[lib],
+                    cache:true,
+                    dataType:'script'
+                });
+            }
+            if(callback){
+                defer.done(function(){
+                    callback();
+                });
+            }
+            return defer;
+        }
+    };
+    $(window).load(function(){
+        var hash=location.hash.replace(/^\#/,"");
+        if(hash){
+            try{
+                window.scrollTo(0,$("a[name='"+hash+"']").offset().top);
+            }catch(e){
+            }
+        }
+    });
+})();
+</script>
+{%$js_code=Form::getFootJS($allForms)%}
+{%eval var=$js_code%}
+<script>
+(function(ctrlType) {
+    $('.add_flow').each(function(i, e) {
+        var dateStr = $.trim($('td:first', $(e).parents('tr.gradeX:first')).html());
+        $(e).click(function() {
+            $(':input.'+ctrlType).each(function(ii, ee) {
+                if($(ee).data(ctrlType) != undefined) {
+                    $(ee).data(ctrlType).update(new Date(new Date(dateStr).getTime()-1000));
+                }
+            });
+        });
+    });
+})('datetimepicker');
+</script>
+{%/block%}

@@ -1,0 +1,1 @@
+alter table stock add column rate_count int(11) default '0' comment '商品评价数';

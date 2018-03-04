@@ -1,0 +1,50 @@
+<?php
+class Base_Buyer extends DBModel{
+
+    public function getFieldList(){
+        static $FIELD_LIST=[
+            ['name'=>'id','type'=>"int",'key'=>true,'defalut'=>NULL,'null'=>false,],
+            ['name'=>'name','type'=>"string",'key'=>true,'defalut'=>NULL,'null'=>false,],
+            ['name'=>'password','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>false,],
+            ['name'=>'gender','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'country','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'province','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'city','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'address','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'profession','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'email','type'=>"string",'key'=>true,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'phone','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'create_time','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'update_time','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'weixin','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'qq','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'real_name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'favor_brands','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'maxpay','type'=>"int",'key'=>false,'defalut'=>'0','null'=>true,],
+            ['name'=>'birthday','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'resume','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'id_pics','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'id_num','type'=>"string",'key'=>true,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'id_type','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'head','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'status','type'=>"string",'key'=>false,'defalut'=>'notapply','null'=>false,],
+            ['name'=>'valid','type'=>"string",'key'=>false,'defalut'=>'valid','null'=>false,],
+            ['name'=>'account_type','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'account','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'account_name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'fee_rate','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'check_words','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'easemob_username','type'=>"string",'key'=>true,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'easemob_password','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'picker','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'ship_percent','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'background_pic','type'=>"string",'key'=>false,'defalut'=>'','null'=>true,],
+            ['name'=>'background_pic_small','type'=>"string",'key'=>false,'defalut'=>'','null'=>true,],
+            ['name'=>'signature','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'fans','type'=>"int",'key'=>false,'defalut'=>'0','null'=>false,],
+            ['name'=>'level','type'=>"int",'key'=>false,'defalut'=>'0','null'=>false,],
+            ['name'=>'desc','type'=>"string",'key'=>false,'defalut'=>'','null'=>true,],
+                    ];
+        return $FIELD_LIST;
+    }
+}

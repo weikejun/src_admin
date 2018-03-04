@@ -1,0 +1,1 @@
+alter table `order` modify column `status` enum('wait_prepay','prepayed','wait_pay','payed','packed','wait_refund','refund','returned','fail','to_demostic','to_user','post_sale','success','canceled','timeout','full_refund') DEFAULT 'wait_prepay' COMMENT '订单状态';
