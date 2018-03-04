@@ -3,6 +3,9 @@
 class ACL{
     public static $controllers = array(
         "IndexNew",
+        "Project",
+	"ProjectMemo",
+        "Company",
         "BuyerRank",
         "StockBook",
         "Admin",

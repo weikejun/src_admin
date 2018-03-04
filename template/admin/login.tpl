@@ -5,7 +5,7 @@
 <!-- BEGIN HEAD -->
 <head>
 	<meta charset="utf-8" />
-	<title>淘世界运营平台 | 登录页</title>
+	<title>源码投资管理平台 | 登录页</title>
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -38,7 +38,7 @@
 	<div class="content">
 		<!-- BEGIN LOGIN FORM -->
 		<form class="form-vertical login-form" method="post" action="/admin/index/login">
-			<h3 class="form-title">淘世界运营平台</h3>
+			<h3 class="form-title">源码投资管理平台</h3>
 			<!--div class="alert alert-error hide">
 				<button class="close" data-dismiss="alert"></button>
 				<span>Enter any username and password.</span>
@@ -80,7 +80,7 @@
 	<!-- END LOGIN -->
 	<!-- BEGIN COPYRIGHT -->
 	<div class="copyright">
-		&copy; &nbsp;2014 &nbsp;&nbsp;爱美主义 
+		&copy; &nbsp;<script>cpPeriod=new Date();document.write(cpPeriod.getFullYear());</script> &nbsp;&nbsp;源码资本 
 	</div>
 	<!-- END COPYRIGHT -->
 	<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->

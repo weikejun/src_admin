@@ -13,7 +13,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 <head>
 	<meta charset="utf-8" />
     {%block name="title"%}
-	<title>淘世界运营平台</title>
+	<title>源码投资管理平台</title>
     {%/block%}
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 	<meta content="" name="description" />
@@ -36,7 +36,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<link href="/winphp/metronic/media/css/jqvmap.css" rel="stylesheet" type="text/css" media="screen"/>
 	<link href="/winphp/metronic/media/css/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
 	<!-- END PAGE LEVEL STYLES -->
-	<link rel="shortcut icon" href="/winphp/metronic/media/image/favicon.ico" />
+	<link rel="shortcut icon" href="http://www.sourcecodecap.com/favicon.ico" />
     {%/block%}
 </head>
 <!-- END HEAD -->
@@ -50,7 +50,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 			<div class="container-fluid">
 				<!-- BEGIN LOGO -->
 				<a class="brand" href="index">
-				<img src="/winphp/metronic/media/image/tsj_logo.png" width="24" alt="logo"/>
+				<img src="http://www.sourcecodecap.com/favicon.ico" width="24" alt="logo"/>
 				</a>
 				<!-- END LOGO -->
 				<!-- BEGIN RESPONSIVE MENU TOGGLER -->
@@ -63,7 +63,6 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 					<!-- BEGIN USER LOGIN DROPDOWN -->
 					<li class="dropdown user">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<img alt="" src="/winphp/metronic/media/image/avatar1_small.jpg" />
                         <span class="username">{%$user->mName|escape%}</span>
 						<i class="icon-angle-down"></i>
 						</a>
@@ -106,7 +105,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<!-- BEGIN FOOTER -->
 	<div class="footer">
 		<div class="footer-inner">
-			&copy; 2013 &nbsp; 爱美主义 
+			&copy; <script>document.write(new Date().getFullYear());</script> &nbsp; 源码资本 
 		</div>
 		<div class="footer-tools">
 			<span class="go-top">
