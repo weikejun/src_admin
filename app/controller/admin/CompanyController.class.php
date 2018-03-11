@@ -11,6 +11,7 @@ class CompanyController extends Page_Admin_Base {
 
         $this->form=new Form(array(
             array('name'=>'name','label'=>'企业名称','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'bussiness','label'=>'所属行业','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
             array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
         ));
@@ -20,6 +21,9 @@ class CompanyController extends Page_Admin_Base {
             }],
             ['label'=>'企业名称','field'=>function($model){
                 return $model->mName;
+            }],
+            ['label'=>'所属行业','field'=>function($model){
+                return $model->mBussiness;
             }],
             ['label'=>'创建人ID','field'=>function($model){
 		$admin = new Admin();

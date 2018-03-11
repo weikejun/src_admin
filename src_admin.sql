@@ -41,6 +41,8 @@ DROP TABLE IF EXISTS `project`; /*项目表*/
 CREATE TABLE `project` (
   `id` int(11) not NULL AUTO_INCREMENT COMMENT '项目ID',
   `item_status` varchar(32) DEFAULT NULL COMMENT '记录状态',
+  `company_id` int(11) DEFAULT NULL COMMENT '企业ID',
+  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
   `name` varchar(32) DEFAULT NULL COMMENT '名称',
   `code` varchar(32) DEFAULT NULL COMMENT '编号',
   `turn` varchar(16) DEFAULT NULL COMMENT '轮次',

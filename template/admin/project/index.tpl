@@ -15,12 +15,14 @@
                 {%if !$pageAdmin->hide_action_new %}
                 <div class="clearfix">
                     <div class="btn-group">
-                        <a href="?action=read" id="sample_editable_1_new" class="btn green"><i class="icon-plus"></i>新建 </a>
+                        <a href="?action=read" id="sample_editable_1_new" class="btn green">
+                            <i class="icon-plus"></i>新建 
+                        </a>
                     </div>
                 </div>
                 {%/if%}
 
-                {%include file="admin/base/_list.html" inline%}
+                {%include file="admin/project/_list.tpl" inline%}
             </div>
             <!-- END EXAMPLE TABLE PORTLET-->
         </div>

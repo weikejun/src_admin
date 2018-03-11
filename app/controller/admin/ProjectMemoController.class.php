@@ -6,6 +6,7 @@ class ProjectMemoController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new ProjectMemo();
+        $this->model->orderBy('create_time', 'desc');
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
@@ -17,8 +18,8 @@ class ProjectMemoController extends Page_Admin_Base {
             array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
         ));
         $this->list_display=array(
-            ['label'=>'项目ID','field'=>function($model){
-                return $model->mProjectId;
+            ['label'=>'记录ID','field'=>function($model){
+                return $model->mId;
             }],
             ['label'=>'项目名称','field'=>function($model){
 		$project = new Project();

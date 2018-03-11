@@ -4,8 +4,12 @@ class Base_Project extends DBModel{
     public function getFieldList(){
         static $FIELD_LIST=[
             ['name'=>'id','type'=>"int",'key'=>true,'defalut'=>NULL,'null'=>false,],
+            ['name'=>'company_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>false,],
+            ['name'=>'admin_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>false,],
             ['name'=>'name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'code','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'item_status','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'company_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'turn','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'turn_sub','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'investment_type','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],

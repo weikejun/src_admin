@@ -1,6 +1,6 @@
 
 
-		<div class="page-sidebar nav-collapse collapse">
+		<div class="page-sidebar nav-collapse collapse" style="position:fixed">
 			<!-- BEGIN SIDEBAR MENU -->        
 			<ul class="page-sidebar-menu">
 				<li>
@@ -48,15 +48,6 @@
                         <span class="selected"></span>
                     </a>
                 </li>
-                {%/if%}
-                {%if $c=='Order'%}
-				<li class="start {%if $executeInfo.controllerName=='Order'%} active {%/if%}">
-					<a href="/admin/order">
-					<i class="icon-home"></i> 
-                    <span class="title">订单管理</span>
-					<span class="selected"></span>
-					</a>
-				</li>
                 {%/if%}
                 {%if $c=='SystemLog'%}
 				<li class="start {%if $executeInfo.controllerName=='SystemLog'%} active {%/if%}">

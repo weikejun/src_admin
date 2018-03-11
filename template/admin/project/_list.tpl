@@ -1,0 +1,155 @@
+<div id="sample_1_wrapper" class="dataTables_wrapper form-inline" role="grid">
+    {%if $pageAdmin->list_filter%}
+    <form name='__filter'>
+        {%foreach $pageAdmin->list_filter as $filter%}
+                {%$filter->toHtml()%}
+        {%/foreach%}
+        <button type="submit" class="btn blue"><i class="icon-ok"></i>筛选</button>
+    </form>
+    {%/if%}
+    {%if $pageAdmin->search_fields%}
+    <div class="row-fluid">
+        <div class="span6">
+        </div>
+        <div class="span6">
+            <div class="dataTables_filter" id="sample_1_filter">
+                <label>
+                    <form style="margin:0;" name="search">
+                        <input type="hidden" name="action" value="search">
+                        搜索: <input name="search" value="{%$smarty.get.search|escape%}" type="text" aria-controls="sample_1" class="m-wrap medium">
+                        {%if $smarty.get.field%}
+                        <input name="field" value="{%$smarty.get.field|escape%}" type="hidden">
+                        {%/if%}
+                        <button type="submit" class="btn blue"><i class="icon-ok"></i>提交</button>
+                    </form>
+                </label>
+            </div>
+        </div>
+    </div>
+    {%/if%}
+    <div style="overflow-x:auto;">
+    <table style="width: 2048px;" class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
+
+        <thead>
+            <tr role="row">
+                <th><input type="checkbox" id="selectAll"/></th>
+                {%foreach from=$pageAdmin->list_display item=list_item%}
+                <th>
+                    {%if is_string($list_item)%}
+                    {%$list_item%}
+                    {%elseif isset($list_item['label'])%}
+                    {%$list_item.label%}
+                    {%else%}
+                    {%strval($list_item)%}
+                    {%/if%}
+                </th>
+                {%/foreach%}
+                <th>操作</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+            {%foreach from=$modelDataList item=modelData%}
+            <tr class="gradeX {%cycle values="odd,even"%}">
+                <td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td>
+                {%foreach from=$pageAdmin->list_display item=list_item%}
+                <td>
+
+                    {%if is_array($list_item)&&isset($list_item.label)%}
+                    {%$list_item=$list_item.field%}
+                    {%/if%}
+
+                    {%if is_string($list_item) %}
+                    {%$modelData->getData($list_item)%}
+                    {%elseif is_callable($list_item)%}
+                    {%call_user_func($list_item,$modelData,$pageAdmin,$modelDataList)%}
+                    {%else%}
+                    {%strval($list_item)%}
+                    {%/if%}
+
+
+                </td>
+                {%/foreach%}
+                <td>
+                    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.edit %}<a href="?action=read&id={%$modelData->mId%}">编辑</a>{%/if%}
+                    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.delete %}<a confirm="你确定要删除么？" href="?action=delete&id={%$modelData->mId%}">删除</a>{%/if%}
+                    {%foreach from=$pageAdmin->single_actions item=action%}
+                    {%if !$action.enable||(is_callable($action.enable)&&call_user_func($action.enable,$modelData,$pageAdmin)) %}
+                    <a {%if $action.target%}target="{%$action.target%}"{%/if%} {%if $action.confirm %}confirm="{%$action.confirm%}"{%/if%} href="{%strip%}
+                        {%if is_string($action.action)%}
+                        {%$action.action%}
+                        {%elseif is_callable($action.action)%}
+                        {%call_user_func($action.action,$modelData,$pageAdmin)%}
+                        {%else%}
+                        {%strval($action.action)%}
+                        {%/if%}
+                        {%/strip%}">{%$action.label%}</a>
+                    {%/if%}
+                    {%/foreach%}
+                </td>
+            </tr>
+            {%/foreach%}
+        </tbody>
+    </table>
+    </div>
+    <div class="row-fluid">
+        <ul id="multi_actions">
+            {%foreach from=$pageAdmin->multi_actions item=action%}
+            <li class="span1" style="width: 100px;"><a href="javascript:;" {%if $action.required===false%}require='false'{%/if%} action="{%$action.action%}" target="{%$action.target%}">{%$action.label%}</a></li>
+            {%/foreach%}
+        </ul>
+    </div>
+    <div class="row-fluid">
+        <div class="span4">
+            <div class="dataTables_info" id="sample_1_info">
+                 本页显示第 {%$_startIndex+1%} 到 {%$_startIndex+count($modelDataList)%} 结果，共 {%$_allCount%} 结果</div>
+        </div>
+        <div class="span8">
+            <div class="dataTables_paginate paging_bootstrap pagination">
+                {%$_pageAll=ceil($_allCount/$_pageSize)%}
+                {%if $_pageAll > 1%} 
+                <ul>
+                    {%if $_page>0%}
+                    <li>
+                        <a href="{%build_url page=$_page-1%}">
+                        ← <span class="hidden-480">上一页
+                        </a>
+                    </li>
+                    {%/if%}
+
+                    {%$startPage=max(0,$_page-3)%}
+                    {%$endPage=min($_pageAll-1,$_page+4)%}
+                    {%if $startPage>0%}
+                    <li><a href="{%build_url page=0%}">1</a></li>
+                    <li><a>...</a></li>
+                    {%/if%}
+                    
+                    {%foreach range($startPage,$endPage) as $page%}
+                    <li{%if $_page==$page%} class="active"{%/if%}><a href="{%build_url page=$page%}">{%$page+1%}</a></li>
+                    {%/foreach%}
+                    
+                    {%if $endPage<$_pageAll-1%}
+                    <li><a>...</a></li>
+                    <li><a href="{%build_url page=$_pageAll-1%}">{%$_pageAll%}</a></li>
+                    {%/if%}
+
+                    {%if $_page<$_pageAll-1%}
+                    <li>
+                        <a href="{%build_url page=$_page+1%}">
+                            <span class="hidden-480">
+                                下一页</span> → 
+                        </a>
+                    </li>
+                    {%/if%}
+                </ul>
+                {%/if%}
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+

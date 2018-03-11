@@ -21,7 +21,7 @@
             <h3 class="page-title">
                 {%$executeInfo.controllerName|escape%}
             </h3>
-            <ul class="breadcrumb">
+            <ul class="breadcrumb" style="margin-bottom:0px;">
                 <li>
                 <i class="icon-home"></i>
                 <a href="{%$__controller->getUrlPrefix()%}">首页</a> 
@@ -40,8 +40,8 @@
     <div class="row-fluid">
         <div class="span12">
             <!-- BEGIN SAMPLE FORM PORTLET-->   
-            <div class="portlet box blue">
-                <div class="portlet-title">
+            <div class="portlet box" style="border:1px solid #e5e5e5">
+                <!--div class="portlet-title">
                     <div class="caption">
                         <i class="icon-reorder"></i>
                         <span class="hidden-480">{%$executeInfo.controllerName|escape%}</span>
@@ -52,7 +52,7 @@
                         <a href="javascript:;" class="reload"></a>
                         <a href="javascript:;" class="remove"></a>
                     </div>
-                </div>
+                </div-->
                 <div class="portlet-body">
                     <!-- BEGIN FORM-->
                     <form name="main" action="{%$pageAdmin->getUrl()%}" method="post" class="form-horizontal">
