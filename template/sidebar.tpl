@@ -31,11 +31,11 @@
                     </a>
                 </li>
                 {%/if%}
-                {%if $c=='ProjectMemo'%}
-                <li class="start {%if $executeInfo.controllerName=='ProjectMemo'%} active {%/if%}">
-                    <a href="/admin/projectMemo">
+                {%if $c=='DataStat'%}
+                <li class="start {%if $executeInfo.controllerName=='DataStat'%} active {%/if%}">
+                    <a href="/admin/dataStat">
                         <i class="icon-home"></i>
-                        <span class="title">工作记录</span>
+                        <span class="title">数据统计</span>
                         <span class="selected"></span>
                     </a>
                 </li>
@@ -44,19 +44,37 @@
                 <li class="start {%if $executeInfo.controllerName=='Company'%} active {%/if%}">
                     <a href="/admin/company">
                         <i class="icon-home"></i>
-                        <span class="title">企业信息</span>
+                        <span class="title">目标公司</span>
                         <span class="selected"></span>
                     </a>
                 </li>
                 {%/if%}
-                {%if $c=='SystemLog'%}
-				<li class="start {%if $executeInfo.controllerName=='SystemLog'%} active {%/if%}">
-					<a href="/admin/SystemLog">
-					<i class="icon-home"></i> 
-                    <span class="title">系统日志</span>
-					<span class="selected"></span>
-					</a>
-				</li>
+                {%if $c=='Entity'%}
+                <li class="start {%if $executeInfo.controllerName=='Entity'%} active {%/if%}">
+                    <a href="/admin/entity">
+                        <i class="icon-home"></i>
+                        <span class="title">投资主体</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='EntityRel'%}
+                <li class="start {%if $executeInfo.controllerName=='EntityRel'%} active {%/if%}">
+                    <a href="/admin/entityRel">
+                        <i class="icon-home"></i>
+                        <span class="title">主体关系</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='Payment'%}
+                <li class="start {%if $executeInfo.controllerName=='Payment'%} active {%/if%}">
+                    <a href="/admin/payment">
+                        <i class="icon-home"></i>
+                        <span class="title">付款记录</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
                 {%/if%}
                 {%if $c=='Admin'%}
 				<li class="start {%if $executeInfo.controllerName=='Admin'%} active {%/if%}">

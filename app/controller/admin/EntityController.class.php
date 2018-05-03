@@ -1,18 +1,18 @@
 <?php
-class CompanyController extends Page_Admin_Base {
+class EntityController extends Page_Admin_Base {
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
-	WinRequest::mergeModel(array('controllerText'=>"目标公司"));
-        $this->model=new Company();
+        $this->model=new Entity();
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
-            array('name'=>'name','label'=>'企业名称','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'bussiness','label'=>'所属行业','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'name','label'=>'主体名称','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'tp','label'=>'类型','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'currency','label'=>'货币','type'=>"choice",'choices'=>[['RMB','RMB'],['USD','USD'],['HKD','HKD']], 'default'=>'USD','required'=>false,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
             array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
         ));
@@ -20,13 +20,16 @@ class CompanyController extends Page_Admin_Base {
             ['label'=>'id','field'=>function($model){
                 return $model->mId;
             }],
-            ['label'=>'企业名称','field'=>function($model){
+            ['label'=>'主体名称','field'=>function($model){
                 return $model->mName;
             }],
-            ['label'=>'所属行业','field'=>function($model){
-                return $model->mBussiness;
+            ['label'=>'类型','field'=>function($model){
+                return $model->mTp;
             }],
-            ['label'=>'创建人ID','field'=>function($model){
+            ['label'=>'货币','field'=>function($model){
+                return $model->mCurrency;
+            }],
+            ['label'=>'创建人','field'=>function($model){
 		$admin = new Admin();
 		$ret = $admin->addWhere("id", $model->mAdminId)->select();
 		return ($ret ? $admin->mName : '(id='.$model->mAdminId.')' );
@@ -38,14 +41,15 @@ class CompanyController extends Page_Admin_Base {
 
         $this->single_actions=[
             ['label'=>'投资记录','action'=>function($model){
-                return '/admin/project?__filter='.urlencode('company_id='.$model->mId);
+                return '/admin/project?__filter='.urlencode('entity_id='.$model->mId);
+            }],
+            ['label'=>'股权结构','action'=>function($model){
+                return '/admin/entityRel?__filter='.urlencode('subject_id='.$model->mId);
             }],
         ];
 
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'企业ID','paramName'=>'id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'企业名称','paramName'=>'name','fusion'=>true]),
-            new Page_Admin_TimeRangeFilter(['name'=>'创建时间','paramName'=>'create_time']),
+            new Page_Admin_TextFilter(['name'=>'主体名称','paramName'=>'name','fusion'=>true]),
         );
     }
 }

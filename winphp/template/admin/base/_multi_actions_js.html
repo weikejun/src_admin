@@ -16,11 +16,30 @@
         $("#selectAll").click(function(){
             var checkboxes=$(".checker input[name=\"__item\"]");
             if($(this).prop("checked")){
-                checkboxes.attr("checked",true).parent().addClass("checked");
+		checkboxes.each(function() {
+			$(this).prop("checked", true);
+			$(this).parent().addClass("checked");
+		});
             }else{
-                checkboxes.attr("checked",false).parent().removeClass("checked");
+		checkboxes.each(function() {
+			$(this).prop("checked", false);
+			$(this).parent().removeClass("checked");
+		});
             }
         });
+	var checkers = $(":checkbox[id!=selectAll]");
+	checkers.each(function() {
+		$(this).click(function() {
+			var checkeds = $(":checkbox[id!=selectAll]:checked");
+			if (checkeds.length == checkers.length) {
+				$("#selectAll").prop("checked", true);
+				$("#selectAll").parent().addClass("checked");
+			} else {
+				$("#selectAll").prop("checked", false);
+				$("#selectAll").parent().removeClass("checked");
+			}
+		});
+	})
     })();
 </script>
 

@@ -1,11 +1,10 @@
 <?php
-class CompanyController extends Page_Admin_Base {
+class DataStatController extends Page_Admin_Base {
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
-	WinRequest::mergeModel(array('controllerText'=>"目标公司"));
         $this->model=new Company();
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);

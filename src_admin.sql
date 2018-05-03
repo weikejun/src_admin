@@ -31,6 +31,64 @@ CREATE TABLE `company` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `entity`
+--
+
+DROP TABLE IF EXISTS `entity`; /*投资主体信息*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `entity` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) DEFAULT NULL COMMENT '主体名称',
+  `tp` varchar(16) DEFAULT NULL COMMENT '主体类型',
+  `currency` varchar(16) DEFAULT NULL COMMENT '货币类型',
+  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `entity_rel`
+--
+
+DROP TABLE IF EXISTS `entity_rel`; /*主体关系*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `entity_rel` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `subject_id` int(11) DEFAULT NULL COMMENT '目标主体ID',
+  `holder_id` int(11) DEFAULT NULL COMMENT '持有主体ID',
+  `ratio` varchar(16) DEFAULT NULL COMMENT '持有比例',
+  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `subject_id_holder_id_index` (`subject_id`,`holder_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `payment`
+--
+
+DROP TABLE IF EXISTS `payment`; /*付款记录*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) DEFAULT NULL COMMENT '项目ID',
+  `amount` varchar(16) DEFAULT NULL COMMENT '金额',
+  `currency` varchar(16) DEFAULT NULL COMMENT '货币',
+  `operator` varchar(16) DEFAULT NULL COMMENT '负责人',
+  `pay_time` int(11) DEFAULT NULL COMMENT '打款时间',
+  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `project`
 --
@@ -86,6 +144,18 @@ CREATE TABLE `project` (
   `hold_value` varchar(16) DEFAULT NULL COMMENT '持有价值',
   `return_rate` varchar(16) DEFAULT NULL COMMENT '总回报率',
   `return_irr` varchar(16) DEFAULT NULL COMMENT 'IRR回报率',
+  `final_captable` varchar(256) DEFAULT NULL COMMENT '',
+  `final_word` varchar(8) DEFAULT NULL COMMENT '',
+  `closing_pdf` varchar(8) DEFAULT NULL COMMENT '',
+  `closing_file` varchar(8) DEFAULT NULL COMMENT '',
+  `stock_cert` varchar(8) DEFAULT NULL COMMENT '境外股票证书',
+  `business_reg` varchar(8) DEFAULT NULL COMMENT '境内工商',
+  `filling_owner` varchar(8) DEFAULT NULL COMMENT '文件filling保管人',
+  `exit_amount` varchar(8) DEFAULT NULL COMMENT '退出金额',
+  `exit_way` varchar(8) DEFAULT NULL COMMENT '退出方式',
+  `exit_ratio` varchar(8) DEFAULT NULL COMMENT '退出比例',
+  `exit_return` varchar(8) DEFAULT NULL COMMENT '退出回报倍数',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
