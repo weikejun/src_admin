@@ -1,25 +1,29 @@
 <?php
 
 class Form_ChoosemodelField extends Form_Field{
-    private $model;
+    private $modelClass;
     public function __construct($config){
         parent::__construct($config);
         if(!class_exists($config['model'])){
             throw new ModelAndViewException("text:no this model:{$config['model']}",1,"text:no this model:{$config['model']}");
         }
-        $this->model=$config['model'];
+        $this->modelClass=$config['model'];
+	$this->config['show'] = isset($config['show']) ? $config['show'] : 'name';
     }
 
     public function to_html($is_new){
         $class=$this->config['class'];
+	$model = new $this->modelClass;
+	$model->mId = $this->value;
+	$show = 'm'.ucfirst($this->config['show']);
+	if (!$is_new) {
+		$model->select();
+	}
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
-            "<div class='controls'>".
-//                                            '<div class="input-append date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">'.
-                                                '<input name="'.$this->name.'"  type="text" value="'.$this->value.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.$this->model.'">';
-//                                                '<span class="add-on"><i class="icon-calendar"></i></span>'.
-//                                            '</div>';
-            //"<input class='date-input $class' type='hidden' name='{$this->name}'  value='".htmlspecialchars($this->value)."'>";
+		"<div class='controls'>".
+		'<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.$this->modelClass.'">'.
+		'<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         }
@@ -50,18 +54,19 @@ use("popup",function(){
             return;
         }
         var model=$(this).attr("model");
-        var field=$(this).attr("name");
+        var field=$(this).attr("_name");
         window.choosemodelPopup=$('#popup').find('.content').html('').end().bPopup({
             content:'iframe', //'ajax', 'iframe' or 'image'
             contentContainer:'.content',
             iframeAttr:'scrolling="yes" frameborder="0"',
-            loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field) //Uses jQuery.load()
+	    loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field)+'&show={$this->config['show']}' //Uses jQuery.load()
         });
         return false;
     
     });
-    window.choosemodel=function(model,field,id){
+    window.choosemodel=function(model,field,id,text){
         $(document.forms.main).find('[name="'+field+'"]').val(id);
+        $(document.forms.main).find('[_name="'+field+'"]').val(text);
     };
 });
 </script>

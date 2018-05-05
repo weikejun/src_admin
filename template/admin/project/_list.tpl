@@ -27,7 +27,7 @@
         </div>
     </div>
     {%/if%}
-    <div style="overflow-x:auto;">
+    <div id="data_tbwrap" style="overflow-x:scroll;">
     <table style="width: 2048px;" class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
 
         <thead>
@@ -72,7 +72,7 @@
                 </td>
                 {%/foreach%}
                 <td>
-                    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.edit %}<a href="?action=read&id={%$modelData->mId%}">编辑</a>{%/if%}
+                    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.edit %}<a id="read_{%$modelData->mId%}" href="?action=read&id={%$modelData->mId%}">编辑</a>{%/if%}
                     {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.delete %}<a confirm="你确定要删除么？" href="?action=delete&id={%$modelData->mId%}">删除</a>{%/if%}
                     {%foreach from=$pageAdmin->single_actions item=action%}
                     {%if !$action.enable||(is_callable($action.enable)&&call_user_func($action.enable,$modelData,$pageAdmin)) %}
@@ -151,5 +151,3 @@
 
 
 </div>
-
-

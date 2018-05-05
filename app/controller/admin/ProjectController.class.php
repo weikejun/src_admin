@@ -1,46 +1,36 @@
 <?php
 class ProjectController extends Page_Admin_Base {
     private $_objectCache = [];
-    public function indexAction() {
-	    list($view, $model) = parent::indexAction();
-	    if (basename($view, '.html') == 'index') {
-		    return array('admin/project/index.tpl', $model);
-	    }
-	    return [$view, $model];
-    }
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Project();
+        $this->model->orderBy('id', 'DESC');
+        WinRequest::mergeModel(array(
+            'controllerText'=>"目标公司",
+            'listView'=>'admin/project/_list.tpl',
+        ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
             array('name'=>'company_id','label'=>'目标公司','type'=>"choosemodel",'model'=>'Company','default'=>null,'required'=>true,),
-            array('name'=>'name','label'=>'项目名称','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'code','label'=>'项目编号','type'=>"text",'default'=>null,'required'=>false,),
             array('name'=>'item_status','label'=>'整理状态','type'=>"choice",'choices'=>[['closing','已完成'],['ongoing','待完成'],['pending','其他']], 'default'=>'ongoing','required'=>true,),
-            array('name'=>'turn','label'=>'轮次大类','type'=>"choice",'choices'=>['A','B','C'], 'default'=>'A','required'=>true,),
+            array('name'=>'turn','label'=>'轮次大类','type'=>"choice",'choices'=>[['A轮','A轮'],['B轮','B轮'],['C轮','C轮'],['D轮','D轮'],['E轮','E轮'],['F轮','F轮'],['F轮后','F轮后'],['不适用','不适用']], 'default'=>'A轮','required'=>true,),
             array('name'=>'turn_sub','label'=>'轮次详情','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'investment_type','label'=>'投退类型','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'decision_date','label'=>'决策时间','type'=>"datetime",'default'=>null,'null'=>false,),
-            array('name'=>'proj_status','label'=>'项目状态','type'=>"choice",'choices'=>[['Closing','Closing'],['Ongoing','Ongoing'],['Pending','Pending'],['Ceasing','Ceasing']], 'default'=>'Pending','required'=>false,),
-            array('name'=>'close_date','label'=>'Close时间','type'=>"datetime",'default'=>null,'null'=>false,),
-            array('name'=>'owner_pre','label'=>'原项目负责人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'owner_now','label'=>'现项目负责人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'law_firm','label'=>'律所及律师','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'legal_in','label'=>'legal接口人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'director_out','label'=>'境外董事','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'director_in','label'=>'境内董事','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'director_status','label'=>'境内董事工商状态','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'observer','label'=>'观察员','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'pre_money','label'=>'投前估值','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'post_money','label'=>'投后估值','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'stock_price','label'=>'每股价格','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'financing_amount','label'=>'融资总额','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'currency','label'=>'货币单位','type'=>"choice",'choices'=>[['RMB','RMB'],['USD','USD'],['HKD','HKD']], 'default'=>'USD','required'=>false,),
+            array('name'=>'new_follow','label'=>'新老类型','type'=>"choice",'choices'=>[['new','new'],['follow on','follow on']], 'default'=>'new','required'=>true,),
+            array('name'=>'enter_exit_type','label'=>'投退类型','type'=>"choice",'choices'=>[['领投','领投'],['跟投','跟投'],['不跟投','不跟投'],['部分退出','部分退出'],['全部退出','全部退出'],['清算退出','清算退出'],['重组','重组'],['上市','上市'],['其他','其他']], 'default'=>'领投','required'=>true,),
+            array('name'=>'new_old_stock','label'=>'新股老股','type'=>"choice",'choices'=>[['新股','新股'],['老股','老股'],['其他','其他']], 'default'=>'新股','required'=>true,),
+            array('name'=>'decision_date','label'=>'决策日期','type'=>"date",'default'=>null,'null'=>false,),
+            array('name'=>'proj_status','label'=>'项目状态','type'=>"choice",'choices'=>[['进展中','进展中'],['已交割','已交割'],['暂停','暂停'],['终止不做','终止不做'],['其他','其他']], 'default'=>'进展中','required'=>false,),
+            array('name'=>'close_date','label'=>'Close日期','type'=>"date",'default'=>null,'null'=>false,),
+            array('name'=>'law_firm','label'=>'负责律所','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'currency','label'=>'计价货币','type'=>"choice",'choices'=>[['USD','USD'],['RMB','RMB'],['HKD','HKD']], 'default'=>'USD','required'=>false,),
+            array('name'=>'pre_money','label'=>'公司投前估值','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'financing_amount','label'=>'本轮融资总额','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'post_money','label'=>'公司投后估值','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'multi_currency','label'=>'是否多币种','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'investment_co','label'=>'源码投资主体','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'period','label'=>'期数/专项','type'=>"text", 'default'=>null,'required'=>false,),

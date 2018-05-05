@@ -11,6 +11,7 @@
     {%eval var=$css_code%}
     <style>
         .inline_form{padding:10px;}
+        .portlet-body .form-horizontal{margin-top: 20px;}
     </style>
 {%/block%}
 {%block name="content"%}
@@ -67,10 +68,10 @@
                         
                         {%$form->to_html($__is_new)%}
 
-                        <div class="form-actions">
+			<div id="sub_wrap"><div id="btn_submit" class="form-actions">
                             <button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button>
                             <!--button type="button" class="btn">返回</button-->
-                        </div>
+			</div></div>
                     </form>
                     <!-- END FORM-->  
                     <div class="inline_forms">
@@ -175,6 +176,17 @@
             }catch(e){
             }
         }
+	var subBtn = $("#btn_submit")
+		subBtnInitOff = subBtn.offset();
+	$(document).scroll(function() {
+		var docScrTop = $(this).scrollTop();
+		if (docScrTop + $(window).height() <= subBtnInitOff.top) {
+			subBtn.css({'position':'fixed','right':'40px','bottom':'0px'});
+		} else {
+			subBtn.css({'position':'static'});
+		}
+	});
+	$(document).scroll();
     });
 })();
 </script>

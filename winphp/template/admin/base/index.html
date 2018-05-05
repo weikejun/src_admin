@@ -20,7 +20,11 @@
                 </div>
                 {%/if%}
 
+		{%if !$listView %}
                 {%include file="admin/base/_list.html" inline%}
+		{%else%}
+                {%include file="$listView" inline%}
+		{%/if%}
             </div>
             <!-- END EXAMPLE TABLE PORTLET-->
         </div>
@@ -30,6 +34,67 @@
 {%/block%}
 
 {%block name="footjs" append%}
+<script>
+    (function(){
+        var itemDatas={%json_encode(array_map(create_function('$item','return $item->getData();'),$modelDataList))%};
+        $("tbody>tr").dblclick(function(){
+            var index=$(this).index();
+	    location = $('#read_'+itemDatas[index]['id']).prop('href');
+        });
+    })();
+	$(document).ready(function() {
+        if ($('#data_tbwrap')) {
+            $('tr').each(function(iter) {
+                var fixFields = $(this).children();
+                var coords = new Array;
+                var dups = new Array;
+                var parTr = $(this);
+                fixFields.each(function(iter){
+                    var dup = $(this).clone();
+                    var org = $(this);
+                    dup.on('fixed', function(evt) {
+                        $(this).css({
+                            'background-color': '#f9f9f9',
+                            'position': 'fixed',
+                            'top': org.offset().top - $(document).scrollTop(),
+                            'left': org.offset().left + $('#data_tbwrap').scrollLeft(),
+                            'width': org.width(),
+                            'height': org.height()
+                        });
+                    });
+                    dup.hide();
+                    dup.attr('dup_no', iter);
+                    parTr.append(dup);
+                });
+            });
+            $('tr th').each(function(iter) {
+                $(this).dblclick(function() {
+                    if($(this).offset().left+$('#data_tbwrap').scrollLeft() > $('#data_tbwrap').offset().left+$('#data_tbwrap').width()) {
+                        return alert('冻结失败: 超出边界');
+                    }
+                    var dupNo = iter;
+                    if ($(this).attr('dup_no')) {
+                        var dupNo = parseInt($(this).attr('dup_no'));
+                    }
+                    $('[dup_no]').each(function() {
+                        if (parseInt($(this).attr('dup_no')) <= dupNo) {
+                            $(this).trigger('fixed');
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+            $(document).scroll(function() {
+                $('[dup_no]').each(function() {
+                    $(this).trigger('fixed');
+                });
+            });
+        }
+	});
+</script>
+
     {%include file="admin/base/_filter_js.html" inline%}
     {%include file="admin/base/_multi_actions_js.html" inline%}
 {%/block%}

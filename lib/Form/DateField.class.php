@@ -38,6 +38,8 @@ EOF;
             var dt_picker=$(elem);
             var input=dt_picker.clone().attr({"type":"text","name":''}).insertAfter(dt_picker);
             input[controlType]({
+                format:'yyyy-mm-dd',
+                autoclose: true,
                 rtl : App.isRTL()
             });
             input.data(controlType).update(new Date(dt_picker.val()*1000-new Date().getTimezoneOffset() * 60 * 1000));

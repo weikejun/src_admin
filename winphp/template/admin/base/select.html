@@ -21,7 +21,7 @@
         var itemDatas={%json_encode(array_map(create_function('$item','return $item->getData();'),$modelDataList))%};
         $("tbody>tr").dblclick(function(){
             var index=$(this).index();
-            parent.window.choosemodel('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',itemDatas[index]['id']);
+	    parent.window.choosemodel('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',itemDatas[index]['id'],itemDatas[index]['{%$smarty.get.show%}']);
             parent.window.choosemodelPopup.close();
         });
 	$(":checkbox").each(function(elem) {
