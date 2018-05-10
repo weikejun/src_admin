@@ -70,6 +70,31 @@ CREATE TABLE `entity_rel` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `investment_exit`
+--
+
+DROP TABLE IF EXISTS `investment_exit`; /*退出记录*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `investment_exit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) DEFAULT NULL COMMENT '项目ID',
+  `amount` varchar(16) DEFAULT NULL COMMENT '金额',
+  `exit_way` varchar(16) DEFAULT NULL COMMENT '退出方式',
+  `currency` varchar(16) DEFAULT NULL COMMENT '货币',
+  `stock_num` varchar(16) DEFAULT NULL COMMENT '退出股数',
+  `exit_rate` varchar(16) DEFAULT NULL COMMENT '退出比例',
+  `rest_rate` varchar(16) DEFAULT NULL COMMENT '剩余比例',
+  `return_rate` varchar(16) DEFAULT NULL COMMENT '回报率',
+  `memo` varchar(16) DEFAULT NULL COMMENT '备忘',
+  `exit_time` int(11) DEFAULT NULL COMMENT '退出时间',
+  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `payment`
 --
 
@@ -170,6 +195,26 @@ CREATE TABLE `project_memo` (
   `message` text DEFAULT '' COMMENT '工作说明',
   `memo` text DEFAULT '' COMMENT '工作记录',
   `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `system_logs`
+--
+
+DROP TABLE IF EXISTS `system_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `system_log` (
+  `id` int(11) NOT NULL auto_increment,
+  `operator_id` int(11) DEFAULT NULL,
+  `operator_ip` int(11) DEFAULT NULL,
+  `resource` varchar(16) DEFAULT NULL COMMENT '操作资源',
+  `res_id` varchar(16) DEFAULT NULL COMMENT '资源ID',
+  `action` varchar(16) DEFAULT NULL COMMENT '动作',
+  `detail` text DEFAULT NULL COMMENT '操作内容',
+  `create_time` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;

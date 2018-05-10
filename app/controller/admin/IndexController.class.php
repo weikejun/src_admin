@@ -1,5 +1,5 @@
 <?php
-class IndexController extends AppBaseController{
+class IndexController extends Page_Admin_Base{
     
     public function __construct(){
         parent::__construct();

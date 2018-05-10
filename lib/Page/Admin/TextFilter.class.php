@@ -26,7 +26,10 @@ class Page_Admin_TextFilter extends Page_Admin_IFilter{
     public function toHtml(){
         
         $html='';
-        parse_str($_GET['__filter'],$params);
+        $params = [];
+        if (isset($_GET['__filter'])) {
+            parse_str($_GET['__filter'],$params);
+        }
         
         $paramNames=$this->getParamName();
         if(!is_array($paramNames)){
@@ -41,9 +44,10 @@ class Page_Admin_TextFilter extends Page_Admin_IFilter{
                     $html.="<input type='hidden' name='".$paramName."' ".
                     " value={$params[$paramName]}>";
                  */
+            $paramVal = (isset($params[$paramName]) ? $params[$paramName] : '');
             $html.='<ul style="margin:0;" class="nav nav-pills filter">'.
                 '<li class="span1">'.htmlspecialchars($Names[$i]).'</li>'.
-                '<li><label class="radio-inline"><input value="'.htmlspecialchars($params[$paramName]).'" type="text" name="'.$paramName.'"></label></li>'."\n";
+                '<li><label class="radio-inline"><input value="'.htmlspecialchars($paramVal).'" type="text" name="'.$paramName.'"></label></li>'."\n";
             $html.='</ul>';
         }
         return $html;

@@ -6,6 +6,9 @@ class RolePermissionController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new RolePermission();
+        WinRequest::mergeModel(array(
+            'controllerText'=>"角色权限管理",
+        ));
 
         $this->form=new Form(array(
             array('name'=>'group_id','label'=>'角色ID','type'=>"choosemodel",'model'=>'Group','default'=>null,'required'=>false,),

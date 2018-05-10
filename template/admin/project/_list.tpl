@@ -27,8 +27,12 @@
         </div>
     </div>
     {%/if%}
-    <div id="data_tbwrap" style="overflow-x:scroll;">
-    <table style="width: 2048px;" class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
+    <style>
+    #data_tbwrap {overflow-x:scroll;}
+    #data_tbwrap table {width:2048px;}
+    </style>
+    <div id="data_tbwrap">
+    <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
 
         <thead>
             <tr role="row">

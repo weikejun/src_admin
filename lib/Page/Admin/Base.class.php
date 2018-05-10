@@ -88,7 +88,7 @@ abstract class Page_Admin_Base extends BaseController{
         $model->setAutoClear(false);
         $page=$this->_GET('page',0);
         $model->limit($page*self::$PAGE_SIZE,self::$PAGE_SIZE);
-        if($this->list_filter){
+        if($this->list_filter && isset($_GET['__filter'])) {
             foreach($this->list_filter as $filter){
                 $filter->setFilter($model);
             }

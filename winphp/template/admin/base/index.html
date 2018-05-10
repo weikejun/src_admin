@@ -8,9 +8,9 @@
     <div class="span12">
         <!-- BEGIN EXAMPLE TABLE PORTLET-->
         <div class="portlet box light-grey">
-            <!--div class="portlet-title">
+            <div class="portlet-title">
                 <div class="caption"><i class="icon-globe"></i>{%$controllerText%}</div>
-            </div-->
+            </div>
             <div class="portlet-body">
                 {%if !$pageAdmin->hide_action_new %}
                 <div class="clearfix">
@@ -19,12 +19,7 @@
                     </div>
                 </div>
                 {%/if%}
-
-		{%if !$listView %}
                 {%include file="admin/base/_list.html" inline%}
-		{%else%}
-                {%include file="$listView" inline%}
-		{%/if%}
             </div>
             <!-- END EXAMPLE TABLE PORTLET-->
         </div>

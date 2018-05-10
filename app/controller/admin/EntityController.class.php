@@ -6,6 +6,9 @@ class EntityController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Entity();
+        WinRequest::mergeModel(array(
+            'controllerText'=>"投资主体",
+        ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 

@@ -29,12 +29,16 @@ class Page_Admin_TimeRangeFilter extends Page_Admin_IFilter{
 
     public function toHtml(){
         $html='';
-        parse_str($_GET['__filter'],$params);
-        $reqVal=$params[$this->getParamName()];
+        $params = [];
+        if (isset($_GET['__filter'])) {
+            parse_str($_GET['__filter'],$params);
+        }
+        $startTm=isset($params[$this->getParamName().'__start']) ? $params[$this->getParamName().'__start'] : '';
+        $endTm=isset($params[$this->getParamName().'__end']) ? $params[$this->getParamName().'__end'] : '';
         $html.='<ul style="margin:0;" class="nav nav-pills filter">'.
             '<li class="span1">'.htmlspecialchars($this->getName()).'</li>'.
-            '<li>start:<label class="radio-inline"><input class="datetimepicker" value="'.htmlspecialchars($params[$this->getParamName()."__start"]).'" type="text" name="'.$this->getParamName().'__start"></label></li>'."\n".
-            '<li>end:<label class="radio-inline"><input class="datetimepicker" value="'.htmlspecialchars($params[$this->getParamName()."__end"]).'" type="text" name="'.$this->getParamName().'__end"></label></li>'."\n".
+            '<li><label class="radio-inline"><input class="datetimepicker" value="'.htmlspecialchars($startTm).'" type="text" name="'.$this->getParamName().'__start"></label></li>'."\n".
+            '<li>&nbsp;-&nbsp;<label class="radio-inline"><input class="datetimepicker" value="'.htmlspecialchars($endTm).'" type="text" name="'.$this->getParamName().'__end"></label></li>'."\n".
             '<li>示例：'.date("Y-m-d H:i:s").'</li>'."\n";
         $html.='</ul>';
 

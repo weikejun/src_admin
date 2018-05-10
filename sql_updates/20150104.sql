@@ -1,1 +1,0 @@
-alter table index_new add column imgs6 TEXT comment '新版本适配6，6+的图片' after `imgs`;

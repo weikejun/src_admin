@@ -6,6 +6,10 @@ class ActionController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Action();
+        $this->model->orderBy('create_time', 'DESC');
+        WinRequest::mergeModel(array(
+            'controllerText'=>"访问权限管理",
+        ));
 
         $this->form=new Form(array(
             array('name'=>'name','label'=>'访问名称','type'=>"text",'default'=>null,'required'=>true,),

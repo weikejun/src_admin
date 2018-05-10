@@ -134,3 +134,18 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2014-09-15 14:57:29
+
+DROP TABLE IF EXISTS `admin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `admin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) DEFAULT NULL,
+  `password` varchar(32) DEFAULT NULL,
+  `gender` varchar(3) DEFAULT NULL,
+  `department` varchar(32) DEFAULT NULL,
+  `create_time` int(11) DEFAULT NULL,
+  `valid` enum('valid','invalid') DEFAULT 'valid',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;

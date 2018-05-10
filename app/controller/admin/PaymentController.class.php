@@ -8,6 +8,9 @@ class PaymentController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Payment();
         $this->model->orderBy("pay_time","desc");
+        WinRequest::mergeModel(array(
+            'controllerText'=>"付款记录",
+        ));
 
         $this->form=new Form(array(
             array('name'=>'project_id','label'=>'项目ID','type'=>"choosemodel",'model'=>'Project','default'=>null,'required'=>true,),

@@ -7,6 +7,9 @@ private $_objC;
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new EntityRel();
+        WinRequest::mergeModel(array(
+            'controllerText'=>"投资主体关系",
+        ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 

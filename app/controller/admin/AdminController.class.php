@@ -7,6 +7,9 @@ class AdminController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Admin();
         $this->model->orderBy('create_time', 'DESC');
+        WinRequest::mergeModel(array(
+            'controllerText'=>"系统用户",
+        ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 

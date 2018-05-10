@@ -22,7 +22,7 @@ class Form_ChoosemodelField extends Form_Field{
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
 		"<div class='controls'>".
-		'<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.$this->modelClass.'">'.
+		'<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.$this->modelClass.'" _show="'.$this->config['show'].'">'.
 		'<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
@@ -55,11 +55,12 @@ use("popup",function(){
         }
         var model=$(this).attr("model");
         var field=$(this).attr("_name");
+        var showField=$(this).attr("_show");
         window.choosemodelPopup=$('#popup').find('.content').html('').end().bPopup({
             content:'iframe', //'ajax', 'iframe' or 'image'
             contentContainer:'.content',
             iframeAttr:'scrolling="yes" frameborder="0"',
-	    loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field)+'&show={$this->config['show']}' //Uses jQuery.load()
+	    loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field)+'&show='+showField //Uses jQuery.load()
         });
         return false;
     
