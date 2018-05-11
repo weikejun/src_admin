@@ -34,7 +34,8 @@
         var itemDatas={%json_encode(array_map(create_function('$item','return $item->getData();'),$modelDataList))%};
         $("tbody>tr").dblclick(function(){
             var index=$(this).index();
-	    location = $('#read_'+itemDatas[index]['id']).prop('href');
+            var href = $('#read_'+itemDatas[index]['id']).prop('href');
+            if (href) location = href;
         });
     })();
 	$(document).ready(function() {

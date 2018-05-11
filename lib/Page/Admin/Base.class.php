@@ -55,6 +55,14 @@ abstract class Page_Admin_Base extends BaseController{
         $allowMethods = array("select", "select_search","search",'index','create','update','read','delete');
 
         if ($tAction != null && $tAction[0]!='_' && in_array($tAction, $allowMethods) && method_exists($this, $tAction)) {
+            $logger = new SystemLog();
+            $logFun = function($model) use(&$logger, $tAction) {
+                    $logger->doLog($model, $tAction);
+            };
+            $this->model
+                ->on('after_insert', $logFun)
+                ->on('after_delete', $logFun)
+                ->on('after_update', $logFun);
             $this->$tAction();
             return array($this->_templateName,$this->_assigned);
         }
@@ -202,7 +210,7 @@ abstract class Page_Admin_Base extends BaseController{
     }
     public function _delete(){
         //$this->model->reset();
-        $this->model->addWhere("id",$_REQUEST['id'])->delete();
+        $this->model->addWhere("id",$_REQUEST['id'])->select()->delete();
     }
     public function delete(){
         $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());

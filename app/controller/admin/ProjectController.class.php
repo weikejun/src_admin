@@ -5,14 +5,13 @@ class ProjectController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
+
         $this->model=new Project();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText' => "投资记录",
             'tableWrap' => true,
         ));
-        //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
@@ -31,7 +30,7 @@ class ProjectController extends Page_Admin_Base {
             array('name'=>'pre_money','label'=>'公司投前估值','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'financing_amount','label'=>'本轮融资总额','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'post_money','label'=>'公司投后估值','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'invest_entity','label'=>'源码投退主体','type'=>"choosemodel",'model'=>'Entity','default'=>null,'required'=>true,),
+            array('name'=>'invest_entity','label'=>'源码投退主体','type'=>"choosemodel",'model'=>'Entity','default'=>null,'required'=>false,),
             array('name'=>'rmb_usd','label'=>'RMB/USD','type'=>"choice",'choices'=>[['RMB','RMB'],['RMB-ODI','RMB-ODI'],['USD','USD'],['USD-JV','USD-JV'],['USD-VIE','USD-VIE'],['USD-拆VIE','USD-拆VIE'],['其他','其他']], 'default'=>'RMB','required'=>false,),
             array('name'=>'period','label'=>'期数/专项','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'mirror','label'=>'镜像持股','type'=>"choice",'choices'=>[['不适用','不适用'],['有','有'],['无','无']], 'default'=>'不适用','required'=>true,),

@@ -4,7 +4,6 @@ class EntityController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Entity();
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",

@@ -4,7 +4,6 @@ class AdminController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Admin();
         $this->model->orderBy('create_time', 'DESC');
         WinRequest::mergeModel(array(

@@ -16,7 +16,7 @@ class Form_ChoosemodelField extends Form_Field{
 	$model = new $this->modelClass;
 	$model->mId = $this->value;
 	$show = 'm'.ucfirst($this->config['show']);
-	if (!$is_new) {
+	if ($model->mId) {
 		$model->select();
 	}
         $html="<div class='control-group'>";

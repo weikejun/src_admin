@@ -5,7 +5,6 @@ private $_objC;
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new EntityRel();
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体关系",

@@ -4,7 +4,6 @@ class SystemLogController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new SystemLog();
         $this->model->orderBy("create_time","DESC");
         WinRequest::mergeModel(array(
@@ -17,12 +16,15 @@ class SystemLogController extends Page_Admin_Base {
 
         ));
         $this->list_display=array(
+            ['label'=>'流水号','field'=>function($model){
+                return $model->mId;
+            }],
             ['label'=>'操作人','field'=>function($model){
                 $admin = $this->_getResource($model->mOperatorId, 'Admin', new Admin, 'id');
                 return $admin->mName;
             }],
             ['label'=>'操作IP','field'=>function($model){
-                return $model->mOperatorIP;
+                return $model->mOperatorIp;
             }],
             ['label'=>'资源','field'=>function($model){
                 return $model->mResource.":".$model->mResId;
@@ -48,13 +50,26 @@ class SystemLogController extends Page_Admin_Base {
             array('label'=>'添加到module','action'=>'javascript:add_to_module();return false;'),
         );*/
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'操作人ID','paramName'=>'operator_id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'资源','paramName'=>'resource','fusion'=>false]),
+            new Page_Admin_TextForeignFilter(['name'=>'操作人','paramName'=>'name|operator_id','foreignTable'=>'Admin','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>'资源','paramName'=>'resource','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>'资源ID','paramName'=>'res_id','fusion'=>false]),
+            new Page_Admin_TimeRangeFilter(['name'=>'操作时间','paramName'=>'create_time']),
         );
 
         $this->hide_action_new = true;
+
+        $this->single_actions_default = ['delete' => false, 'edit' => false];
         
         //$this->search_fields=array('admin_id','buyer_id','user_id','log');
+    }
+
+    public function _delete() {
+    }
+
+    public function _update() {
+    }
+
+    public function _create() {
     }
 }
 

@@ -11,6 +11,7 @@ trait EventEmitter{
                 return false;
             }
         }
+        return $this;
     }
     public function on($eventName,$callable){
         if(!is_callable($callable)||!is_string($eventName)){
@@ -20,5 +21,6 @@ trait EventEmitter{
             $this->_event_map[$eventName]=[];
         }
         $this->_event_map[$eventName][]=$callable;
+        return $this;
     }
 }

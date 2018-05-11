@@ -5,7 +5,6 @@ class PaymentController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new Payment();
         $this->model->orderBy("pay_time","desc");
         WinRequest::mergeModel(array(

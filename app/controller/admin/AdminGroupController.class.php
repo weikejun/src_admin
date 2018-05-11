@@ -4,7 +4,6 @@ class AdminGroupController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->addInterceptor(new AdminLogInterceptor());
         $this->model=new AdminGroup();
         WinRequest::mergeModel(array(
             'controllerText'=>"用户角色管理",

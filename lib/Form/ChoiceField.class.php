@@ -19,7 +19,7 @@ class Form_ChoiceField extends Form_Field{
             $display=isset($choice[1])?$choice[1]:$value;
             if($this->config['checked']){
                 $this->value = $this->config['checked'];
-            }else if($is_new || (strval($this->value) !== '0' && !$this->value)) {
+            }else if($is_new && trim($this->value) === '') {
                 $this->value = $this->config['default'];
             }
             $checked=($value==$this->value)?"checked='checked'":"";
