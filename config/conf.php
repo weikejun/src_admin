@@ -18,10 +18,7 @@ else
 }
 date_default_timezone_set('Asia/Shanghai');
 
-
-#DB::init("mysql:host=127.0.0.1;dbname=aimeizhuyi;port:3306",'root','');
-#DB::init("mysql:host=127.0.0.1;dbname=aimeizhuyi;port:3306",'root','aimei753951');
-DB::init("mysql:host=localhost;dbname=aimeizhuyi;port=3306;charset=utf8",'root','root');
+DB::init("mysql:host=localhost;dbname=src_admin;port=3306;charset=utf8",'root','root');
 if(php_sapi_name()!='cli'){
 //    ini_set("session.save_handler", "memcache");  
 //    ini_set("session.save_path", "tcp://127.0.0.1:11211");
