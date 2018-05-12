@@ -4,7 +4,7 @@ class SystemLogController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->model=new SystemLog();
+        $this->model=new Model_SystemLog();
         $this->model->orderBy("create_time","DESC");
         WinRequest::mergeModel(array(
             'controllerText'=>"系统日志",
@@ -20,7 +20,7 @@ class SystemLogController extends Page_Admin_Base {
                 return $model->mId;
             }],
             ['label'=>'操作人','field'=>function($model){
-                $admin = $this->_getResource($model->mOperatorId, 'Admin', new Admin, 'id');
+                $admin = $this->_getResource($model->mOperatorId, 'Admin', new Model_Admin, 'id');
                 return $admin->mName;
             }],
             ['label'=>'操作IP','field'=>function($model){
@@ -50,7 +50,7 @@ class SystemLogController extends Page_Admin_Base {
             array('label'=>'添加到module','action'=>'javascript:add_to_module();return false;'),
         );*/
         $this->list_filter=array(
-            new Page_Admin_TextForeignFilter(['name'=>'操作人','paramName'=>'name|operator_id','foreignTable'=>'Admin','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>'操作人','paramName'=>'name|operator_id','foreignTable'=>'Model_Admin','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>'资源','paramName'=>'resource','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>'资源ID','paramName'=>'res_id','fusion'=>false]),
             new Page_Admin_TimeRangeFilter(['name'=>'操作时间','paramName'=>'create_time']),

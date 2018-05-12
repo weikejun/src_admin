@@ -27,11 +27,11 @@ class ACL{
     }
 
     public static function checkPermissionResult($actionName){
-        $admin_id = Admin::getCurrentAdmin()->mId;
+        $admin_id = Model_Admin::getCurrentAdmin()->mId;
         if(!$admin_id)  return false;
 
         # 用户名为root直接获取权限
-        $admin_name = Admin::getCurrentAdmin()->mName;
+        $admin_name = Model_Admin::getCurrentAdmin()->mName;
         if($admin_name == 'root'){
             return true;
         }
@@ -39,25 +39,25 @@ class ACL{
         # 非root才走权限验证流程
         #$permissionName = Action::getAuth($actionName);
         #if(!$permissionName) return false;
-        $permissionId = Action::getPermissionId($actionName);
+        $permissionId = Model_Action::getPermissionId($actionName);
         if(!$permissionId) return false;
 
-        if(!Permission::exist($permissionId))   return false;
+        if(!Model_Permission::exist($permissionId))   return false;
 
         # 首先直接判断用户直接权限
-        $permission_ids = RolePermission::getPermissionIdsByAdmin($admin_id);
+        $permission_ids = Model_RolePermission::getPermissionIdsByAdmin($admin_id);
         #if(Permission::checkPermission($permission_ids, $permissionName)){
         #    return true;
         #}
         if(in_array($permissionId, $permission_ids))    return true;
 
         # 用户没有直接权限则查看用户的组权限
-        $group_ids = AdminGroup::getGroupIdsByAdmin($admin_id);
+        $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
         if(count($group_ids) == 0)  return false;
-        if(Group::isRoot($group_ids)){
+        if(Model_Group::isRoot($group_ids)){
             return true;
         }
-        $permission_ids = RolePermission::getPermissionIdsByGroup($group_ids);
+        $permission_ids = Model_RolePermission::getPermissionIdsByGroup($group_ids);
         #return Permission::checkPermission($permission_ids, $permissionName);
         if(in_array($permissionId, $permission_ids))    return true;
         return false;
@@ -66,31 +66,31 @@ class ACL{
     public static function getPermissionControllers(){
         $permissionControllers = array();
 
-        $admin_id = Admin::getCurrentAdmin()->mId;
+        $admin_id = Model_Admin::getCurrentAdmin()->mId;
         if(!$admin_id)  return $permissionControllers;
 
-        $admin_name = Admin::getCurrentAdmin()->mName;
+        $admin_name = Model_Admin::getCurrentAdmin()->mName;
         if($admin_name == 'root'){
             return self::$controllers;
         }
         
-        $group_ids = AdminGroup::getGroupIdsByAdmin($admin_id);
+        $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
         $permission_ids_by_group = array();
         if(count($group_ids) > 0){
-            if(Group::isRoot($group_ids)){
+            if(Model_Group::isRoot($group_ids)){
                 return self::$controllers;
             }
-            $permission_ids_by_group = RolePermission::getPermissionIdsByGroup($group_ids);
+            $permission_ids_by_group = Model_RolePermission::getPermissionIdsByGroup($group_ids);
         }
 
         # 根据用户权限和组权限找到用户的所有权限
-        $permission_ids_by_admin = RolePermission::getPermissionIdsByAdmin($admin_id);
+        $permission_ids_by_admin = Model_RolePermission::getPermissionIdsByAdmin($admin_id);
         $permission_ids = array_unique(array_merge($permission_ids_by_admin, $permission_ids_by_group));
 
         if(count($permission_ids) == 0) return $permissionControllers;
         #$permissionNames = Permission::getPermissionNames($permission_ids); 
         #$actionNames = Action::getActionNames($permissionNames);
-        $actionNames = Action::getActionNames($permission_ids);
+        $actionNames = Model_Action::getActionNames($permission_ids);
     
         $myControllers = array();
         if(count($actionNames) > 0){

@@ -1,10 +1,11 @@
 <?php
 class PermissionController extends Page_Admin_Base {
+    use ControllerPreproc;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->model=new Permission();
+        $this->model=new Model_Permission();
         $this->model->orderBy('create_time', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText'=>"权限管理",

@@ -10,7 +10,7 @@ class AdminLoginInterceptor extends Interceptor{
             throw new ModelAndViewException("not login",1,"redirect:/admin/index/login?url=".urlencode($_SERVER['REQUEST_URI']));
         } else{
         	//WinRequest::mergeModel(array('user'=>$_SESSION['user']));
-        	WinRequest::mergeModel(array('user'=>Admin::getCurrentAdmin()));
+        	WinRequest::mergeModel(array('user'=>Model_Admin::getCurrentAdmin()));
         }
     }
     public function needLogin($executeInfo){

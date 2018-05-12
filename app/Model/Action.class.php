@@ -1,7 +1,7 @@
 <?php
-class Action extends Base_Action{
+class Model_Action extends Base_Action{
     public static function getPermissionId($actionName){
-        $action = new Action();
+        $action = new self();
         $action = $action->addWhere('name', $actionName)->select();
         return $action ? $action->mPermissionId : null;
     }
@@ -9,7 +9,7 @@ class Action extends Base_Action{
     public static function getActionNames($permissionIds){
         $actionNames = array();
         if(count($permissionIds) > 0){
-            $action = new Action();
+            $action = new self();
             $actions = $action->addWhere("permission_id", $permissionIds, 'in')->find();
             if($actions){ 
                 foreach($actions as $action){

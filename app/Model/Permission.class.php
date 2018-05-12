@@ -1,14 +1,14 @@
 <?php
-class Permission extends Base_Permission{
+class Model_Permission extends Base_Permission{
     public static function exist($permissionId){
-        $permission = new Permission();
+        $permission = new self();
         $permission = $permission->addWhere("id", $permissionId)->select();
         return $permission != null;
     }
 
     public static function checkPermission($permissionIds, $permissionName){
         if(count($permissionIds) == 0)    return false;
-        $permission = new Permission();
+        $permission = new self();
         $permissions = $permission->addWhere("id", $permissionIds, 'in')->find();
         if(!$permissions)   return false;
         foreach($permissions as $permission){
@@ -23,7 +23,7 @@ class Permission extends Base_Permission{
     public static function getPermissionNames($permissionIds){
         $permissionNames = array();
         if(count($permissionIds) > 0){
-            $permission = new Permission();
+            $permission = new self();
             $permissions = $permission->addWhere("id", $permissionIds, 'in')->find();
             if($permissions){ 
                 foreach($permissions as $permission){

@@ -1,5 +1,5 @@
 <?php
-class Admin extends Base_Admin{
+class Model_Admin extends Base_Admin{
     public static function getCurrentAdmin(){
         global $IS_DEBUG;
         $admin=new self();

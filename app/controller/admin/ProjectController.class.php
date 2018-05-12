@@ -1,12 +1,13 @@
 <?php
 class ProjectController extends Page_Admin_Base {
+    use ControllerPreproc;
     private $_objectCache = [];
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
 
-        $this->model=new Project();
+        $this->model=new Model_Project();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText' => "投资记录",
@@ -15,14 +16,16 @@ class ProjectController extends Page_Admin_Base {
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
-            array('name'=>'company_id','label'=>'目标公司','type'=>"choosemodel",'model'=>'Company','default'=>null,'required'=>true,),
+            array('name'=>'company_id','label'=>'目标公司','type'=>"choosemodel",'model'=>'Model_Company','default'=>null,'required'=>true,),
+            array('name'=>'proj_name','label'=>'项目名称','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'proj_code','label'=>'项目编号','type'=>"text",'default'=>null,'required'=>false,),
             array('name'=>'item_status','label'=>'整理状态','type'=>"choice",'choices'=>[['closing','已完成'],['ongoing','待完成'],['pending','其他']], 'default'=>'ongoing','required'=>true,),
             array('name'=>'turn','label'=>'轮次大类','type'=>"choice",'choices'=>[['A轮','A轮'],['B轮','B轮'],['C轮','C轮'],['D轮','D轮'],['E轮','E轮'],['F轮','F轮'],['F轮后','F轮后'],['不适用','不适用']], 'default'=>'A轮','required'=>true,),
             array('name'=>'turn_sub','label'=>'轮次详情','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'new_follow','label'=>'新老类型','type'=>"choice",'choices'=>[['new','new'],['follow on','follow on']], 'default'=>'new','required'=>true,),
             array('name'=>'enter_exit_type','label'=>'投退类型','type'=>"choice",'choices'=>[['领投','领投'],['跟投','跟投'],['不跟投','不跟投'],['部分退出','部分退出'],['全部退出','全部退出'],['清算退出','清算退出'],['重组','重组'],['上市','上市'],['其他','其他']], 'default'=>'领投','required'=>true,),
             array('name'=>'new_old_stock','label'=>'新股老股','type'=>"choice",'choices'=>[['新股','新股'],['老股','老股'],['其他','其他']], 'default'=>'新股','required'=>true,),
-            array('name'=>'decision_date','label'=>'决策日期','type'=>"date",'default'=>null,'null'=>false,),
+            array('name'=>'decision_date','label'=>'决策日期','type'=>"date",'default'=>null,'required'=>false),
             array('name'=>'proj_status','label'=>'项目状态','type'=>"choice",'choices'=>[['进展中','进展中'],['已交割','已交割'],['暂停','暂停'],['终止不做','终止不做'],['其他','其他']], 'default'=>'进展中','required'=>false,),
             array('name'=>'close_date','label'=>'Close日期','type'=>"date",'default'=>null,'null'=>false,),
             array('name'=>'law_firm','label'=>'负责律所','type'=>"text", 'default'=>null,'required'=>false,),
@@ -30,7 +33,7 @@ class ProjectController extends Page_Admin_Base {
             array('name'=>'pre_money','label'=>'公司投前估值','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'financing_amount','label'=>'本轮融资总额','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'post_money','label'=>'公司投后估值','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'invest_entity','label'=>'源码投退主体','type'=>"choosemodel",'model'=>'Entity','default'=>null,'required'=>false,),
+            array('name'=>'invest_entity','label'=>'源码投退主体','type'=>"choosemodel",'model'=>'Model_Entity','default'=>null,'required'=>false,),
             array('name'=>'rmb_usd','label'=>'RMB/USD','type'=>"choice",'choices'=>[['RMB','RMB'],['RMB-ODI','RMB-ODI'],['USD','USD'],['USD-JV','USD-JV'],['USD-VIE','USD-VIE'],['USD-拆VIE','USD-拆VIE'],['其他','其他']], 'default'=>'RMB','required'=>false,),
             array('name'=>'period','label'=>'期数/专项','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'mirror','label'=>'镜像持股','type'=>"choice",'choices'=>[['不适用','不适用'],['有','有'],['无','无']], 'default'=>'不适用','required'=>true,),
@@ -57,26 +60,33 @@ class ProjectController extends Page_Admin_Base {
             array('name'=>'term_pri_assignee','label'=>'对创始人优先受让权','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>'有','required'=>true,),
             array('name'=>'term_sell_together','label'=>'对创始人共售权','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>'有','required'=>true,),
             array('name'=>'term_pri_comon_stock','label'=>'对普通股优先权','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>'有','required'=>true,),
-            array('name'=>'stock_trans','label'=>'是否有老股转让','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'trans_detail','label'=>'老股转让说明','type'=>"textarea", 'default'=>null,'required'=>false,),
-            array('name'=>'shareholding_total','label'=>'各主体合计持股比例','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'stocknum_total','label'=>'持有合计股数','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'hold_value','label'=>'持有股数的价值','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'return_rate','label'=>'投资回报倍数','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'return_irr','label'=>'投资回报IRR','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'final_captable','label'=>'Final Captable','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'final_word','label'=>'Final Word','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'closing_pdf','label'=>'Closing PDF','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'closing_file','label'=>'Closing原件','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'stock_cert','label'=>'境外股票证书','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'business_reg','label'=>'境内工商','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'filling_owner','label'=>'文件filling保管人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'exit_amount','label'=>'退出金额','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'exit_way','label'=>'退出方式','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'exit_ratio','label'=>'退出比例','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'exit_return','label'=>'退出回报倍数','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
-            array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
+            array('name'=>'term_buyback_standard','label'=>'回购金额标准','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_buyback_start','label'=>'回购起算日','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_buyback_period','label'=>'回购年限','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_buyback_date','label'=>'本轮可回购时间','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_ipo_period','label'=>'合格IPO年限','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_waiting_period','label'=>'等待期年限','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'term_anti_dilution','label'=>'反稀释方法','type'=>"choice",'choices'=>[['完全棘轮','完全棘轮'],['狭义加权平均','狭义加权平均'],['广义加权平均','广义加权平均'],['无','无']], 'default'=>null,'required'=>false),
+            array('name'=>'term_liquidation_preference','label'=>'优先清算权方法','type'=>"choice",'choices'=>[['参与分配','参与分配'],['不参与分配','不参与分配'],['无','无']], 'default'=>null,'required'=>false),
+            array('name'=>'term_drag_along_right','label'=>'拖售权','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
+            array('name'=>'term_dar_illustrate','label'=>'拖售权说明','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'term_warrant','label'=>'warrant','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
+            array('name'=>'term_dividends_preference','label'=>'优先分红权','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
+            array('name'=>'term_valuation_adjustment','label'=>'对赌/估值调整','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'term_spouse_consent','label'=>'配偶同意函','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
+            array('name'=>'term_longstop_date','label'=>'longstop date','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'term_important_changes','label'=>'相对上轮重大变化','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'term_good_item','label'=>'不常见好条款摘选','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'doc_final_captalbe','label'=>'Final Captalbe','type'=>"choice",'choices'=>[['已存档','已存档'],['未存档','未存档']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_final_word','label'=>'Final Word','type'=>"choice",'choices'=>[['已存档','已存档'],['未存档','未存档']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_closing_pdf','label'=>'Closing PDF','type'=>"choice",'choices'=>[['已存档','已存档'],['未存档','未存档']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_closing_original','label'=>'Closing原件','type'=>"choice",'choices'=>[['已存档','已存档'],['未存档','未存档']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_overseas_stockcert','label'=>'境外股票证书','type'=>"choice",'choices'=>[['已存档','已存档'],['未存档','未存档']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_aic_registration','label'=>'境内工商登记','type'=>"choice",'choices'=>[['已办理','已办理'],['未办理','未办理']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_filling_keeper','label'=>'文件Filing保管人','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'doc_has_pending','label'=>'有无未决事项','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
+            array('name'=>'doc_pending_detail','label'=>'未决事项说明','type'=>"text",'default'=>null,'required'=>false),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
         ));
         $this->list_display=array(
             ['label'=>'项目ID','field'=>function($model){
@@ -92,12 +102,12 @@ class ProjectController extends Page_Admin_Base {
                 return $model->mItemStatus;
             }],
             ['label'=>'被投企业','field'=>function($model){
-                $company = new Company();
+                $company = new Model_Company();
 		$ret = $company->addWhere("id", $model->mCompanyId)->select();
 		return ($ret ? $company->mName : '（名称出错）' );
             }],
             ['label'=>'所属行业','field'=>function($model){
-                $company = new Company();
+                $company = new Model_Company();
 		$ret = $company->addWhere("id", $model->mCompanyId)->select();
 		return ($ret ? $company->mName : '（名称出错）' );
             }],
@@ -136,11 +146,6 @@ class ProjectController extends Page_Admin_Base {
             }],
             ['label'=>'工作记录','field'=>function($model){
 		return '<a href="/admin/projectMemo?__filter='.urlencode('project_id='.$model->mId).'">查看</a>&nbsp;<a href="/admin/projectMemo?action=read&project_id='.$model->mId.'">添加</a>';
-            }],
-            ['label'=>'创建人','field'=>function($model){
-		$admin = new Admin();
-		$ret = $admin->addWhere("id", $model->mAdminId)->select();
-		return ($ret ? $admin->mName : '(id='.$model->mAdminId.')' );
             }],
         );
 

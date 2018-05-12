@@ -37,6 +37,9 @@ abstract class Page_Admin_Base extends BaseController{
         return get_class($this);
     }
     
+    public function preMethod($tAction) {
+    }
+
     public function indexAction() {
         $tAction = 'index';
         if($this->_REQUEST('__inline_admin_index',false)!==false){
@@ -55,14 +58,7 @@ abstract class Page_Admin_Base extends BaseController{
         $allowMethods = array("select", "select_search","search",'index','create','update','read','delete');
 
         if ($tAction != null && $tAction[0]!='_' && in_array($tAction, $allowMethods) && method_exists($this, $tAction)) {
-            $logger = new SystemLog();
-            $logFun = function($model) use(&$logger, $tAction) {
-                    $logger->doLog($model, $tAction);
-            };
-            $this->model
-                ->on('after_insert', $logFun)
-                ->on('after_delete', $logFun)
-                ->on('after_update', $logFun);
+            $this->preMethod($tAction);
             $this->$tAction();
             return array($this->_templateName,$this->_assigned);
         }

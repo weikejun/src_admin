@@ -1,10 +1,11 @@
 <?php
 class EntityController extends Page_Admin_Base {
+    use ControllerPreproc;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->model=new Entity();
+        $this->model=new Model_Entity();
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",
         ));
@@ -16,7 +17,6 @@ class EntityController extends Page_Admin_Base {
             array('name'=>'tp','label'=>'类型','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'currency','label'=>'货币','type'=>"choice",'choices'=>[['RMB','RMB'],['USD','USD'],['HKD','HKD']], 'default'=>'USD','required'=>false,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
-            array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'id','field'=>function($model){

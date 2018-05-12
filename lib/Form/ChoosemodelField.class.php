@@ -8,22 +8,22 @@ class Form_ChoosemodelField extends Form_Field{
             throw new ModelAndViewException("text:no this model:{$config['model']}",1,"text:no this model:{$config['model']}");
         }
         $this->modelClass=$config['model'];
-	$this->config['show'] = isset($config['show']) ? $config['show'] : 'name';
+        $this->config['show'] = isset($config['show']) ? $config['show'] : 'name';
     }
 
     public function to_html($is_new){
         $class=$this->config['class'];
-	$model = new $this->modelClass;
-	$model->mId = $this->value;
-	$show = 'm'.ucfirst($this->config['show']);
-	if ($model->mId) {
-		$model->select();
-	}
+        $model = new $this->modelClass;
+        $model->mId = $this->value;
+        $show = 'm'.ucfirst($this->config['show']);
+        if ($model->mId) {
+            $model->select();
+        }
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
-		"<div class='controls'>".
-		'<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.$this->modelClass.'" _show="'.$this->config['show'].'">'.
-		'<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';
+            "<div class='controls'>".
+            '<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.str_replace("Model_", "", $this->modelClass).'" _show="'.$this->config['show'].'">'.
+            '<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         }
@@ -60,10 +60,10 @@ use("popup",function(){
             content:'iframe', //'ajax', 'iframe' or 'image'
             contentContainer:'.content',
             iframeAttr:'scrolling="yes" frameborder="0"',
-	    loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field)+'&show='+showField //Uses jQuery.load()
+        loadUrl:'{%\$__controller->getUrlPrefix()%}/'+encodeURIComponent(model)+'?action=select&field='+encodeURIComponent(field)+'&show='+showField //Uses jQuery.load()
         });
         return false;
-    
+
     });
     window.choosemodel=function(model,field,id,text){
         $(document.forms.main).find('[name="'+field+'"]').val(id);

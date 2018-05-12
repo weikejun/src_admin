@@ -100,7 +100,7 @@ abstract class DBModel{
     }
 
     protected function getTableName(){
-        $tableName = preg_replace('/(.)([A-Z])/', '${1}_${2}',get_class($this));
+        $tableName = preg_replace('/(.)([A-Z])/', '${1}_${2}', str_replace('Model_', '', get_class($this)));
         return strtolower($tableName);
     }
     protected function getTable(){

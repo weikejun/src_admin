@@ -1,7 +1,7 @@
 <?php
-class Group extends Base_Group{
+class Model_Group extends Base_Group{
     public static function isRoot($groupIds){
-        $group = new Group();
+        $group = new self();
         $groups = $group->addWhere("id", $groupIds, 'in')->find();
         if($groups){
             foreach($groups as $group){

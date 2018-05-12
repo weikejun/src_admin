@@ -1,5 +1,6 @@
 <?php
 class CompanyController extends Page_Admin_Base {
+    use ControllerPreproc;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -8,14 +9,12 @@ class CompanyController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"目标公司",
         ));
-        $this->model=new Company();
+        $this->model=new Model_Company();
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
             array('name'=>'name','label'=>'公司全称','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'proj_name','label'=>'项目名称','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'proj_code','label'=>'项目编号','type'=>"text",'default'=>null,'required'=>false,),
             array('name'=>'bussiness','label'=>'所属行业','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'init_res_person','label'=>'初始负责人','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'current_person','label'=>'现负责人','type'=>"text", 'default'=>null,'required'=>false,),
@@ -27,7 +26,6 @@ class CompanyController extends Page_Admin_Base {
             array('name'=>'info_right','label'=>'信息权','type'=>"choice",'choices'=>[['有','有'],['无','无']], 'default'=>'有','required'=>true,),            array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
             array('name'=>'info_right_threshold','label'=>'信息权门槛','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'stock_num','label'=>'总股数','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'id','field'=>function($model){

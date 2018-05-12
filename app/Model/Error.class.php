@@ -3,7 +3,7 @@
 //the error msg list
 //jiazhuo 2013.11
 */
-class Error{
+class Model_Error{
     public static function str($code){
         $str=self::$errmsgs[$code];
         return $str;

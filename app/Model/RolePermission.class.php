@@ -1,7 +1,7 @@
 <?php
-class RolePermission extends Base_Role_Permission{
+class Model_RolePermission extends Base_Role_Permission{
     public static function getPermissionIdsByAdmin($adminId){
-        $admin_permission = new RolePermission();
+        $admin_permission = new self();
         $admin_permissions = $admin_permission->addWhere('admin_id', $adminId)->find();
         $permission_ids = array();
         if($admin_permissions){
@@ -15,7 +15,7 @@ class RolePermission extends Base_Role_Permission{
     }
 
     public static function getPermissionIdsByGroup($groupIds){
-        $group_permission = new RolePermission();
+        $group_permission = new self();
         $group_permissions = $group_permission->addWhere("group_id", $groupIds, 'in')->find();
         $permission_ids = array();
         if($group_permissions){

@@ -1,5 +1,6 @@
 <?php
 class InvestmentExitController extends Page_Admin_Base {
+    use ControllerPreproc;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -7,13 +8,13 @@ class InvestmentExitController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"退出记录",
         ));
-        $this->model=new InvestmentExit();
+        $this->model=new Model_InvestmentExit();
         $this->model->orderBy('exit_time', 'DESC');
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
 
         $this->form=new Form(array(
-            array('name'=>'project_id','label'=>'投资项目','type'=>"choosemodel",'model'=>'Project','default'=>null,'required'=>true,),
+            array('name'=>'project_id','label'=>'投资项目','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>true,),
             array('name'=>'amount','label'=>'金额','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'currency','label'=>'计价货币','type'=>"choice",'choices'=>[['USD','USD'],['RMB','RMB'],['HKD','HKD']], 'default'=>'USD','required'=>true,),
             array('name'=>'exit_way','label'=>'退出方式','type'=>"text",'default'=>null,'required'=>true,),
@@ -24,21 +25,20 @@ class InvestmentExitController extends Page_Admin_Base {
             array('name'=>'exit_time','label'=>'退出日期','type'=>"date",'default'=>null,'null'=>true,),
             array('name'=>'memo','label'=>'退出备注','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
-            array('name'=>'admin_id','label'=>'创建人ID','type'=>"hidden",'readonly'=>'true','default'=>Admin::getCurrentAdmin()->mId,'required'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'id','field'=>function($model){
                 return $model->mId;
             }],
             ['label'=>'项目名称','field'=>function($model){
-                $project = $this->_getResource($model->mProjectId, 'Project', new Project, 'id');
+                $project = $this->_getResource($model->mProjectId, 'Project', new Model_Project, 'id');
                 return $project->mName;
             }],
             ['label'=>'金额','field'=>function($model){
                 return $model->mAmount . ' ' . $model->mCurrency;
             }],
             ['label'=>'退出轮次','field'=>function($model){
-                $project = $this->_getResource($model->mProjectId, 'Project', new Project, 'id');
+                $project = $this->_getResource($model->mProjectId, 'Project', new Model_Project, 'id');
                 return $project->mTurn;
             }],
             ['label'=>'退出方式','field'=>function($model){

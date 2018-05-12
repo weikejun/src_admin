@@ -1,5 +1,5 @@
 <?php
-class SystemLog extends Base_System_Log{
+class Model_SystemLog extends Base_System_Log{
     public function doLog($model, $action) {
         $context = WinRequest::getModel('executeInfo');
         $detailStr = '';
@@ -9,7 +9,7 @@ class SystemLog extends Base_System_Log{
             }
         }
         $this->setData([
-            'operator_id' => Admin::getCurrentAdmin()->mId,
+            'operator_id' => Model_Admin::getCurrentAdmin()->mId,
             'operator_ip' => Utils::getClientIP(),
             'resource' => $context['controllerName'],
             'res_id' => $model->mId,
