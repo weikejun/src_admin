@@ -86,7 +86,7 @@ class ProjectController extends Page_Admin_Base {
             array('name'=>'doc_filling_keeper','label'=>'文件Filing保管人','type'=>"text",'default'=>null,'required'=>false),
             array('name'=>'doc_has_pending','label'=>'有无未决事项','type'=>"choice",'choices'=>[['有','有'],['没有','没有']], 'default'=>null,'required'=>false),
             array('name'=>'doc_pending_detail','label'=>'未决事项说明','type'=>"text",'default'=>null,'required'=>false),
-            array('name'=>'update_time','label'=>'更新时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime","readonly"=>'true','default'=>time(),'auto_update'=>true),
         ));
         $this->list_display=array(
             ['label'=>'项目ID','field'=>function($model){
