@@ -20,10 +20,11 @@ trait ExportToCsvAction{
         echo $csv_terminated;
     }
     public function exportToCsvAction(){
+        $exeInfo = WinRequest::getModel('executeInfo');
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 		//header("Content-Length: " . strlen($out));
 		header("Content-type: text/x-csv");
-		header("Content-Disposition:filename=order.csv");
+		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".csv");
 
 		$insert = '';
         foreach($this->list_filter as $filter){

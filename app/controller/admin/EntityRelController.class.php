@@ -1,6 +1,7 @@
 <?php
 class EntityRelController extends Page_Admin_Base {
-private $_objC;
+    private $_objC;
+    use ControllerPreproc;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -14,28 +15,24 @@ private $_objC;
 
         $this->form=new Form(array(
             array('name'=>'subject_id','label'=>'目标主体','type'=>"choosemodel",'model'=>'Model_Entity','default'=>null,'required'=>true,),
-            array('name'=>'holder_id','label'=>'持有主体','type'=>"choosemodel",'model'=>'Model_Entity','default'=>null,'required'=>true,),
+            array('name'=>'holder_id','label'=>'股东主体','type'=>"choosemodel",'model'=>'Model_Entity','default'=>null,'required'=>true,),
             array('name'=>'ratio','label'=>'持股比例','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime","readonly"=>'true','default'=>time(),'null'=>false,),
         ));
         $this->list_display=array(
-            ['label'=>'目标主体','field'=>function($model){
-		$ret = self::_getResource($model->mSubjectId, 'entity', new Model_Entity());
-		return ($ret ? $ret->mName : '(id='.$model->mSubjectId.')' );
+            ['label'=>'股东主体','field'=>function($model){
+                $ret = self::_getResource($model->mHolderId, 'entity', new Model_Entity());
+                return ($ret ? $ret->mName : '(id='.$model->mHolderId.')' );
             }],
-            ['label'=>'持有主体','field'=>function($model){
-		$ret = self::_getResource($model->mHolderId, 'entity', new Model_Entity());
-		return ($ret ? $ret->mName : '(id='.$model->mHolderId.')' );
+            ['label'=>'目标主体','field'=>function($model){
+                $ret = self::_getResource($model->mSubjectId, 'entity', new Model_Entity());
+                return ($ret ? $ret->mName : '(id='.$model->mSubjectId.')' );
             }],
             ['label'=>'持股比例','field'=>function($model){
                 return $model->mRatio;
             }],
-            ['label'=>'创建人','field'=>function($model){
-		$ret = self::_getResource($model->mAdminId, 'admin', new Model_Admin());
-		return ($ret ? $ret->mName : '(id='.$model->mAdminId.')' );
-            }],
-            ['label'=>'创建时间','field'=>function($model){
-                return date('Y-m-d H:i:s',$model->mCreateTime);
+            ['label'=>'更新时间','field'=>function($model){
+                return date('Y-m-d H:i:s',$model->mUpdateTime);
             }],
         );
 

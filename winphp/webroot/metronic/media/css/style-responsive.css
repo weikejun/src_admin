@@ -182,7 +182,7 @@ For tablets and phones
 	Page sidebar
 	***/
 	.page-sidebar {
-		margin: 0 10px;
+		margin: 35px 10px 0 10px;
 	}
 
 	.page-sidebar.in {
@@ -444,7 +444,7 @@ For tablets and phones
 	Page sidebar
 	***/
 	.page-sidebar.in {
-		margin-top: 7px !important;
+		margin-top: 45px !important;
 	}
 
 	/***

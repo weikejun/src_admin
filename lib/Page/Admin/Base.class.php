@@ -1,6 +1,6 @@
 <?php
 abstract class Page_Admin_Base extends BaseController{
-    protected static $PAGE_SIZE=20;
+    protected static $PAGE_SIZE=10;
     private $_assigned=array();
     protected static $_objCache = [];
 
@@ -55,7 +55,7 @@ abstract class Page_Admin_Base extends BaseController{
         $this->assign('pageAdmin',$this);
         $tAction =$this->_REQUEST('action',$tAction);
         
-        $allowMethods = array("select", "select_search","search",'index','create','update','read','delete');
+        $allowMethods = array("select", "select_search","search",'index','create','update','read','delete','clone');
 
         if ($tAction != null && $tAction[0]!='_' && in_array($tAction, $allowMethods) && method_exists($this, $tAction)) {
             $this->preMethod($tAction);
@@ -175,6 +175,10 @@ abstract class Page_Admin_Base extends BaseController{
         $this->assign("__success_url",$__success_url);
         $this->_read();
         $this->display("admin/base/read.html");
+    }
+    public function clone() {
+        $this->read();
+        $this->assign("__is_new",true);
     }
     public function _update(){
         $requestData=$_REQUEST;

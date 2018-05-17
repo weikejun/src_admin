@@ -24,7 +24,6 @@ class AdminController extends Page_Admin_Base {
              */
 
             array('name'=>'name','label'=>'用户名','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>null,'null'=>false,),
             array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>false,),
             array('name'=>'password_again','label'=>'密码确认','type'=>"password",'default'=>null,'required'=>false,'validator'=>function($values){
                 if(!$values['password']||
@@ -35,6 +34,7 @@ class AdminController extends Page_Admin_Base {
                 }
             }),
             array('name'=>'valid','label'=>'有效状态',"choices"=>array(array('valid',"有效"),array('invalid',"无效"),), 'type'=>"choice",'default'=>'valid','null'=>false,),
+            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>null,'readonly'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'id','field'=>function($model){

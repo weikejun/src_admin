@@ -11,7 +11,7 @@ class Base_System_Log extends DBModel{
             ['name'=>'res_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'detail','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'create_time','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
-                    ];
+        ];
         return $FIELD_LIST;
     }
 }

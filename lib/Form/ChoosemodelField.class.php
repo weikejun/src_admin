@@ -26,6 +26,8 @@ class Form_ChoosemodelField extends Form_Field{
             '<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
+        } else {
+            $html.="<span class='help-inline'><span class=tips>".$this->config['help']."</span></span>";
         }
         $html.='</div>';
         $html.='</div>';

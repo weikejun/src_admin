@@ -44,6 +44,7 @@ EOF;
             var input=dt_picker.clone().attr({"type":"text","name":''}).insertAfter(dt_picker);
             input[controlType]({
                 format:'yyyy-mm-dd hh:ii:ss',
+                autoclose: true,
                 rtl : App.isRTL()
             });
             input.data(controlType).update(new Date(dt_picker.val()*1000));

@@ -14,6 +14,8 @@ class Form_TextField extends Form_Field{
             "<input class='$class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}'  value='".$value."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
+        } else {
+            $html.="<span class='help-inline'><span class='tips'>".$this->config['help']."</span></span>";
         }
         $html.='</div>';
         $html.='</div>';

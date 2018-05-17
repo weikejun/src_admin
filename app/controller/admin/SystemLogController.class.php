@@ -8,6 +8,7 @@ class SystemLogController extends Page_Admin_Base {
         $this->model->orderBy("create_time","DESC");
         WinRequest::mergeModel(array(
             'controllerText'=>"系统日志",
+            'tableWrap' => '1024px',
         ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);

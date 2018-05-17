@@ -5,7 +5,7 @@ class Model_SystemLog extends Base_System_Log{
         $detailStr = '';
         foreach($model->getData() as $key => $value) {
             if (trim($value) !== '') {
-                $detailStr .= "$key: $value,";
+                $detailStr .= "$key=$value|";
             }
         }
         $this->setData([

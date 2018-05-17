@@ -22,10 +22,18 @@ DROP TABLE IF EXISTS `company`; /*企业信息*/
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `company` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) DEFAULT NULL COMMENT '企业名称',
+  `name` varchar(32) DEFAULT NULL COMMENT '公司名称',
+  `short` varchar(32) DEFAULT NULL COMMENT '项目名称',
   `bussiness` varchar(32) DEFAULT NULL COMMENT '所属行业',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `total_stock` varchar(16) DEFAULT NULL,
+  `init_manager` varchar(16) DEFAULT NULL COMMENT '初始负责人',
+  `current_manager` varchar(16) DEFAULT NULL COMMENT '当前负责人',
+  `legal_person` varchar(16) DEFAULT NULL,
+  `director` varchar(16) DEFAULT NULL,
+  `director_turn` varchar(16) DEFAULT NULL,
+  `director_status` varchar(16) DEFAULT NULL,
+  `filling_keeper` varchar(16) DEFAULT NULL,
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -42,8 +50,7 @@ CREATE TABLE `entity` (
   `name` varchar(32) DEFAULT NULL COMMENT '主体名称',
   `tp` varchar(16) DEFAULT NULL COMMENT '主体类型',
   `currency` varchar(16) DEFAULT NULL COMMENT '货币类型',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -60,8 +67,7 @@ CREATE TABLE `entity_rel` (
   `subject_id` int(11) DEFAULT NULL COMMENT '目标主体ID',
   `holder_id` int(11) DEFAULT NULL COMMENT '持有主体ID',
   `ratio` varchar(16) DEFAULT NULL COMMENT '持有比例',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `subject_id_holder_id_index` (`subject_id`,`holder_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -77,17 +83,14 @@ DROP TABLE IF EXISTS `investment_exit`; /*退出记录*/
 CREATE TABLE `investment_exit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) DEFAULT NULL COMMENT '项目ID',
+  `company_id` int(11) DEFAULT NULL COMMENT '公司ID',
   `amount` varchar(16) DEFAULT NULL COMMENT '金额',
-  `exit_way` varchar(16) DEFAULT NULL COMMENT '退出方式',
   `currency` varchar(16) DEFAULT NULL COMMENT '货币',
-  `stock_num` varchar(16) DEFAULT NULL COMMENT '退出股数',
-  `exit_rate` varchar(16) DEFAULT NULL COMMENT '退出比例',
-  `rest_rate` varchar(16) DEFAULT NULL COMMENT '剩余比例',
-  `return_rate` varchar(16) DEFAULT NULL COMMENT '回报率',
+  `exit_way` varchar(16) DEFAULT NULL COMMENT '退出方式',
+  `exit_num` varchar(16) DEFAULT NULL COMMENT '退出股数',
   `memo` varchar(16) DEFAULT NULL COMMENT '备忘',
   `exit_time` int(11) DEFAULT NULL COMMENT '退出时间',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(11) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -102,12 +105,13 @@ DROP TABLE IF EXISTS `payment`; /*付款记录*/
 CREATE TABLE `payment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) DEFAULT NULL COMMENT '项目ID',
+  `company_id` int(11) DEFAULT NULL COMMENT '公司ID',
   `amount` varchar(16) DEFAULT NULL COMMENT '金额',
   `currency` varchar(16) DEFAULT NULL COMMENT '货币',
   `operator` varchar(16) DEFAULT NULL COMMENT '负责人',
   `pay_time` int(11) DEFAULT NULL COMMENT '打款时间',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `memo` varchar(1024) DEFAULT NULL COMMENT '备注',
+  `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -116,85 +120,85 @@ CREATE TABLE `payment` (
 -- Table structure for table `project`
 --
 
-DROP TABLE IF EXISTS `project`; /*项目表*/
+DROP TABLE IF EXISTS `project`; /*交易表*/
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project` (
-  `id` int(11) not NULL AUTO_INCREMENT COMMENT '项目ID',
-  `item_status` varchar(32) DEFAULT NULL COMMENT '记录状态',
+  `id` int(11) not NULL AUTO_INCREMENT COMMENT '交易ID',
   `company_id` int(11) DEFAULT NULL COMMENT '企业ID',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `name` varchar(32) DEFAULT NULL COMMENT '名称',
-  `code` varchar(32) DEFAULT NULL COMMENT '编号',
+  `code` varchar(32) DEFAULT NULL COMMENT '项目编号',
+  `item_status` varchar(32) DEFAULT NULL COMMENT '记录状态',
   `turn` varchar(16) DEFAULT NULL COMMENT '轮次',
   `turn_sub` varchar(16) DEFAULT NULL COMMENT '子轮次',
-  `investment_type` varchar(16) DEFAULT NULL COMMENT '投退类型',
-  `proj_status` varchar(16) DEFAULT NULL COMMENT '项目状态',
+  `enter_exit_type` varchar(16) DEFAULT NULL COMMENT '投退类型',
+  `new_follow` varchar(16) DEFAULT NULL COMMENT '新老类型',
+  `new_old_stock` varchar(16) DEFAULT NULL COMMENT '新老股',
   `decision_date` int(11) DEFAULT NULL COMMENT '决策日期',
+  `proj_status` varchar(16) DEFAULT NULL COMMENT '项目状态',
   `close_date` int(11) DEFAULT NULL COMMENT 'close日期',
-  `owner_pre` varchar(16) DEFAULT NULL COMMENT '原负责人',
-  `owner_now` varchar(16) DEFAULT NULL COMMENT '现负责人',
   `law_firm` varchar(32) DEFAULT NULL COMMENT '律所及律师',
-  `legal_in` varchar(32) DEFAULT NULL COMMENT '法律接口人',
-  `director_out` varchar(16) DEFAULT NULL COMMENT '境外董事',
-  `director_in` varchar(16) DEFAULT NULL COMMENT '境内董事',
-  `director_status` varchar(16) DEFAULT NULL COMMENT '境内董事工商办理',
   `observer` varchar(16) DEFAULT NULL COMMENT '观察员',
-  `pre_money` varchar(16) DEFAULT NULL COMMENT '投前估值',
-  `post_money` varchar(16) DEFAULT NULL COMMENT '投后估值',
-  `stock_price` varchar(16) DEFAULT NULL COMMENT '股价',
-  `financing_amount` varchar(16) DEFAULT NULL COMMENT '融资额度',
+  `info_right` varchar(16) DEFAULT NULL COMMENT '',
+  `info_right_threshold` text DEFAULT NULL COMMENT '',
   `currency` varchar(8) DEFAULT NULL COMMENT '货币单位, RMB/USD',
-  `investment_co` varchar(32) DEFAULT NULL COMMENT '投资主体',
-  `period` varchar(8) DEFAULT NULL COMMENT '期数',
-  `multi_currency` varchar(8) DEFAULT NULL COMMENT '是否多货币',
+  `pre_money` varchar(16) DEFAULT NULL COMMENT '投前估值',
+  `financing_amount` varchar(16) DEFAULT NULL COMMENT '融资额度',
+  `value_change` varchar(16) DEFAULT NULL COMMENT '',
+  `entity_id` int(11) DEFAULT NULL COMMENT '主体ID',
+  `rmb_usd` varchar(16) DEFAULT NULL COMMENT '',
+  `period` varchar(16) DEFAULT NULL COMMENT '期数',
+  `mirror` varchar(16) DEFAULT NULL COMMENT '镜像持股',
+  `entrustment` varchar(1024) DEFAULT NULL COMMENT '',
   `our_amount` varchar(16) DEFAULT NULL COMMENT '我方额度',
   `other_amount` varchar(32) DEFAULT NULL COMMENT '其他方面额度',
-  `stock_trans` varchar(8) DEFAULT NULL COMMENT '老股转让否',
-  `trans_detail` varchar(64) DEFAULT NULL COMMENT '老股转说明',
   `amount_memo` varchar(64) DEFAULT NULL COMMENT '金额备注',
   `loan` varchar(16) DEFAULT NULL COMMENT '借款',
-  `shareholding` varchar(16) DEFAULT NULL COMMENT '初始持股比例',
-  `shareholding_new` varchar(16) DEFAULT NULL COMMENT '最新持股比例',
-  `shareholding_total` varchar(16) DEFAULT NULL COMMENT '各主体总持股比例',
+  `loan_expiration` varchar(16) DEFAULT NULL COMMENT '借款期限',
+  `loan_memo` varchar(16) DEFAULT NULL COMMENT '借款备注',
+  `stocknum_all` varchar(16) DEFAULT NULL COMMENT '投时公司总股数',
+  `stocknum_get` varchar(16) DEFAULT NULL COMMENT '投时持有本轮股数',
+  `stocknum_new` varchar(16) DEFAULT NULL COMMENT '最新持有本轮股数',
   `shareholding_member` varchar(16) DEFAULT NULL COMMENT '团队持股比例',
   `shareholding_esop` varchar(16) DEFAULT NULL COMMENT 'esop比例',
-  `mirror` varchar(16) DEFAULT NULL COMMENT '镜像持股',
-  `entrustment` varchar(16) DEFAULT NULL COMMENT '代持',
-  `stocknum_all` varchar(16) DEFAULT NULL COMMENT '公司总股数',
-  `stocknum_turn` varchar(16) DEFAULT NULL COMMENT '公司本轮股数',
-  `stocknum_total` varchar(16) DEFAULT NULL COMMENT '公司合计股数',
-  `hold_value` varchar(16) DEFAULT NULL COMMENT '持有价值',
-  `return_rate` varchar(16) DEFAULT NULL COMMENT '总回报率',
-  `return_irr` varchar(16) DEFAULT NULL COMMENT 'IRR回报率',
-  `final_captable` varchar(256) DEFAULT NULL COMMENT '',
-  `final_word` varchar(8) DEFAULT NULL COMMENT '',
-  `closing_pdf` varchar(8) DEFAULT NULL COMMENT '',
-  `closing_file` varchar(8) DEFAULT NULL COMMENT '',
-  `stock_cert` varchar(8) DEFAULT NULL COMMENT '境外股票证书',
-  `business_reg` varchar(8) DEFAULT NULL COMMENT '境内工商',
-  `filling_owner` varchar(8) DEFAULT NULL COMMENT '文件filling保管人',
-  `exit_amount` varchar(8) DEFAULT NULL COMMENT '退出金额',
-  `exit_way` varchar(8) DEFAULT NULL COMMENT '退出方式',
-  `exit_ratio` varchar(8) DEFAULT NULL COMMENT '退出比例',
-  `exit_return` varchar(8) DEFAULT NULL COMMENT '退出回报倍数',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  `term_limit` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_stock_transfer_limit` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_stock_transfer_limit_other` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_limit_other` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_founder_transfer_limit` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_holder_veto` varchar(32) DEFAULT NULL COMMENT '',
+  `term_board_veto` varchar(32) DEFAULT NULL COMMENT '',
+  `term_preemptive` varchar(16) DEFAULT NULL COMMENT '',
+  `term_pri_assignee` varchar(16) DEFAULT NULL COMMENT '',
+  `term_sell_together` varchar(16) DEFAULT NULL COMMENT '',
+  `term_pri_common_stock` varchar(16) DEFAULT NULL COMMENT '',
+  `term_buyback_standard` varchar(64) DEFAULT NULL COMMENT '',
+  `term_buyback_start` varchar(16) DEFAULT NULL COMMENT '',
+  `term_buyback_period` varchar(16) DEFAULT NULL COMMENT '',
+  `term_buyback_date` varchar(16) DEFAULT NULL COMMENT '',
+  `term_waiting_period` varchar(16) DEFAULT NULL COMMENT '',
+  `term_ipo_period` varchar(16) DEFAULT NULL COMMENT '',
+  `term_anti_dilution` varchar(16) DEFAULT NULL COMMENT '',
+  `term_liquidation_preference` varchar(16) DEFAULT NULL COMMENT '',
+  `term_drag_along_right` varchar(16) DEFAULT NULL COMMENT '',
+  `term_dar_illustrate` varchar(16) DEFAULT NULL COMMENT '',
+  `term_warrant` varchar(16) DEFAULT NULL COMMENT '',
+  `term_dividends_preference` varchar(16) DEFAULT NULL COMMENT '',
+  `term_valuation_adjustment` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_spouse_consent` varchar(16) DEFAULT NULL COMMENT '',
+  `term_longstop_date` varchar(16) DEFAULT NULL COMMENT '',
+  `term_important_changes` varchar(1024) DEFAULT NULL COMMENT '',
+  `term_good_item` varchar(1024) DEFAULT NULL COMMENT '',
+  `arch_final_captalbe` varchar(256) DEFAULT NULL COMMENT '',
+  `arch_final_word` varchar(8) DEFAULT NULL COMMENT '',
+  `arch_closing_pdf` varchar(8) DEFAULT NULL COMMENT '',
+  `arch_closing_original` varchar(8) DEFAULT NULL COMMENT '',
+  `arch_overseas_stockcert` varchar(8) DEFAULT NULL COMMENT '境外股票证书',
+  `arch_aic_registration` varchar(8) DEFAULT NULL COMMENT '境内工商',
+  `pending_detail` varchar(1024) DEFAULT NULL COMMENT '',
+  `work_memo` text DEFAULT NULL COMMENT '',
+  `update_time` int(11) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `project_memo`; /*项目备忘记录*/
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `project_memo` (
-  `id` int(11) not NULL AUTO_INCREMENT COMMENT '记录ID',
-  `project_id` int(11) DEFAULT NULL COMMENT '项目ID',
-  `admin_id` int(11) DEFAULT NULL COMMENT '创建人ID',
-  `message` text DEFAULT '' COMMENT '工作说明',
-  `memo` text DEFAULT '' COMMENT '工作记录',
-  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

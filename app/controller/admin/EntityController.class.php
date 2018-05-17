@@ -16,10 +16,10 @@ class EntityController extends Page_Admin_Base {
             array('name'=>'name','label'=>'主体名称','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'tp','label'=>'类型','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'currency','label'=>'货币','type'=>"choice",'choices'=>[['RMB','RMB'],['USD','USD'],['HKD','HKD']], 'default'=>'USD','required'=>false,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime","readonly"=>'true','default'=>time(),'null'=>false,'auto_update'=>true),
         ));
         $this->list_display=array(
-            ['label'=>'id','field'=>function($model){
+            ['label'=>'主体ID','field'=>function($model){
                 return $model->mId;
             }],
             ['label'=>'主体名称','field'=>function($model){
@@ -31,13 +31,8 @@ class EntityController extends Page_Admin_Base {
             ['label'=>'货币','field'=>function($model){
                 return $model->mCurrency;
             }],
-            ['label'=>'创建人','field'=>function($model){
-		$admin = new Admin();
-		$ret = $admin->addWhere("id", $model->mAdminId)->select();
-		return ($ret ? $admin->mName : '(id='.$model->mAdminId.')' );
-            }],
-            ['label'=>'创建时间','field'=>function($model){
-                return date('Y-m-d H:i:s',$model->mCreateTime);
+            ['label'=>'更新时间','field'=>function($model){
+                return date('Y-m-d H:i:s',$model->mUpdateTime);
             }],
         );
 

@@ -25,7 +25,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<link href="/winphp/metronic/media/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/style-metro.css" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/style.css" rel="stylesheet" type="text/css"/>
-	<link href="/winphp/metronic/media/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+	<link href="/winphp/metronic/media/css/style-responsive.css?v=20180517" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/default.css" rel="stylesheet" type="text/css" id="style_color"/>
 	<link href="/winphp/metronic/media/css/uniform.default.css" rel="stylesheet" type="text/css"/>
 	<!-- END GLOBAL MANDATORY STYLES -->
@@ -149,6 +149,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<script src="/winphp/metronic/media/js/fullcalendar.min.js" type="text/javascript"></script>
 	<script src="/winphp/metronic/media/js/jquery.easy-pie-chart.js" type="text/javascript"></script>
 	<script src="/winphp/metronic/media/js/jquery.sparkline.min.js" type="text/javascript"></script>  
+	<script src="/winphp/js/jquery.dragscroll.js" type="text/javascript"></script>  
 	<!-- END PAGE LEVEL PLUGINS -->
 	<!-- BEGIN PAGE LEVEL SCRIPTS -->
 	<script src="/winphp/metronic/media/js/app.js" type="text/javascript"></script>

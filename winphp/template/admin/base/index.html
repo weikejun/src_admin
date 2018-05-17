@@ -39,6 +39,15 @@
         });
     })();
 	$(document).ready(function() {
+        $("#fold_filter").click(function() {
+            $('form[name=__filter] .filter').toggle();
+            $(document).scroll();
+            if ($(this).html() == "收起∧") {
+                $(this).html("展开∨");
+            } else {
+                $(this).html("收起∧");
+            }
+        });
         if ($('#data_tbwrap')) {
             $('tr').each(function(iter) {
                 var fixFields = $(this).children();
@@ -72,14 +81,18 @@
                     if ($(this).attr('dup_no')) {
                         var dupNo = parseInt($(this).attr('dup_no'));
                     }
-                    $('[dup_no]').each(function() {
-                        if (parseInt($(this).attr('dup_no')) <= dupNo) {
-                            $(this).trigger('fixed');
-                            $(this).show();
-                        } else {
+                    if ($(this).css('position') == 'fixed') {
+                        $('[dup_no]').each(function() {
                             $(this).hide();
-                        }
-                    });
+                        });
+                    } else {
+                        $('[dup_no]').each(function() {
+                            if (parseInt($(this).attr('dup_no')) <= dupNo) {
+                                $(this).trigger('fixed');
+                                $(this).show();
+                            } 
+                        });
+                    }
                 });
             });
             $(document).scroll(function() {

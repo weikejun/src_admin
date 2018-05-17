@@ -9,52 +9,62 @@ class InvestmentExitController extends Page_Admin_Base {
             'controllerText'=>"退出记录",
         ));
         $this->model=new Model_InvestmentExit();
-        $this->model->orderBy('exit_time', 'DESC');
-        //$this->model->on('beforeinsert','beforeinsert',$this);
-        //$this->model->on('beforeupdate','beforeupdate',$this);
+        $this->model->orderBy('update_time', 'DESC');
+
+        function setCompanyId($model) {
+            $project = new Model_Project;
+            $project->mId = $model->mProjectId;
+            $project->select();
+            if($project->mCompanyId) {
+                $model->addWhere('id', $model->mId)->update(['company_id'=>[$project->mCompanyId, DBTable::NO_ESCAPE]]);
+            }
+        };
+
+        $this->model->on('after_update', function($model) {
+            setCompanyId($model);
+        });
+        $this->model->on('after_insert', function($model) {
+            setCompanyId($model);
+        });
 
         $this->form=new Form(array(
-            array('name'=>'project_id','label'=>'投资项目','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>true,),
-            array('name'=>'amount','label'=>'金额','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'project_id','label'=>'交易ID','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>true,'show'=>'id'),
+            array('name'=>'company_id','label'=>'公司ID','type'=>"hidden",'default'=>0,'required'=>false),
+            array('name'=>'amount','label'=>'退出金额','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'currency','label'=>'计价货币','type'=>"choice",'choices'=>[['USD','USD'],['RMB','RMB'],['HKD','HKD']], 'default'=>'USD','required'=>true,),
             array('name'=>'exit_way','label'=>'退出方式','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'stock_num','label'=>'退出股数','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'exit_rate','label'=>'退出比例','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'rest_rate','label'=>'退后剩余比例','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'return_rate','label'=>'退出回报率','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'exit_num','label'=>'退出股数','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'exit_time','label'=>'退出日期','type'=>"date",'default'=>null,'null'=>true,),
             array('name'=>'memo','label'=>'退出备注','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"hidden","readonly"=>'true','default'=>time(),'null'=>false,),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime","readonly"=>'true','default'=>time(),'null'=>false,'auto_update'=>true),
         ));
+        $projectCache = new Model_project;
+        $companyCache = new Model_Company;
         $this->list_display=array(
-            ['label'=>'id','field'=>function($model){
+            ['label'=>'记录ID','field'=>function($model)use(&$projectCache,&$companyCache){
+                $projectCache->mId = $model->mProjectId;
+                $projectCache->select();
+                $companyCache->mId = $model->mCompanyId;
+                $companyCache->select();
                 return $model->mId;
             }],
-            ['label'=>'项目名称','field'=>function($model){
-                $project = $this->_getResource($model->mProjectId, 'Project', new Model_Project, 'id');
-                return $project->mName;
+            ['label'=>'交易ID','field'=>function($model){
+                return $model->mProjectId;
             }],
-            ['label'=>'金额','field'=>function($model){
-                return $model->mAmount . ' ' . $model->mCurrency;
+            ['label'=>'项目名称','field'=>function($model)use(&$companyCache){
+                return $companyCache->mShort;
             }],
-            ['label'=>'退出轮次','field'=>function($model){
-                $project = $this->_getResource($model->mProjectId, 'Project', new Model_Project, 'id');
-                return $project->mTurn;
+            ['label'=>'退出金额','field'=>function($model){
+                return number_format($model->mAmount,2) . ' ' . $model->mCurrency;
+            }],
+            ['label'=>'退出轮次','field'=>function($model)use(&$projectCache){
+                return $projectCache->mTurn;
             }],
             ['label'=>'退出方式','field'=>function($model){
                 return $model->mExitWay;
             }],
             ['label'=>'退出股数','field'=>function($model){
-                return $model->mStockNum;
-            }],
-            ['label'=>'退出比例','field'=>function($model){
-                return $model->mExitRate;
-            }],
-            ['label'=>'退后剩余比例','field'=>function($model){
-                return $model->mRestRate;
-            }],
-            ['label'=>'退出回报率','field'=>function($model){
-                return $model->mReturnRate;
+                return number_format($model->mExitNum);
             }],
             ['label'=>'退出日期','field'=>function($model){
                 return date('Y-m-d H:i:s',$model->mExitTime);
@@ -62,16 +72,20 @@ class InvestmentExitController extends Page_Admin_Base {
             ['label'=>'退出备注','field'=>function($model){
                 return $model->mMemo;
             }],
+            ['label'=>'更新时间','field'=>function($model){
+                return date('Y-m-d H:i:s',$model->mUpdateTime);
+            }],
         );
 
         $this->single_actions=[
-            ['label'=>'投资记录','action'=>function($model){
+            /*['label'=>'投资记录','action'=>function($model){
                 return '/admin/project?__filter='.urlencode('project_id='.$model->mProjectId);
-            }],
+            }],*/
         ];
 
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'项目ID','paramName'=>'project_id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>'交易ID','paramName'=>'project_id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>'公司ID','paramName'=>'project_id','fusion'=>false]),
         );
     }
 }
