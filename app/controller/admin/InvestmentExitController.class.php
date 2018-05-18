@@ -28,7 +28,7 @@ class InvestmentExitController extends Page_Admin_Base {
         });
 
         $this->form=new Form(array(
-            array('name'=>'project_id','label'=>'交易ID','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>true,'show'=>'id'),
+            array('name'=>'project_id','label'=>'交易ID','type'=>"choosemodel",'model'=>'Model_Project','default'=>$_GET['project_id'],'required'=>true,'show'=>'id'),
             array('name'=>'company_id','label'=>'公司ID','type'=>"hidden",'default'=>0,'required'=>false),
             array('name'=>'amount','label'=>'退出金额','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'currency','label'=>'计价货币','type'=>"choice",'choices'=>[['USD','USD'],['RMB','RMB'],['HKD','HKD']], 'default'=>'USD','required'=>true,),
@@ -85,7 +85,7 @@ class InvestmentExitController extends Page_Admin_Base {
 
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'交易ID','paramName'=>'project_id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'公司ID','paramName'=>'project_id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>'公司ID','paramName'=>'company_id','fusion'=>false]),
         );
     }
 }

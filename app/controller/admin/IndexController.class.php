@@ -7,8 +7,8 @@ class IndexController extends Page_Admin_Base{
         $this->addInterceptor(new AdminAuthInterceptor());
     }
     public function indexAction(){
-        //return array("admin/index.tpl",array('url'=>$_GET['url']));
-	return array("redirect: /admin/Project");
+        return array("admin/index.tpl",array('url'=>$_GET['url']));
+        //return array("redirect: /admin/Project");
     }
     
     public function loginAction(){

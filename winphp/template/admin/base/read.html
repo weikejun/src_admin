@@ -178,17 +178,16 @@
             }catch(e){
             }
         }
-	var subBtn = $("#btn_submit")
-		subBtnInitOff = subBtn.offset();
-	$(document).scroll(function() {
-		var docScrTop = $(this).scrollTop();
-		if (docScrTop + $(window).height() <= subBtnInitOff.top) {
-			subBtn.css({'position':'fixed','right':'40px','bottom':'0px'});
-		} else {
-			subBtn.css({'position':'static'});
-		}
-	});
-	$(document).scroll();
+        var subBtn = $("#btn_submit"), subBtnInitOff = subBtn.offset();
+        $(document).scroll(function() {
+            var docScrTop = $(this).scrollTop();
+            if (docScrTop + $(window).height() <= subBtnInitOff.top) {
+                subBtn.css({'position':'fixed','right':'31px','bottom':'0px'});
+            } else {
+                subBtn.css({'position':'static'});
+            }
+        });
+        $(document).scroll();
     });
 })();
 </script>

@@ -29,7 +29,7 @@ class PaymentController extends Page_Admin_Base {
         });
 
         $this->form=new Form(array(
-            array('name'=>'project_id','label'=>'项目ID','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>true,'show'=>'id'),
+            array('name'=>'project_id','label'=>'项目ID','type'=>"choosemodel",'model'=>'Model_Project','default'=>$_GET['project_id'],'required'=>true,'show'=>'id'),
             array('name'=>'amount','label'=>'金额','type'=>"text", 'default'=>null,'required'=>true,),
             array('name'=>'company_id','label'=>'公司ID','type'=>"hidden", 'default'=>0,'required'=>false,),
             array('name'=>'currency','label'=>'货币','type'=>"choice",'choices'=>[['RMB','RMB'],['USD','USD'],['HKD','HKD']], 'default'=>'USD','required'=>true,),

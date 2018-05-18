@@ -6,6 +6,7 @@ class RolePermissionController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_RolePermission();
+        $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText'=>"角色权限管理",
         ));
@@ -27,13 +28,13 @@ class RolePermissionController extends Page_Admin_Base {
                 if(!empty($model->mGroupId)) {
                     $group = new Model_Group();
                     $ret = $group->addWhere("id", $model->mGroupId)->select();
-                    return ($ret ? ('(id='.$model->mGroupId.')' . $group->mName) : '(id='.$model->mGroupId.')' );
+                    return ($ret ? ($group->mName) : '(id='.$model->mGroupId.')' );
                 }
             }],
             ['label'=>'权限','field'=>function($model){
                 $permission = new Model_Permission();
                 $ret = $permission->addWhere("id", $model->mPermissionId)->select();
-                return ($ret ? ('(id='.$model->mPermissionId.')' . $permission->mName) : '(id='.$model->mPermissionId.')' );
+                return ($ret ? ($permission->mName) : '(id='.$model->mPermissionId.')' );
             }],
         );
 

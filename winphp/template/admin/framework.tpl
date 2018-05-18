@@ -121,7 +121,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<script src="/winphp/metronic/media/js/jquery-1.10.1.min.js" type="text/javascript"></script>
 	<!--<script src="/winphp/metronic/media/js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>-->
 	<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-	<!-- <script src="/winphp/metronic/media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>     --> 
+	<script src="/winphp/metronic/media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script> 
 	<script src="/winphp/metronic/media/js/bootstrap.min.js" type="text/javascript"></script>
 	<!--[if lt IE 9]>
 	<script src="/winphp/metronic/media/js/excanvas.min.js"></script>

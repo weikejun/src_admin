@@ -12,8 +12,7 @@ class CompanyController extends Page_Admin_Base {
             'tableWrap' => "2048px",
         ));
         $this->model=new Model_Company();
-        //$this->model->on('beforeinsert','beforeinsert',$this);
-        //$this->model->on('beforeupdate','beforeupdate',$this);
+        $this->model->orderBy('update_time', 'DESC');
 
         $this->form=new Form(array(
             array('name'=>'name','label'=>'公司全称','type'=>"text",'default'=>null,'required'=>true,'help'=>'我是一个说明'),
@@ -27,6 +26,7 @@ class CompanyController extends Page_Admin_Base {
             array('name'=>'director_status','label'=>'董事状态','type'=>"choice",'choices'=>[['不适用','不适用'],['在职','在职'],['取消原席位','取消原席位'],['待工商登记','待工商登记']], 'default'=>'不适用','required'=>true,),
             array('name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>"text",'default'=>null,'required'=>false),
             array('name'=>'total_stock','label'=>'总股数','type'=>"text", 'default'=>null,'required'=>false,),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime", 'default'=>time(),'required'=>false,'auto_update'=>true, 'readonly'=>true),
         ));
         $shareholding = 0;
         $projectCache = new Model_Project;
@@ -58,8 +58,13 @@ class CompanyController extends Page_Admin_Base {
             ['label'=>'总股数','field'=>function($model){
                 return number_format($model->mTotalStock);
             }],
+            ['label'=>'投资记录','field'=>function($model){
+                $project = new Model_Project;
+                $project->addWhere('company_id', $model->mId);
+                return "<div class=data_item><a href='/admin/project?__filter=".urlencode("name|company_id=$model->mName")."'> ".$project->count()." </a><a class=item_op href='/admin/project?action=read&company_id=$model->mId'> +新增 </a></div>";
+            }],
             ['label'=>'当前轮次','field'=>function($model)use(&$projectCache){
-                return $projectCache->mTurn;
+                return "<div class=data_item><a href='/admin/project?__filter=".urlencode("id=$projectCache->mId")."'> $projectCache->mTurn </a><a class=item_op href='/admin/project?action=read&id=$projectCache->mId'> +复制 </a></div>";
             }],
             ['label'=>'当前估值','field'=>function($model)use(&$projectCache){
                 return number_format($projectCache->mPreMoney + $projectCache->mFinancingAmount);
@@ -106,9 +111,9 @@ class CompanyController extends Page_Admin_Base {
         );
 
         $this->single_actions=[
-            ['label'=>'投资记录','action'=>function($model){
+            /*['label'=>'投资记录','action'=>function($model){
                 return '/admin/project?__filter='.urlencode('company_id='.$model->mId);
-            }],
+            }],*/
         ];
 
         $this->multi_actions=array(
