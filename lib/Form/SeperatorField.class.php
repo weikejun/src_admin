@@ -40,6 +40,43 @@ $(document).ready(function() {
         $(liElem).html('<a href="#'+$(lkElem).prop('name')+'">'+liElem.html()+'</a>');
         $('#seperator-index').append(liElem);
     });
+    setInterval(function() {
+        $('#seperator-index').find('li').css('color','');
+        var markPending = function(elem) {
+            var sepElem = $(elem).prevAll('.control-seperator').eq(0);
+            $('#seperator-index').find('li[name='+$(sepElem).find('li').attr('name')+']').css('color', 'red');
+        }
+        $('.control-group').each(function() {
+            var ipElem = $(this).find(':text');
+            if(ipElem && ipElem.attr('name') && ipElem.val() == '') {
+                markPending(this);
+                return;
+            };
+            ipElem = $(this).find(':radio');
+            if (ipElem && ipElem.length > 0) {
+                for(i = 0; i < ipElem.length; i++) {
+                    if(ipElem.attr('checked') || ipElem.parent('.checked').length) return;
+                }
+                markPending(this);
+                return;
+            }
+            ipElem = $(this).find('textarea');
+            if(ipElem && ipElem.attr('name') && ipElem.val() == '') {
+                markPending(this);
+                return;
+            };
+            var ipElem = $(this).find(':hidden');
+            if(ipElem && ipElem.attr('name')) {
+                if (ipElem.hasClass('datepicker') && !ipElem.next().val()) {
+                    markPending(this);
+                    return;
+                } else if(ipElem.next.val == '') {
+                    markPending(this);
+                    return;
+                }
+            };
+        });
+    }, 1000);
 });
 </script>
 EOF;

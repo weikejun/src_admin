@@ -1,5 +1,19 @@
 <?php
 class SystemLogController extends Page_Admin_Base {
+    public function diffAction() {
+        $this->model->addWhere('id', $_GET['diff'], 'IN');
+        $logs = $this->model->find();
+        parse_str(str_replace('|', '&', trim($logs[0]->mDetail, '|')), $kvs1);
+        parse_str(str_replace('|', '&', trim($logs[1]->mDetail, '|')), $kvs2);
+        foreach($kvs1 as $k => $v) {
+            if ($kvs1[$k] != $kvs2[$k]) {
+                $kvs1[$k] = "<font color=red>".$kvs1[$k]."</font>";
+                if (isset($kvs2[$k]))
+                    $kvs2[$k] = "<font color=red>".$kvs2[$k]."</font>";
+            }
+        }
+        return ['admin/system_log/diff.tpl', array('kvs1'=>$kvs1,'kvs2'=>$kvs2,'logs1'=>$logs[0],'logs2'=>$logs[1])];
+    }
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());

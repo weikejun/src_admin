@@ -51,7 +51,11 @@ EOF;
             //console.debug(dt_picker.parents("form"));
             dt_picker.parents("form").submit(function(e){
                 var d=input.data(controlType).getDate();
-                dt_picker.val(parseInt(d.getTime()/1000));
+                if (input.val()) {
+                    dt_picker.val(parseInt(d.getTime()/1000));
+                } else {
+                    dt_picker.val(0);
+                }
             });
         });
     })('datetimepicker');

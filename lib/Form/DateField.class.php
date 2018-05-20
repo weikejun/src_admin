@@ -7,11 +7,12 @@ class Form_DateField extends Form_Field{
 
     public function to_html($is_new){
         $class=$this->config['class'];
+        $value=$this->value?htmlspecialchars($this->value):$this->config['default'];
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".
 //                                            '<div class="input-append date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">'.
-                                                '<input size="16" name='.$this->name.'  type="hidden" value="'.htmlspecialchars($this->config['default']).'" readonly class="m-wrap m-ctrl-medium datepicker">';
+                                                '<input size="16" name='.$this->name.'  type="hidden" value="'.$value.'" readonly class="m-wrap m-ctrl-medium datepicker">';
 //                                                '<span class="add-on"><i class="icon-calendar"></i></span>'.
 //                                            '</div>';
             //"<input class='date-input $class' type='hidden' name='{$this->name}'  value='".htmlspecialchars($this->value)."'>";
@@ -48,7 +49,11 @@ EOF;
             //console.debug(dt_picker.parents("form"));
             dt_picker.parents("form").submit(function(e){
                 var d=input.data(controlType).getDate();
-                dt_picker.val(parseInt(d.getTime()/1000));
+                if (input.val()) {
+                    dt_picker.val(parseInt(d.getTime()/1000));
+                } else {
+                    dt_picker.val(0);
+                }
             });
         });
     })('datepicker');

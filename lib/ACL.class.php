@@ -3,8 +3,8 @@
 class ACL{
     public static $controllers = array(
         "IndexNew",
-        "Project",
         "Company",
+        "Project",
         "Entity",
         "EntityRel",
         "Payment",

@@ -19,4 +19,10 @@ class Model_Admin extends Base_Admin{
         //return $user->addWhere("id",$id)->select();
     }
 
+    public static function getNameById($id) {
+        $admin = new self;
+        $admin->mId = $id;
+        $admin->select();
+        return $admin->mName;
+    }
 }

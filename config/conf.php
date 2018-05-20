@@ -18,7 +18,7 @@ else
 }
 date_default_timezone_set('Asia/Shanghai');
 
-DB::init("mysql:host=localhost;dbname=src_admin;port=3306;charset=utf8",'root','root');
+DB::init("mysql:host=rm-m5e26k65he0m48ss4.mysql.rds.aliyuncs.com;dbname=src_admin;port=3306;charset=utf8",'root','Wkj@12345678');
 if(php_sapi_name()!='cli'){
 //    ini_set("session.save_handler", "memcache");  
 //    ini_set("session.save_path", "tcp://127.0.0.1:11211");

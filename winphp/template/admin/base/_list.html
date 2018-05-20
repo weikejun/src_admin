@@ -60,7 +60,7 @@
 
         <thead>
             <tr role="row">
-                <!--th><input type="checkbox" id="selectAll"/></th-->
+                {%if isset($multiCheck)%}<th><input type="checkbox" id="selectAll"/></th>{%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <th>
                     {%if is_string($list_item)%}
@@ -80,7 +80,7 @@
         <tbody>
             {%foreach from=$modelDataList item=modelData%}
             <tr class="gradeX {%cycle values="odd,even"%}">
-                <!--td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td-->
+                {%if isset($multiCheck)%}<td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td>{%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <td>
 

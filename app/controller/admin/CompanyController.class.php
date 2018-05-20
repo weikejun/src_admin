@@ -64,7 +64,8 @@ class CompanyController extends Page_Admin_Base {
                 return "<div class=data_item><a href='/admin/project?__filter=".urlencode("name|company_id=$model->mName")."'> ".$project->count()." </a><a class=item_op href='/admin/project?action=read&company_id=$model->mId'> +新增 </a></div>";
             }],
             ['label'=>'当前轮次','field'=>function($model)use(&$projectCache){
-                return "<div class=data_item><a href='/admin/project?__filter=".urlencode("id=$projectCache->mId")."'> $projectCache->mTurn </a><a class=item_op href='/admin/project?action=read&id=$projectCache->mId'> +复制 </a></div>";
+                if ($projectCache->mId)
+                    return "<div class=data_item><a href='/admin/project?__filter=".urlencode("id=$projectCache->mId")."'> $projectCache->mTurn </a><a class=item_op href='/admin/project?action=read&id=$projectCache->mId'> +复制 </a></div>";
             }],
             ['label'=>'当前估值','field'=>function($model)use(&$projectCache){
                 return number_format($projectCache->mPreMoney + $projectCache->mFinancingAmount);
@@ -121,6 +122,7 @@ class CompanyController extends Page_Admin_Base {
         );
 
         $this->list_filter=array(
+            new Page_Admin_TextFilter(['name'=>'公司ID','paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>'公司名称','paramName'=>'name','fusion'=>true]),
         );
     }

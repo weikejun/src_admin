@@ -1,5 +1,13 @@
 <?php
 class Model_Project extends Base_Project{
+    public static function getItemStatusChoices() {
+        return [
+            ['closing','已完成'],
+            ['ongoing','待完成'],
+            ['invalid','失效']
+        ];
+    }
+
     public static function getTurnChoices() {
         return [
             ['A轮','A轮'],
