@@ -26,7 +26,7 @@
                 <li class="start {%if $executeInfo.controllerName=='Project'%} active {%/if%}">
                     <a href="/admin/project">
                         <i class="icon-home"></i>
-                        <span class="title">投资记录</span>
+                        <span class="title">交易记录</span>
                         <span class="selected"></span>
                     </a>
                 </li>

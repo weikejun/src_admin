@@ -25,12 +25,12 @@ class AdminAuthInterceptor extends Interceptor{
      * 使用 模块名称_函数名称 的小写形式作为权限表达式
      */
     public function genAuth($controllerName,$requestActionName,$methodName='indexAction'){
-        /*if($methodName=='indexAction') {
+        if($methodName=='indexAction') {
             return strtolower($controllerName.'_'.$requestActionName); 
         } else {
             $method = substr($methodName, 0, strlen($methodName) - strlen('Action'));
             return strtolower($controllerName.'_'.$method.'_'.$requestActionName); 
-        }*/
+        }
         return strtolower($controllerName.'_'.$requestActionName); 
     }
 

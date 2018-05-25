@@ -7,6 +7,7 @@ class Base_Entity extends DBModel{
             ['name'=>'name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'tp','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'currency','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'co_investment','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'update_time','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
         ];
         return $FIELD_LIST;

@@ -1,7 +1,8 @@
 <?php
 class CompanyController extends Page_Admin_Base {
     use ControllerPreproc;
-    use ExportToCsvAction;
+    use ExportActions;
+
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -9,7 +10,7 @@ class CompanyController extends Page_Admin_Base {
 
         WinRequest::mergeModel(array(
             'controllerText'=>"目标公司",
-            'tableWrap' => "2048px",
+            'tableWrap' => "3072px",
         ));
         $this->model=new Model_Company();
         $this->model->orderBy('update_time', 'DESC');
@@ -58,7 +59,7 @@ class CompanyController extends Page_Admin_Base {
             ['label'=>'总股数','field'=>function($model){
                 return number_format($model->mTotalStock);
             }],
-            ['label'=>'投资记录','field'=>function($model){
+            ['label'=>'交易记录','field'=>function($model){
                 $project = new Model_Project;
                 $project->addWhere('company_id', $model->mId);
                 return "<div class=data_item><a href='/admin/project?__filter=".urlencode("name|company_id=$model->mName")."'> ".$project->count()." </a><a class=item_op href='/admin/project?action=read&company_id=$model->mId'> +新增 </a></div>";
@@ -112,10 +113,12 @@ class CompanyController extends Page_Admin_Base {
         );
 
         $this->single_actions=[
-            /*['label'=>'投资记录','action'=>function($model){
-                return '/admin/project?__filter='.urlencode('company_id='.$model->mId);
-            }],*/
+            ['label'=>'审阅','action'=>function($model){
+                return '/admin/systemLog/diff?resource=company&res_id='.$model->mId;
+            }],
         ];
+
+        $this->single_actions_default['delete'] = false;
 
         $this->multi_actions=array(
             array('label'=>'导出csv','required'=>false,'action'=>'/admin/company/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),

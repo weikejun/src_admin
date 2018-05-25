@@ -18,6 +18,8 @@ class Form_DateField extends Form_Field{
             //"<input class='date-input $class' type='hidden' name='{$this->name}'  value='".htmlspecialchars($this->value)."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
+        } else {
+            $html.="<span class='help-inline'><span class='tips'>".$this->config['help']."</span></span>";
         }
         $html.='</div>';
         $html.='</div>';

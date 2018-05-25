@@ -50,6 +50,7 @@ CREATE TABLE `entity` (
   `name` varchar(32) DEFAULT NULL COMMENT '主体名称',
   `tp` varchar(16) DEFAULT NULL COMMENT '主体类型',
   `currency` varchar(16) DEFAULT NULL COMMENT '货币类型',
+  `co_investment` varchar(16) DEFAULT NULL COMMENT '',
   `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -125,6 +126,7 @@ DROP TABLE IF EXISTS `project`; /*交易表*/
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `project` (
   `id` int(11) not NULL AUTO_INCREMENT COMMENT '交易ID',
+  `status` varchar(8) DEFAULT 'valid' COMMENT '数据状态',
   `company_id` int(11) DEFAULT NULL COMMENT '企业ID',
   `code` varchar(32) DEFAULT NULL COMMENT '项目编号',
   `item_status` varchar(32) DEFAULT NULL COMMENT '记录状态',

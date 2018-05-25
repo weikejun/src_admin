@@ -31,7 +31,9 @@ class Form_ChoiceField extends Form_Field{
             }
         }
         if($this->error){
-            $html.="<span class='error'>".$this->error."</span>";
+            $html.="<span class='help-inline'>".$this->error."</span>";
+        } else {
+            $html.="<span class='help-inline'><span class='tips'>".$this->config['help']."</span></span>";
         }
         $html.="</div>";
         $html.="</div>";

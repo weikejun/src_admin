@@ -1,5 +1,5 @@
 <?php
-trait ExportToCsvAction{
+trait ExportActions{
     public static function printCsvRow($row){
 		$csv_terminated = "\n";
 		$csv_separator = ",";
@@ -19,6 +19,10 @@ trait ExportToCsvAction{
         echo Utils::toGBK($insert);
         echo $csv_terminated;
     }
+
+    public function initData() {
+    }
+
     public function exportToCsvAction(){
         $exeInfo = WinRequest::getModel('executeInfo');
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -27,6 +31,7 @@ trait ExportToCsvAction{
 		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".csv");
 
 		$insert = '';
+        $this->initData();
         foreach($this->list_filter as $filter){
             $filter->setFilter($this->model);
         }

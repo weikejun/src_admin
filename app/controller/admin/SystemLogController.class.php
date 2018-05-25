@@ -1,18 +1,63 @@
 <?php
 class SystemLogController extends Page_Admin_Base {
     public function diffAction() {
-        $this->model->addWhere('id', $_GET['diff'], 'IN');
-        $logs = $this->model->find();
-        parse_str(str_replace('|', '&', trim($logs[0]->mDetail, '|')), $kvs1);
-        parse_str(str_replace('|', '&', trim($logs[1]->mDetail, '|')), $kvs2);
-        foreach($kvs1 as $k => $v) {
-            if ($kvs1[$k] != $kvs2[$k]) {
-                $kvs1[$k] = "<font color=red>".$kvs1[$k]."</font>";
-                if (isset($kvs2[$k]))
-                    $kvs2[$k] = "<font color=red>".$kvs2[$k]."</font>";
-            }
+        if (!isset($_GET['resource']) || !isset($_GET['res_id'])) {
+            return ['redirect: /admin/index'];
         }
-        return ['admin/system_log/diff.tpl', array('kvs1'=>$kvs1,'kvs2'=>$kvs2,'logs1'=>$logs[0],'logs2'=>$logs[1])];
+        if (isset($_GET['diff']) && count($_GET['diff']) == 2) {
+            $this->model->addWhere('id', $_GET['diff'], 'IN');
+        } else {
+            $this->model->addWhere('resource', $_GET['resource']);
+            $this->model->addWhere('res_id', $_GET['res_id']);
+            $this->model->orderBy('id', 'DESC');
+            $this->model->limit(2);
+        }
+        $logs = $this->model->find();
+        if (count($logs) >= 1) {
+            parse_str(str_replace('|', '&', trim($logs[0]->mDetail, '|')), $kvs1);
+            parse_str(str_replace('|', '&', trim($logs[1]->mDetail, '|')), $kvs2);
+            foreach($kvs1 as $k => $v) {
+                if (in_array($k, ['decision_date', 'close_date', 'loan_expiration', 'term_buyback_start', 'term_buyback_date'])) {
+                    $kvs1[$k] = $kvs1[$k] ? date('Ymd', $kvs1[$k]) : '';
+                    if (isset($kvs2[$k])) {
+                        $kvs2[$k] = $kvs1[$k] ? date('Ymd', $kvs2[$k]) : '';
+                    }
+                } else if (in_array($k, ['update_time'])) {
+                    $kvs1[$k] = $kvs1[$k] ? date('Ymd H:i:s', $kvs1[$k]) : '';
+                    if (isset($kvs2[$k])) {
+                        $kvs2[$k] = $kvs1[$k] ? date('Ymd H:i:s', $kvs2[$k]) : '';
+                    }
+                } else if (in_array($k, ['company_id'])) {
+                    $finder = new Model_Company;
+                    $finder->mId = $kvs1[$k];
+                    $finder->select();
+                    $kvs1[$k] = $finder->mName;
+                    if (isset($kvs2[$k])) {
+                        $finder = new Model_Company;
+                        $finder->mId = $kvs2[$k];
+                        $finder->select();
+                        $kvs2[$k] = $finder->mName;
+                    }
+                } else if (in_array($k, ['entity_id'])) {
+                    $finder = new Model_Entity;
+                    $finder->mId = $kvs1[$k];
+                    $finder->select();
+                    $kvs1[$k] = $finder->mName;
+                    if (isset($kvs2[$k])) {
+                        $finder = new Model_Entity;
+                        $finder->mId = $kvs2[$k];
+                        $finder->select();
+                        $kvs2[$k] = $finder->mName;
+                    }
+                }
+                if ($kvs1[$k] != $kvs2[$k]) {
+                    $kvs1[$k] = "<font color=red>".$kvs1[$k]."</font>";
+                    if (isset($kvs2[$k]))
+                        $kvs1[$k] = "<s>".$kvs2[$k]."</s>&nbsp;".$kvs1[$k];
+                }
+            }
+            return ['admin/system_log/diff.tpl', array('kvs1'=>$kvs1,'kvs2'=>$kvs2,'logs1'=>$logs[0],'logs2'=>$logs[1])];
+        }
     }
     public function __construct(){
         parent::__construct();

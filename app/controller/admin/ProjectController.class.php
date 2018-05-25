@@ -1,31 +1,25 @@
 <?php
 class ProjectController extends Page_Admin_Base {
     use ControllerPreproc;
-    use ExportToCsvAction;
+    use ExportActions;
+
     private $_objectCache = [];
-    public function __construct(){
-        parent::__construct();
-        $this->addInterceptor(new AdminLoginInterceptor());
-        $this->addInterceptor(new AdminAuthInterceptor());
 
-        $this->model=new Model_Project();
-        $this->model->orderBy('id', 'DESC');
-        WinRequest::mergeModel(array(
-            'controllerText' => "投资记录",
-            'tableWrap' => '10240px',
-        ));
-
+    private function _initForm() {
         $this->form=new Form(array(
-            array('name'=>'company_id','label'=>'目标公司','type'=>"choosemodel",'model'=>'Model_Company','default'=>$_GET['company_id'],'required'=>true,),
-            array('name'=>'code','label'=>'项目编号','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'item_status','label'=>'整理状态','type'=>"choice",'choices'=>Model_Project::getItemStatusChoices(), 'default'=>'ongoing','required'=>true,),
-            array('name'=>'field-index-base','label'=>'项目基本信息', 'type'=>'seperator'),
+            array('name'=>'status','label'=>'数据状态','type'=>"hidden", 'default'=>'valid','required'=>true,),
+            array('name'=>'company_id','label'=>'目标企业','type'=>"choosemodel",'model'=>'Model_Company','default'=>$_GET['company_id'],'required'=>true,),
+            array('name'=>'first_financing','label'=>'企业是否首次融资','type'=>"choice",'choices'=>[['是','是'],['否','否'],['不适用','不适用']], 'required'=>true,),
+            array('name'=>'item_status','label'=>'整理状态','type'=>"choice",'choices'=>Model_Project::getItemStatusChoices(), 'default'=>'待完成','required'=>true,),
+            array('name'=>'company_period','label'=>'目标企业阶段','type'=>"selectInput", 'choices'=>[['早期','早期'],['成长期','成长期'],['PreIPO','PreIPO'],['不适用','不适用']],'required'=>false,),
+            array('name'=>'company_character','label'=>'目标企业性质','type'=>"selectInput", 'choices'=>[['内资','内资'],['VIE','VIE'],['JV','JV'],['WFOE','WFOE'],['非境外VIE','非境外VIE'],['国内基金','国内基金'],['海外基金','海外基金'],['其他','其他']],'required'=>false,),
+            array('name'=>'field-index-status','label'=>'本轮交易状态', 'type'=>'seperator'),
+            array('name'=>'decision_date','label'=>'决策日期','type'=>"date",'default'=>null,'required'=>false,'help'=>'TS日期（优先）、IC决策日期、投资部告知的大致日期，尽量精确到月'),
             array('name'=>'turn','label'=>'轮次大类','type'=>"choice",'choices'=>Model_Project::getTurnChoices(),'required'=>false,),
             array('name'=>'turn_sub','label'=>'轮次详情','type'=>"text", 'default'=>null,'required'=>false,),
             array('name'=>'new_follow','label'=>'新老类型','type'=>"choice",'choices'=>Model_Project::getNewFollowChoices(), 'required'=>false,),
             array('name'=>'enter_exit_type','label'=>'投退类型','type'=>"choice",'choices'=>Model_Project::getEnterExitTypeChoices(), 'required'=>false,),
             array('name'=>'new_old_stock','label'=>'新股老股','type'=>"choice",'choices'=>[['新股','新股'],['老股','老股'],['其他','其他']], 'required'=>false,),
-            array('name'=>'decision_date','label'=>'决策日期','type'=>"date",'default'=>null,'required'=>false),
             array('name'=>'proj_status','label'=>'交易状态','type'=>"choice",'choices'=>[['进展中','进展中'],['已交割','已交割'],['暂停','暂停'],['终止不做','终止不做'],['其他','其他']], 'required'=>false,),
             array('name'=>'close_date','label'=>'Close日期','type'=>"date",'default'=>null,),
             array('name'=>'field-index-member','label'=>'项目人员及信息权', 'type'=>'seperator'),
@@ -97,6 +91,9 @@ class ProjectController extends Page_Admin_Base {
             array('name'=>'work_memo','label'=>'工作备忘','type'=>"textarea",'required'=>false),
             array('name'=>'update_time','label'=>'更新时间','type'=>"datetime","readonly"=>'true','default'=>time(),'auto_update'=>true),
         ));
+    }
+
+    private function _initListDisplay() {
         $companyCache = new Model_Company;
         $this->list_display=array(
             ['label'=>'交易ID','field'=>function($model)use(&$companyCache){
@@ -104,16 +101,16 @@ class ProjectController extends Page_Admin_Base {
                 $companyCache->select();
                 return $model->mId;
             }],
-            ['label'=>'项目编号','field'=>function($model){
-                return $model->mCode;
+            ['label'=>'企业ID','field'=>function($model){
+                return $companyCache->mId;
             }],
-            ['label'=>'项目名称','field'=>function($model)use(&$companyCache){
+            ['label'=>'项目简称','field'=>function($model)use(&$companyCache){
                 return $companyCache->mShort;
             }],
             ['label'=>'整理状态','field'=>function($model){
                 return $model->mItemStatus;
             }],
-            ['label'=>'公司名称','field'=>function($model)use(&$companyCache){
+            ['label'=>'目标企业','field'=>function($model)use(&$companyCache){
                 return "<a href='/admin/company?__filter=".urlencode("id=$companyCache->mId")."'>$companyCache->mName</a>";
             }],
             ['label'=>'所属行业','field'=>function($model){
@@ -404,17 +401,29 @@ class ProjectController extends Page_Admin_Base {
                 return date("Ymd H:i:s", $model->mUpdateTime);
             }],
         );
+    }
 
+    private function _initSingleActions() {
         $this->single_actions=[
             ['label'=>'复制','action'=>function($model){
                 return '/admin/project?action=clone&id='.$model->mId;
             }],
+            ['label'=>'审阅','action'=>function($model){
+                return '/admin/systemLog/diff?resource=project&res_id='.$model->mId;
+            }],
         ];
 
-        $this->multi_actions=array(
-            array('label'=>'导出csv','required'=>false,'action'=>'/admin/project/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),
-        );
+        //$this->single_actions_default = ['delete'=>false];
+    }
 
+    private function _initMultiActions() {
+        $this->multi_actions=array(
+            ['label'=>'回收站', 'required'=>false, 'action'=>'/admin/project/recovery'],
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/project/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
+        );
+    }
+
+    private function _initListFilter() {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'交易ID','paramName'=>'id','fusion'=>false,'hidden'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'项目名称','paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
@@ -424,6 +433,120 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>'新老类型','paramName'=>'new_follow','choices'=>Model_Project::getNewFollowChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>'投退类型','paramName'=>'enter_exit_type','choices'=>Model_Project::getEnterExitTypeChoices()]),
         );
+    }
+
+    public function __construct(){
+        parent::__construct();
+
+        $this->addInterceptor(new AdminLoginInterceptor());
+        $this->addInterceptor(new AdminAuthInterceptor());
+
+        $this->model=new Model_Project();
+        $this->model->orderBy('id', 'DESC');
+
+        WinRequest::mergeModel(array(
+            'controllerText' => '交易记录',
+        ));
+    }
+
+    private function _initFullAction() {
+        $this->_initForm();
+        $this->_initListDisplay();
+        $this->_initSingleActions();
+        $this->_initMultiActions();
+        $this->_initListFilter();
+
+        $this->model->addWhere('status', 'valid');
+        WinRequest::mergeModel(array(
+            'tableWrap' => '10240px',
+        ));
+
+        $this->multi_actions[] = ['label'=>'常用字段','required'=>false,'action'=>trim('/admin/project?'.$_SERVER['QUERY_STRING'],'?')];
+    }
+
+    public function fullAction() {
+        $this->_initFullAction();
+        return parent::indexAction();
+    }
+
+    private function _initIndexAction() {
+        $this->_initForm();
+        $this->_initListDisplay();
+        $this->_initSingleActions();
+        $this->_initMultiActions();
+        $this->_initListFilter();
+
+        $this->model->addWhere('status', 'valid');
+        WinRequest::mergeModel(array(
+            'tableWrap' => '2048px',
+        ));
+
+        $briefFields = [
+            '交易ID',
+            '项目编号',
+            '整理状态',
+            '公司名称',
+            '所属行业',
+            '轮次大类',
+            '轮次详情',
+            '新老类型',
+            '投退类型',
+            '新股老股',
+            '决策日期',
+            '交易状态',
+            'Closing Date',
+        ];
+        $list_display = $this->list_display;
+        $this->list_display = [];
+        for($i = 0; $i < count($list_display); $i++) {
+            if (in_array($list_display[$i]['label'], $briefFields)) {
+                array_push($this->list_display, $list_display[$i]);
+            }
+        }
+
+        $this->multi_actions[] = array('label'=>'全部字段','required'=>false,'action'=>trim('/admin/project/full?'.$_SERVER['QUERY_STRING'],'?'));
+    }
+
+    public function indexAction() {
+        $this->_initIndexAction();
+        return parent::indexAction();
+    }
+
+    public function recoveryAction() {
+        if (isset($_GET['id']) && !empty($_GET['id'])) {
+            $this->model->addWhere('id', $_REQUEST['id'])->update(['status'=>['"valid"', DBTable::NO_ESCAPE]]);
+            return ['redirect: ' . dirname($_SERVER['SCRIPT_NAME'])];
+        }
+        $this->_initListDisplay();
+        $this->model->addWhere('status', 'invalid');
+        $this->hide_action_new = true;
+        $this->single_actions_default = ['edit'=>false,'delete'=>false];
+        $this->single_actions=[
+            ['label'=>'恢复','action'=>function($model){
+                return '/admin/project/recovery?id='.$model->mId;
+            }],
+        ];
+        WinRequest::mergeModel(array(
+            'tableWrap' => '10240px',
+        ));
+        $reqModel = WinRequest::getModel();
+        $reqModel['controllerText'] = '交易记录 回收站';
+        WinRequest::setModel($reqModel);
+        return parent::indexAction();
+    }
+
+    /*
+     * 重载_delete()方法
+     */
+    public function _delete() {
+        $this->model->addWhere('id', $_REQUEST['id'])->update(['status'=>['"invalid"', DBTable::NO_ESCAPE]]);
+    }
+
+    /*
+     * 重载ExportActions.initData方法
+     */
+    public function initData() {
+        $this->_initFullAction();
     }
 }
 
