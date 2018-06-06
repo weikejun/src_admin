@@ -9,25 +9,66 @@ class CompanyController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
 
         WinRequest::mergeModel(array(
-            'controllerText'=>"目标公司",
+            'controllerText'=>"目标企业",
             'tableWrap' => "3072px",
         ));
         $this->model=new Model_Company();
         $this->model->orderBy('update_time', 'DESC');
 
         $this->form=new Form(array(
-            array('name'=>'name','label'=>'公司全称','type'=>"text",'default'=>null,'required'=>true,'help'=>'我是一个说明'),
-            array('name'=>'short','label'=>'项目名称','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'bussiness','label'=>'所属行业','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'init_manager','label'=>'项目初始负责人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'current_manager','label'=>'项目当前负责人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'legal_person','label'=>'法务负责人','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'director','label'=>'董事','type'=>"text", 'default'=>'无董事席位','required'=>false,),
-            array('name'=>'director_turn','label'=>'董事委派轮次','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'director_status','label'=>'董事状态','type'=>"choice",'choices'=>[['不适用','不适用'],['在职','在职'],['取消原席位','取消原席位'],['待工商登记','待工商登记']], 'default'=>'不适用','required'=>true,),
-            array('name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>"text",'default'=>null,'required'=>false),
-            array('name'=>'total_stock','label'=>'总股数','type'=>"text", 'default'=>null,'required'=>false,),
-            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime", 'default'=>time(),'required'=>false,'auto_update'=>true, 'readonly'=>true),
+            ['name'=>'name','label'=>'目标企业','type'=>"text",'default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称'],
+            ['name'=>'short','label'=>'项目简称','type'=>"text",'default'=>null,'required'=>true,'help'=>'填入项目唯一简称，后续变动可此处修改。'],
+            ['name'=>'_total_stock','label'=>'最新企业总股数','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_company_character','label'=>'当前目标企业性质','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'bussiness','label'=>'所属行业','type'=>"selectInput",'choices'=>Model_Company::getBussinessChoices(),'required'=>true,],
+            ['name'=>'bussiness_change','label'=>'主营行业变化','type'=>'selectInput','choices'=>[['未变化','未变化']],'required'=>false],
+            ['name'=>'region','label'=>'所属地域','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true],
+            ['name'=>'field-index-financing','label'=>'融资信息','type'=>'seperator'],
+            ['name'=>'_latest_value','label'=>'最新估值','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_latest_invest_turn','label'=>'最新轮次归类','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_financing_no','label'=>'投后融资轮次','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_first_company_period','label'=>'首次投时企业阶段','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_latest_company_period','label'=>'最新企业阶段','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'field-index-enterexit','label'=>'源码投退信息','type'=>'seperator'],
+            ['name'=>'_captable','label'=>'投退CapTable','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_first_close_date','label'=>'首次投资交割日期','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_have_exit','label'=>'是否发生过退出','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_lastest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_lastest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_hold_status','label'=>'持有状态','type'=>"rawText",'required'=>false,],
+            ['name'=>'_multi_entity_invest','label'=>'是否多主体投过','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_multi_entity_hold','label'=>'当前是否多主体持股','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_multi_currency_entity_invest','label'=>'是否被美元+人民币主体投过','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_multi_currency_entity_hold','label'=>'当前是否被美元+人民币主体持有','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_entity_odi','label'=>'源码主体ODI','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'field-index-govern','label'=>'企业治理','type'=>'seperator'],
+            ['name'=>'_director_turn','label'=>'董事委派轮次','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_director_name','label'=>'最新源码董事姓名','type'=>"rawText", 'default'=>'无董事席位','required'=>false,],
+            ['name'=>'_director_status','label'=>'最新源码董事状态','type'=>"rawText",'required'=>false,],
+            ['name'=>'_observer','label'=>'最新源码观察员','type'=>"rawText",'required'=>false,],
+            ['name'=>'_holder_veto','label'=>'最新股东会Veto','type'=>"rawText",'required'=>false,],
+            ['name'=>'_board_veto','label'=>'最新董事会Veto','type'=>"rawText",'required'=>false,],
+            ['name'=>'field-index-return','label'=>'源码投资回报','type'=>'seperator'],
+            ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_hold_return_rate','label'=>'在管投资回报倍数','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_exit_amount_cost','label'=>'已退出金额对应成本','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'_exit_return_rate','label'=>'已退出部分回报率','type'=>"rawText", 'default'=>null,'required'=>false,],
+            ['name'=>'field-index-staff','label'=>'当前项目组成员','type'=>'seperator'],
+            ['name'=>'partner','label'=>'主管合伙人','type'=>"text", 'default'=>null,'required'=>false,],
+            ['name'=>'manager','label'=>'项目负责人','type'=>"text", 'default'=>null,'required'=>false,],
+            ['name'=>'legal_person','label'=>'法务负责人','type'=>"text", 'default'=>null,'required'=>false,],
+            ['name'=>'finance_person','label'=>'财务负责人','type'=>"text", 'default'=>null,'required'=>false,],
+            ['name'=>'field-index-filing','label'=>'工商及Filing','type'=>'seperator'],
+            ['name'=>'_aic_status','label'=>'人民币项目工商','type'=>"rawText",'required'=>false,],
+            ['name'=>'_filing_status','label'=>'Filing是否完整','type'=>"rawText",'required'=>false,],
+            ['name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>"text",'default'=>null,'required'=>false],
+            ['name'=>'field-index-memo','label'=>'备注及未决事项','type'=>'seperator'],
+            ['name'=>'_pending_detail','label'=>'未决事项说明','type'=>"rawText",'required'=>false,],
+            ['name'=>'memo','label'=>'备注','type'=>"textarea",'required'=>false],
+            ['name'=>'update_time','label'=>'更新时间','type'=>"datetime", 'default'=>time(),'required'=>false,'auto_update'=>true, 'readonly'=>true],
         ));
         $shareholding = 0;
         $projectCache = new Model_Project;
@@ -118,7 +159,10 @@ class CompanyController extends Page_Admin_Base {
             }],
         ];
 
-        $this->single_actions_default['delete'] = false;
+        $this->single_actions_default = [
+            'delete' => false,
+            'edit' => true,
+        ];
 
         $this->multi_actions=array(
             array('label'=>'导出csv','required'=>false,'action'=>'/admin/company/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),

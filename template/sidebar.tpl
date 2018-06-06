@@ -44,7 +44,7 @@
                 <li class="start {%if $executeInfo.controllerName=='Company'%} active {%/if%}">
                     <a href="/admin/company">
                         <i class="icon-home"></i>
-                        <span class="title">目标公司</span>
+                        <span class="title">目标企业</span>
                         <span class="selected"></span>
                     </a>
                 </li>

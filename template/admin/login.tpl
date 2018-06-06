@@ -49,7 +49,7 @@
 				<div class="controls">
 					<div class="input-icon left">
 						<i class="icon-user"></i>
-						<input class="m-wrap placeholder-no-fix" type="text" placeholder="用户名" name="name"/>
+						<input autocomplete="off" class="m-wrap placeholder-no-fix" type="text" placeholder="用户名" name="name"/>
 					</div>
 				</div>
 			</div>
