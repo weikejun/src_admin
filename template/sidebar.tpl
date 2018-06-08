@@ -76,15 +76,6 @@
                     </a>
                 </li>
                 {%/if%}
-                {%if $c=='InvestmentExit'%}
-                <li class="start {%if $executeInfo.controllerName=='InvestmentExit'%} active {%/if%}">
-                    <a href="/admin/investmentExit">
-                        <i class="icon-home"></i>
-                        <span class="title">退出记录</span>
-                        <span class="selected"></span>
-                    </a>
-                </li>
-                {%/if%}
                 {%if $c=='Admin'%}
 				<li class="start {%if $executeInfo.controllerName=='Admin'%} active {%/if%}">
 					<a href="/admin/admin">

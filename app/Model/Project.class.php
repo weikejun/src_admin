@@ -8,6 +8,28 @@ class Model_Project extends Base_Project{
         ];
     }
 
+    public static function getCompanyPeriodChoices() {
+        return [
+            ['早期','早期'],
+            ['成长期','成长期'],
+            ['PreIPO','PreIPO'],
+            ['不适用','不适用']
+        ];
+    }
+
+    public static function getCompanyCharacterChoices() {
+        return [
+            ['内资','内资'],
+            ['VIE','VIE'],
+            ['JV','JV'],
+            ['WFOE','WFOE'],
+            ['非境外VIE','非境外VIE'],
+            ['国内基金','国内基金'],
+            ['海外基金','海外基金'],
+            ['其他','其他']
+        ];
+    }
+
     public static function getAicRegistraionChoices() {
         return [
             ['已办理','已办理'],

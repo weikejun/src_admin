@@ -4,6 +4,10 @@ abstract class Page_Admin_Base extends BaseController{
     private $_assigned=array();
     protected static $_objCache = [];
 
+    public static function getResource($id, $key, $finder, $selCol = 'id') {
+        return self::_getResource($id, $key, $finder, $selCol);
+    }
+
     protected static function _getResource($id, $key, $finder, $selCol = 'id') {
         $resource = null;
         if(isset(self::$_objCache[$key][$selCol][$id])) {
@@ -274,5 +278,4 @@ abstract class Page_Admin_Base extends BaseController{
         $this->display("redirect:".$ref_url);
         //Utils::redirect($ref_url);
     }
-    
 }
