@@ -16,4 +16,15 @@ Trait Form_Traits {
             file_put_contents("/tmp/".str_replace('Form_', '', __class__).".fields.sql", "`".$field['name']."` $sqlFieldType DEFAULT ".($field['default']?("'".$field['default']."'"):'NULL')." COMMENT '".$field['label']."', \n", FILE_APPEND);
         }
     }
+
+    public static function getFieldViewName($fieldName) {
+        static $nameMap;
+        if (!$nameMap) {
+            $nameMap = [];
+            foreach(self::getFieldsMap() as $field) {
+                $nameMap[$field['name']] = $field['label'];
+            }
+        }
+        return $nameMap[$fieldName]?$nameMap[$fieldName]:$fieldName;
+    }
 }

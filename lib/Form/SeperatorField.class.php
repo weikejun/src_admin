@@ -77,6 +77,21 @@ $(document).ready(function() {
             };
         });
     }, 1000);
+    setInterval(function() {
+        $.ajax({
+            type: 'POST',
+            url: $('#main_form').attr('action') + '/autoSave',
+            data: $('#main_form').serialize(),
+            dataType: 'json',
+            success: function(ret) {
+                if (ret.id) {
+                    $('#autosave').html('&nbsp;<i>自动保存于 '+ret.stamp+'</i>');
+                    $('#main_form input[name=id]').val(ret.id);
+                    $('#main_form input[name=action]').val('update');
+                }
+            }
+        });
+    }, 180000);
 });
 </script>
 EOF;

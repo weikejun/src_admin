@@ -179,6 +179,7 @@ CREATE TABLE `project` (
     `founder_limit_memo` varchar(512) DEFAULT NULL COMMENT '创始人限制备忘', 
     `board_number` varchar(32) DEFAULT NULL COMMENT '公司董事席位数', 
     `our_board` varchar(32) DEFAULT NULL COMMENT '源码董事会席位', 
+    `our_board_person` varchar(32) DEFAULT NULL COMMENT '源码董事姓名', 
     `our_board_status` varchar(32) DEFAULT NULL COMMENT '源码董事状态', 
     `our_board_register` varchar(32) DEFAULT NULL COMMENT '源码董事登记', 
     `observer` varchar(32) DEFAULT NULL COMMENT '源码观察员', 

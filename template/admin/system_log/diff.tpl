@@ -55,10 +55,11 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 <body>
 <div class="diff">
     <div class="ver_1">
-        <div>当前版本：录入人<b>{%Model_Admin::getNameById($logs1->mOperatorId)%}</b> 录入时间<b>{%date('Ymd H:i:s', $logs1->mCreateTime)%}</b> 日志号<b>{%$logs1->mId%}</b> 动作<b>{%$logs1->mAction%}</b><br />上一版本：录入人<b>{%Model_Admin::getNameById($logs2->mOperatorId)%}</b> 录入时间<b>{%date('Ymd H:i:s', $logs2->mCreateTime)%}</b> 日志号<b>{%$logs2->mId%}</b> 动作<b>{%$logs2->mAction%}</b></div>
+        <div>当前版本：录入人<b>{%Model_Admin::getNameById($logs1->mOperatorId)%}</b> 录入时间<b>{%date('Ymd H:i:s', $logs1->mCreateTime)%}</b> 日志号<b>{%$logs1->mId%}</b> 动作<b>{%$logs1->mAction%}</b><br />上一版本：{%if $logs2 %}录入人<b>{%Model_Admin::getNameById($logs2->mOperatorId)%}</b> 录入时间<b>{%date('Ymd H:i:s', $logs2->mCreateTime)%}</b> 日志号<b>{%$logs2->mId%}</b> 动作<b>{%$logs2->mAction%}</b>{%else%}无{%/if%}</div>
         <div class="content txt">
+            <div class="field">资源：<b>{%$smarty.get.resource%}</b></div>
             {%foreach from=$kvs1 item=value key=index%}
-            <div class="field">{%Model_Project::getFieldViewName($index)%}: <b>{%$value%}</b></div>
+            <div class="field">{%$formClass::getFieldViewName($index)%}：<b>{%$value%}</b></div>
             {%/foreach%}
         </div>
     </div>

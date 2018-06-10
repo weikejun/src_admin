@@ -46,6 +46,17 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>'公司名称','paramName'=>'name','fusion'=>true]),
         );
     }
+
+    /* 
+     * 自动保存
+     */
+    public function autoSaveAction() {
+        if ($_REQUEST['action'] == 'create'
+            || $_REQUEST['action'] == 'update') {
+            parent::indexAction();
+        }
+        return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
+    }
 }
 
 

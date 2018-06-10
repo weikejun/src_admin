@@ -81,7 +81,7 @@ abstract class Form_Field{
     }
     
     public function value(){
-        return $this->value;
+        return trim($this->value);
     }
     public function error(){
         return $this->error;

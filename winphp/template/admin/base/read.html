@@ -14,6 +14,7 @@
         .portlet-body .form-horizontal{margin-top: 20px;}
         .help-inline {font-size: 10px; color: red;}
         .help-inline .tips {color: gray;}
+        #autosave {color: gray;}
     </style>
 {%/block%}
 {%block name="content"%}
@@ -59,7 +60,7 @@
                 </div-->
                 <div class="portlet-body">
                     <!-- BEGIN FORM-->
-                    <form name="main" action="{%$pageAdmin->getUrl()%}" method="post" class="form-horizontal">
+                    <form id="main_form" name="main" action="{%$pageAdmin->getUrl()%}" method="post" class="form-horizontal">
                         {%if $__is_new%}
                         <input type=hidden name="action" value="create">
                         {%else%}
@@ -71,7 +72,7 @@
                         {%$form->to_html($__is_new)%}
 
 			<div id="sub_wrap"><div id="btn_submit" class="form-actions">
-                            <button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button>
+                    <button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button><span id="autosave" ></span>
                             <!--button type="button" class="btn">返回</button-->
 			</div></div>
                     </form>
@@ -179,12 +180,15 @@
             }
         }
         var subBtn = $("#btn_submit"), subBtnInitOff = subBtn.offset();
+        var saveTip = $('#autosave');
         $(document).scroll(function() {
             var docScrTop = $(this).scrollTop();
             if (docScrTop + $(window).height() <= subBtnInitOff.top) {
+                saveTip.css({'position':'fixed','right':'130px','bottom':'45px'});
                 subBtn.css({'position':'fixed','right':'31px','bottom':'0px'});
             } else {
                 subBtn.css({'position':'static'});
+                saveTip.css({'position':'static'})
             }
         });
         $(document).scroll();

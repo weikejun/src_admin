@@ -155,6 +155,17 @@ class ProjectController extends Page_Admin_Base {
         return parent::indexAction();
     }
 
+    /* 
+     * 自动保存
+     */
+    public function autoSaveAction() {
+        if ($_REQUEST['action'] == 'create'
+            || $_REQUEST['action'] == 'update') {
+            parent::indexAction();
+        }
+        return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
+    }
+
     /*
      * 重载_delete()方法
      */
