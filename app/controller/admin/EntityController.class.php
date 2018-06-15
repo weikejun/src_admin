@@ -45,6 +45,19 @@ class EntityController extends Page_Admin_Base {
     }
 
     public function select() {
+        $this->model->addWhere('tp', '主基金相关');
+        return parent::select();
+    }
+
+    public function select_search(){
+        $model=$this->model;
+        $search=trim($this->_GET('search'));
+        $this->assign("search",$search);
+        foreach($this->search_fields as $field){
+            $model->addWhereRaw("($field = '$search' or (`tp` = '主基金相关' and $field like '%$search%'))");
+            //$model->addWhere($field,"%$search%",'like','or');
+        }
+        $this->_index();
         $this->display("admin/base/select.html");
     }
 }

@@ -54,6 +54,7 @@ class Model_Project extends Base_Project{
         return [
             ['象征性','象征性'],
             ['mirror','mirror'],
+            ['不适用','不适用'],
             ['其他','其他'],
         ];
     }
@@ -343,7 +344,7 @@ class Model_Project extends Base_Project{
 
     public static function getDealTypeChoices() {
         return [
-            ['源码投','源码投'],
+            ['企业融资（源码投）','企业融资（源码投）'],
             ['企业融资（源码不投）','企业融资（源码不投）'],
             ['源码退出','源码退出'],
             ['源码独立CB','源码独立CB'],
@@ -390,6 +391,7 @@ class Model_Project extends Base_Project{
             ['老股','老股'],
             ['新股+老股','新股+老股'],
             ['未投资','未投资'],
+            ['退出','退出'],
             ['不适用','不适用'],
             ['其他','其他']
         ];

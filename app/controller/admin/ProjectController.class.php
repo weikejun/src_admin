@@ -25,14 +25,17 @@ class ProjectController extends Page_Admin_Base {
     private function _initSingleActions() {
         $this->single_actions=[
             ['label'=>'复制','action'=>function($model){
-                return '/admin/project?action=clone&id='.$model->mId;
+                return '/admin/project?action=clone&ex=kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo&id='.$model->mId;
             }],
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=project&res_id='.$model->mId;
             }],
+            ['label'=>'失效','action'=>function($model){
+                return '/admin/project?action=delete&id='.$model->mId;
+            }],
         ];
 
-        //$this->single_actions_default = ['delete'=>false];
+        $this->single_actions_default = ['delete'=>false,'edit'=>true];
     }
 
     private function _initMultiActions() {
@@ -61,7 +64,7 @@ class ProjectController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
 
         $this->model=new Model_Project();
-        $this->model->orderBy('id', 'DESC');
+        $this->model->orderBy('kickoff_date', 'DESC');
 
         WinRequest::mergeModel(array(
             'controllerText' => '交易记录',
@@ -77,7 +80,7 @@ class ProjectController extends Page_Admin_Base {
 
         $this->model->addWhere('status', 'valid');
         WinRequest::mergeModel(array(
-            'tableWrap' => '20480px',
+            'tableWrap' => '22000px',
         ));
 
         $this->multi_actions[] = ['label'=>'常用字段','required'=>false,'action'=>trim('/admin/project?'.$_SERVER['QUERY_STRING'],'?')];
@@ -102,19 +105,18 @@ class ProjectController extends Page_Admin_Base {
 
         $briefFields = [
             '交易ID',
-            '项目编号',
-            '整理状态',
             '目标企业',
             '项目简称',
-            '所属行业',
-            '轮次大类',
-            '轮次详情',
-            '新老类型',
-            '投退类型',
-            '新股老股',
+            '整理状态',
+            '本轮交易类型',
+            '企业所处轮次',
+            '企业轮次归类',
+            '项目新老类型',
+            '源码投资主体',
             '决策日期',
             '交易状态',
-            'Closing Date',
+            '签约日期',
+            '交割日期',
         ];
         $list_display = $this->list_display;
         $this->list_display = [];
@@ -135,6 +137,7 @@ class ProjectController extends Page_Admin_Base {
     public function recoveryAction() {
         if (isset($_GET['id']) && !empty($_GET['id'])) {
             $this->model->addWhere('id', $_REQUEST['id'])->update(['status'=>['"valid"', DBTable::NO_ESCAPE]]);
+            $this->model->select();
             return ['redirect: ' . dirname($_SERVER['SCRIPT_NAME'])];
         }
         $this->_initListDisplay();
@@ -147,7 +150,7 @@ class ProjectController extends Page_Admin_Base {
             }],
         ];
         WinRequest::mergeModel(array(
-            'tableWrap' => '10240px',
+            'tableWrap' => '22000px',
         ));
         $reqModel = WinRequest::getModel();
         $reqModel['controllerText'] = '交易记录 回收站';
@@ -161,7 +164,7 @@ class ProjectController extends Page_Admin_Base {
     public function autoSaveAction() {
         if ($_REQUEST['action'] == 'create'
             || $_REQUEST['action'] == 'update') {
-            parent::indexAction();
+            $this->indexAction();
         }
         return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
     }
@@ -178,6 +181,21 @@ class ProjectController extends Page_Admin_Base {
      */
     public function initData() {
         $this->_initFullAction();
+    }
+
+    public function clone() {
+        $ret = parent::clone();
+        // 支持部分字段不复制
+        if ($_GET['ex']) {
+            $ex = explode(',', trim($_GET['ex']));
+            $fields = $this->form->getConfig();
+            for($i = 0; $i < count($fields); $i++) {
+                if (in_array($fields[$i]->name(), $ex)) {
+                    $fields[$i]->clear();
+                }
+            }
+        }
+        return $ret;
     }
 }
 

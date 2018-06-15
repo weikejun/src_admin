@@ -8,10 +8,15 @@ class Form_Company extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'id','label'=>'企业ID','type'=>'hidden','default'=>null,'required'=>false,],
+                ['name'=>'id','label'=>'企业ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                    return $model->getData('id');
+                }],
                 ['name'=>'name','label'=>'目标企业','type'=>'text','default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称'],
                 ['name'=>'short','label'=>'项目简称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入项目唯一简称，后续变动可此处修改。'],
-                ['name'=>'_deal_num','label'=>'交易次数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                ['name'=>'hold_status','label'=>'源码持有状态','type'=>'choice','choices'=>Model_Company::getHoldStatusChoices(),'default'=>'正常','required'=>true,],
+                ['name'=>'project_type','label'=>'项目类别','type'=>'choice','choices'=>Model_Company::getProjectTypeChoices(),'required'=>true,],
+                ['name'=>'management','label'=>'是否在管','type'=>'choice','choices'=>Model_Company::getManagementChoices(),'required'=>true,],
+                ['name'=>'_deal_num','label'=>'交易记录数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('company_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
@@ -23,7 +28,7 @@ class Form_Company extends Form {
                     $project->addWhere('status', 'valid');
                     $project->orderBy('id', 'DESC');
                     $project->select();
-                    return $project->getData('stocknum_all');
+                    return number_format($project->getData('stocknum_all'));
                 }],
                 ['name'=>'_company_character','label'=>'当前目标企业性质','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $project = new Model_Project;
@@ -35,22 +40,71 @@ class Form_Company extends Form {
                 }],
                 ['name'=>'bussiness','label'=>'所属行业','type'=>'selectInput','choices'=>Model_Company::getBussinessChoices(),'required'=>true,],
                 ['name'=>'bussiness_change','label'=>'主营行业变化','type'=>'selectInput','choices'=>[['未变化','未变化']],'required'=>false],
-                ['name'=>'region','label'=>'所属地域','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true],
+                ['name'=>'region','label'=>'主营地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true],
+                ['name'=>'register_region','label'=>'注册地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true,'help'=>'精确到国家（国外）/省（国内）'],
                 ['name'=>'field-index-financing','label'=>'融资信息','type'=>'seperator'],
+                ['name'=>'_first_close_date','label'=>'首次投资时间','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'ASC');
+                    $project->select();
+                    if ($project->getData('close_date')) {
+                        return date('Ymd', $project->getData('close_date'));
+                    }
+                }],
+                ['name'=>'_latest_close_date','label'=>'最新一轮融资时间','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'DESC');
+                    $project->select();
+                    if ($project->getData('close_date')) {
+                        return date('Ymd', $project->getData('close_date'));
+                    }
+                }],
+                ['name'=>'_first_post_moeny','label'=>'首次投时估值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'ASC');
+                    $project->select();
+                    if ($project->getData('post_money')) {
+                        return $project->getData('value_currency'). ' ' . number_format($project->getData('post_money'), 2);
+                    }
+                }],
                 ['name'=>'_latest_post_moeny','label'=>'最新估值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('company_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
-                    $project->orderBy('id', 'DESC');
-                    $project->limit(1);
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'DESC');
                     $project->select();
-                    return $project->getData('post_money');
+                    if ($project->getData('post_money')) {
+                        return $project->getData('value_currency'). ' ' . number_format($project->getData('post_money'), 2);
+                    }
+                }],
+                ['name'=>'_value_increase','label'=>'企业估值涨幅','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'DESC');
+                    $project = $project->find();
+                    $num = count($project);
+                    if ($num) {
+                        return sprintf('%.2f%%', $project[0]->getData('post_money') / $project[$num - 1]->getData('post_money') * 100);
+                    }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('company_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
-                    $project->orderBy('id', 'ASC');
+                    $project->addWhere('close_date', '0', '>');
+                    $project->orderBy('close_date', 'ASC');
                     $project->select();
                     return $project->getData('turn');
                 }],
@@ -126,7 +180,7 @@ class Form_Company extends Form {
                             $stockNum += $data['stock_num'];
                         }
                     }
-                    return $stockNum;
+                    return number_format($stockNum);
                 }],
                 ['name'=>'_lastest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $project = new Model_Project;
@@ -154,10 +208,6 @@ class Form_Company extends Form {
                         ? sprintf("%.2f%%", $stockNum / $project->getData('stocknum_all') * 100) 
                         : '0.00%';
                 }],
-                ['name'=>'_hold_status','label'=>'源码持有状态','type'=>'rawText','required'=>false,'field'=>function($model){
-                    // TODO: 逻辑需要补充
-                    return '算法不明确，待讨论';
-                }],
                 ['name'=>'_multi_entity_invest','label'=>'是否多主体投过','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $project = new Model_Project;
                     $project->addWhere('company_id', $model->getData('id'));
@@ -170,7 +220,7 @@ class Form_Company extends Form {
                 ['name'=>'_multi_entity_hold','label'=>'当前是否多主体持股','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     return '算法待补充';
                 }],
-                ['name'=>'_multi_currency_entity_invest','label'=>'是否被美元+人民币主体投过','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'_multi_currency_entity_invest','label'=>'美元+人民币主体投过','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $project = new Model_Project;
                     $project->addWhere('company_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
@@ -179,7 +229,7 @@ class Form_Company extends Form {
                     $project = $project->find();
                     return '算法待补充';
                 }],
-                ['name'=>'_multi_currency_entity_hold','label'=>'当前是否被美元+人民币主体持有','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'_multi_currency_entity_hold','label'=>'当前美元+人民币主体投','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     return '算法待补充';
                 }],
                 ['name'=>'_entity_odi','label'=>'源码主体ODI','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
@@ -239,7 +289,7 @@ class Form_Company extends Form {
                     $project->setCols('company_id');
                     $project->select();
                     $data = $project->getData();
-                    return number_format($data['total_amount']);
+                    return number_format($data['total_amount'], 2);
                 }],
                 ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     return '算法待补充';
@@ -263,15 +313,32 @@ class Form_Company extends Form {
                 ['name'=>'finance_person','label'=>'财务负责人','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'field-index-filing','label'=>'工商及Filing','type'=>'seperator'],
                 ['name'=>'_aic_status','label'=>'人民币项目工商','type'=>'rawText','required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('aic_registration', '待办理');
+                    return $project->count() ? '未完成' : '已完成';
                 }],
                 ['name'=>'_filing_status','label'=>'Filing是否完整','type'=>'rawText','required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhereRaw('and (`final_captable` = "待存档" or `final_word` = "待存档" or `closing_pdf`= "待存档" or `closing_original` = "待存档" or `overseas_stockcert` = "待存档")');
+                    return $project->find() ? '存档不完整' : '存档完整';
                 }],
                 ['name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'field-index-memo','label'=>'备注及未决事项','type'=>'seperator'],
                 ['name'=>'_pending_detail','label'=>'未决事项说明','type'=>'rawText','required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                    $project = new Model_Project;
+                    $project->addWhere('company_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->addWhere('pending', '有');
+                    $project = $project->find();
+                    $pendingDetail = '';
+                    for($i = 0; $i < count($project); $i++) {
+                        $pendingDetail .= $project[$i]->getData('pending_detail') . '<br>';
+                    }
+                    return $pendingDetail;
                 }],
                 ['name'=>'memo','label'=>'备注','type'=>'textarea','required'=>false],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','default'=>time(),'required'=>false,'auto_update'=>true,'readonly'=>true,'field'=>function($model){

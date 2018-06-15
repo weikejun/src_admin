@@ -1,12 +1,27 @@
 <?php
 class Model_Company extends Base_Company{
+    public static function getManagementChoices() {
+        return [
+            ['在管','在管'],
+            ['非在管','非在管'],
+        ];
+    }
+
+    public static function getProjectTypeChoices() {
+        return [
+            ['人民币项目','人民币项目'],
+            ['美元项目','美元项目'],
+            ['其他', '其他'],
+        ];
+    }
+
     public static function getHoldStatusChoices() {
         return [
-            ['完全持有','完全持有'],
-            ['部分退出','部分退出'],
-            ['全部退出','全部退出'],
-            ['目标企业上市','目标企业上市'],
-            ['清算退出','清算退出'],
+            ['正常','正常'],
+            ['待退出','待退出'],
+            ['已退出','已退出'],
+            ['待清算','待清算'],
+            ['已清算','已清算'],
             ['其他','其他'],
         ];
     }

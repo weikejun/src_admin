@@ -13,9 +13,13 @@ class Form_SelectInputField extends Form_Field{
         }
         $html="<div class='control-group'>";
         $value=htmlspecialchars($this->value, ENT_QUOTES);
+        if ($this->config['input'] == 'textarea') {
+            $inputStr = "<textarea class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." name='{$this->name}'>$value</textarea>";
+        } else {
+            $inputStr = "<input class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' autocomplete=off  value='".$value."'>";
+        }
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
-            "<div class='controls'>".
-            "<input class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' autocomplete=off  value='".$value."'><div class='select-choices'>".$optionStr."</div>";
+            "<div class='controls'>$inputStr<div class='select-choices'>$optionStr</div>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         } else {
@@ -40,7 +44,7 @@ EOF;
     public function foot_js() {
         $js = <<<EOF
 <script _form_control='select input'>
-$('input.select-input').each(function() {
+$('.select-input').each(function() {
     $(this).focus(function() {
         var inWidth = $(this).css('width').replace(/px/ig, '')-2;
         $(this).next('.select-choices').css('width', inWidth).show();
@@ -49,7 +53,7 @@ $('input.select-input').each(function() {
     });
 });
 $('.select-choice').mousedown(function() {
-    var inputElem = $(this).parents('div .controls').find('input').eq(0);
+    var inputElem = $(this).parents('div .controls').find('.select-input').eq(0);
     inputElem.val($(this).html());
 });
 </script>

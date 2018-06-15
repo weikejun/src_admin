@@ -6,6 +6,7 @@ class Base_System_Log extends DBModel{
             ['name'=>'id','type'=>"int",'key'=>true,'defalut'=>NULL,'null'=>false,],
             ['name'=>'operator_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'operator_ip','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
+            ['name'=>'method','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'action','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'resource','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'res_id','type'=>"int",'key'=>false,'defalut'=>NULL,'null'=>true,],

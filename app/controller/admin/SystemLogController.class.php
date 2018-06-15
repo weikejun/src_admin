@@ -1,22 +1,25 @@
 <?php
 class SystemLogController extends Page_Admin_Base {
     public function diffAction() {
+        $model = new Model_SystemLog;
         if (!isset($_GET['resource']) || !isset($_GET['res_id'])) {
             return ['redirect: /admin/index'];
         }
         if (isset($_GET['diff']) && count($_GET['diff']) == 2) {
-            $this->model->addWhere('id', $_GET['diff'], 'IN');
+            $model->addWhere('id', $_GET['diff'], 'IN');
         } else {
-            $this->model->addWhere('resource', $_GET['resource']);
-            $this->model->addWhere('res_id', $_GET['res_id']);
-            $this->model->orderBy('id', 'DESC');
-            $this->model->limit(2);
+            $model->addWhere('resource', $_GET['resource']);
+            $model->addWhere('res_id', $_GET['res_id']);
+            $model->addWhere('method', 'autosave', '!=');
+            $model->orderBy('id', 'DESC');
+            $model->limit(2);
         }
-        $logs = $this->model->find();
+        $logs = $model->find();
         if (count($logs) >= 1) {
             parse_str(str_replace('|', '&', trim($logs[0]->mDetail, '|')), $kvs1);
             parse_str(str_replace('|', '&', trim($logs[1]->mDetail, '|')), $kvs2);
-            foreach($kvs1 as $k => $v) {
+            $kvs = array_merge($kvs1, $kvs2);
+            foreach($kvs as $k => $v) {
                 if (in_array($k, ['decision_date', 'close_date', 'loan_expiration', 'term_buyback_start', 'term_buyback_date'])) {
                     $kvs1[$k] = $kvs1[$k] ? date('Ymd', $kvs1[$k]) : '';
                     if (isset($kvs2[$k])) {
@@ -89,6 +92,9 @@ class SystemLogController extends Page_Admin_Base {
             }],
             ['label'=>'资源','field'=>function($model){
                 return $model->mResource.":".$model->mResId;
+            }],
+            ['label'=>'方法','field'=>function($model){
+                return $model->mMethod;
             }],
             ['label'=>'动作','field'=>function($model){
                 return $model->mAction;

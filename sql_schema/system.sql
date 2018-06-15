@@ -11,6 +11,7 @@ CREATE TABLE `system_log` (
     `operator_ip` varchar(16) DEFAULT NULL COMMENT '操作IP',
     `resource` varchar(16) DEFAULT NULL COMMENT '操作资源',
     `res_id` varchar(16) DEFAULT NULL COMMENT '资源ID',
+    `method` varchar(16) DEFAULT NULL COMMENT '方法',
     `action` varchar(16) DEFAULT NULL COMMENT '动作',
     `detail` text DEFAULT NULL COMMENT '操作内容',
     `create_time` int(11) DEFAULT NULL,

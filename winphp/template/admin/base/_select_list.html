@@ -36,6 +36,9 @@
                         {%if $smarty.get.field%}
                         <input name="field" value="{%$smarty.get.field|escape%}" type="hidden">
                         {%/if%}
+                        {%if $smarty.get.show%}
+                        <input name="show" value="{%$smarty.get.show|escape%}" type="hidden">
+                        {%/if%}
                         <button type="submit" class="btn blue"><i class="icon-ok"></i>提交</button>
                     </form>
                 </label>

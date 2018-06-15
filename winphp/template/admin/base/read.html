@@ -14,7 +14,7 @@
         .portlet-body .form-horizontal{margin-top: 20px;}
         .help-inline {font-size: 10px; color: red;}
         .help-inline .tips {color: gray;}
-        #autosave {color: gray;}
+        #save-tip {color: gray;}
     </style>
 {%/block%}
 {%block name="content"%}
@@ -65,14 +65,14 @@
                         <input type=hidden name="action" value="create">
                         {%else%}
                         <input type=hidden name="action" value="update">
-                        <!--input type=hidden name="id" value="{%$modelData->mId%}"-->
+                        <input type=hidden name="id" value="{%$modelData->mId%}">
                         {%/if%}
                         <input type=hidden name="__success_url" value="{%$__success_url%}">
                         
                         {%$form->to_html($__is_new)%}
 
 			<div id="sub_wrap"><div id="btn_submit" class="form-actions">
-                    <button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button><span id="autosave" ></span>
+                    <button type="submit" class="btn blue"><i class="icon-ok"></i>保存</button><span id="save-tip" ></span>
                             <!--button type="button" class="btn">返回</button-->
 			</div></div>
                     </form>
@@ -136,6 +136,8 @@
     <div class="content"></div>
 </div>
 
+<a id="control-clear" style="display:none;">重置&nbsp;</a>
+
 {%/block%}
 {%block name="footjs" append%}
 <script>
@@ -192,6 +194,24 @@
             }
         });
         $(document).scroll();
+    });
+    $('#main_form').keydown(function(evt) {
+        if (evt.which == 13) {
+            return false;
+        }
+    });
+    $('.control-label').hover(function() {
+        $('#control-clear').show();
+        $(this).prepend($('#control-clear'));
+    },function(){
+        $('#control-clear').hide();
+    });
+    $('#control-clear').click(function() {
+        var pDiv = $(this).parents('div.control-group');
+        pDiv.find('input').val('');
+        pDiv.find(':radio').removeAttr('checked');
+        pDiv.find(':radio').parent().removeClass('checked');
+        pDiv.find('textarea').val('');
     });
 })();
 </script>

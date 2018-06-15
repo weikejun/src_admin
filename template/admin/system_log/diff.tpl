@@ -21,7 +21,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 <style>
 .content {
     width: 600px;
-    height: 1800px;
+    height: 3000px;
     border: 1px solid grey;
     padding: 5px;
 }

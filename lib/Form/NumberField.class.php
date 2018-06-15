@@ -13,7 +13,7 @@ class Form_NumberField extends Form_Field{
     public function to_html($is_new){
         $class=$this->config['class'];
         $html="<div class='control-group'>";
-        $value=(!$this->value&&$this->value!==0)?$this->value:htmlspecialchars(number_format(floatval($this->value)), ENT_QUOTES);
+        $value=(!$this->value&&$this->value!==0)?$this->value:htmlspecialchars(number_format(floatval($this->value), 2), ENT_QUOTES);
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".
             "<input class='numeric $class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}'  value='".$value."'>";
@@ -29,17 +29,20 @@ class Form_NumberField extends Form_Field{
 
     public function foot_js() {
         $js = <<<EOF
-<div id='seperator-index'></div>
 <script>
     $(document).ready(function() {
         $('input.numeric').each(function(index,elem) {
             $(elem).data('timers', -1);
-            $(elem).keyup(function() {
+            $(elem).keyup(function(evt) {
+                if(evt.keyCode == 37 || evt.keyCode == 39) {
+                    return;
+                }
                 if ($(elem).data('timers')) {
                     clearTimeout($(elem).data('timers'));
                     $(elem).data('timers', setTimeout(function() {
-                        $(elem).val(new Number($(elem).val().replace(/[^0-9\.]/g,'')).toLocaleString('en-US'));
-                    },1000));
+                        var re=/\d{1,3}(?=(\d{3})+$)/g;
+                        $(elem).val($(elem).val().replace(/[^0-9\.]/g,'').replace(/^(\d+)((\.\d+)?)$/,function(s,s1,s2){return s1.replace(re,"$&,")+s2;}));
+                    },500));
                 }
                 $(elem).val($(this).val().replace(/[^0-9\.]/g,''));
             });

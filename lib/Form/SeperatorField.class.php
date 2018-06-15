@@ -6,7 +6,7 @@ class Form_SeperatorField extends Form_Field{
     }
 
     public function to_html($is_new){
-        $html = "<div class='control-seperator'><a name='$this->name'></a><li name='$this->name'>".htmlspecialchars($this->label)."</li></div>";
+        $html = "<div class='control-seperator'><a name='$this->name'></a><li name='$this->name'>".htmlspecialchars($this->label)."&nbsp;<a href='javascript:void 0' class='seperator-reset'>清空</a></li></div>";
         return $html;
     }
 
@@ -16,6 +16,7 @@ class Form_SeperatorField extends Form_Field{
 .control-seperator {font-size:14px;background-color:#eee;padding:5px;margin-bottom:10px;border:1px solid #eee;}
 #seperator-index {position:fixed;top:110px;right:31px;background-color:#fff;padding:5px 10px;border:1px solid #eee;}
 #seperator-index a {color:black;}
+.seperator-reset {display:none;}
 </style>
 EOF;
         return $css;
@@ -26,6 +27,25 @@ EOF;
 <div id='seperator-index'></div>
 <script>
 $(document).ready(function() {
+    $('.control-seperator').hover(function() {
+        $(this).find('.seperator-reset').show();
+    }, function() {
+        $(this).find('.seperator-reset').hide();
+    });
+    $('.seperator-reset').click(function() {
+        var pDiv = $(this).parents('div.control-seperator');
+        while(true) {
+            pDiv = $(pDiv).next();
+            if (pDiv.nextAll().length != 0 && !pDiv.hasClass('control-seperator')) {
+                pDiv.find('input').val('');
+                pDiv.find(':radio').removeAttr('checked');
+                pDiv.find(':radio').parent().removeClass('checked');
+                pDiv.find('textarea').val('');
+                continue;
+            } 
+            break;
+        }
+    });
     $(document).scroll(function() {
         var docScrTop = $(this).scrollTop();
         if (docScrTop <= 110) {
@@ -37,9 +57,11 @@ $(document).ready(function() {
     $('.control-seperator').each(function() {
         var lkElem = $(this).find('a');
         var liElem = $(this).find('li').clone();
-        $(liElem).html('<a href="#'+$(lkElem).prop('name')+'">'+liElem.html()+'</a>');
+        $(liElem).html('<a href="#'+$(lkElem).prop('name')+'">'+liElem.html().replace(/<[^>]+>.+<\/[^>]+>/,'')+'</a>');
         $('#seperator-index').append(liElem);
     });
+    // 修正safari标红时像素变化导致折行问题
+    $('#seperator-index').css('width', Number($('#seperator-index').css('width').replace('px',''))+2);
     setInterval(function() {
         $('#seperator-index').find('li').css('color','');
         var markPending = function(elem) {
@@ -67,7 +89,7 @@ $(document).ready(function() {
             };
             var ipElem = $(this).find(':hidden');
             if(ipElem && ipElem.attr('name')) {
-                if (ipElem.hasClass('datepicker') && !ipElem.next().val()) {
+                if (ipElem.hasClass('datepicker') && ipElem.hasClass('fin-check') && !ipElem.next().val()) {
                     markPending(this);
                     return;
                 } else if(ipElem.next.val == '') {
@@ -85,7 +107,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(ret) {
                 if (ret.id) {
-                    $('#autosave').html('&nbsp;<i>自动保存于 '+ret.stamp+'</i>');
+                    $('#save-tip').html('&nbsp;<i>自动保存于 '+ret.stamp+'</i>');
                     $('#main_form input[name=id]').val(ret.id);
                     $('#main_form input[name=action]').val('update');
                 }

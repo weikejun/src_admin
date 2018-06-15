@@ -14,6 +14,7 @@ class Model_SystemLog extends Base_System_Log{
             'resource' => $context['controllerName'],
             'res_id' => $model->mId,
             'action' => $action,
+            'method' => str_replace('Action', '', $context['methodName']),
             'create_time' => time(),
             'detail' => $detailStr,
         ]);

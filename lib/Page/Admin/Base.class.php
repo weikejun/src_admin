@@ -79,8 +79,12 @@ abstract class Page_Admin_Base extends BaseController{
     }
     public function _search(){
         $model=$this->model;
-        $search=$this->_GET('search');
+        $search=trim($this->_GET('search'));
         $this->assign("search",$search);
+        if (!$search) {
+            $model->addWhere('id', 0);
+            return;
+        }
         foreach($this->search_fields as $field){
             $model->addWhere($field,"%$search%",'like','or');
         }
@@ -130,6 +134,7 @@ abstract class Page_Admin_Base extends BaseController{
         $this->display("admin/base/index.html");
     }
     public function _create(){
+        unset($_REQUEST['id']);
         if($this->form->bind($_REQUEST)){
             $this->model->setData($this->form->values());
             if(false!==$this->model->save()){

@@ -10,7 +10,7 @@ class CompanyController extends Page_Admin_Base {
 
         WinRequest::mergeModel(array(
             'controllerText'=>"目标企业",
-            'tableWrap' => "6000px",
+            'tableWrap' => "7000px",
         ));
         $this->model=new Model_Company();
         $this->model->orderBy('update_time', 'DESC');
@@ -53,9 +53,32 @@ class CompanyController extends Page_Admin_Base {
     public function autoSaveAction() {
         if ($_REQUEST['action'] == 'create'
             || $_REQUEST['action'] == 'update') {
-            parent::indexAction();
+            $this->indexAction();
         }
         return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
+    }
+
+    public function select() {
+        $this->list_filter = [];
+        $this->search_fields = ['name'];
+        $this->display("admin/base/select.html");
+    }
+
+    public function select_search(){
+        $this->list_filter = [];
+        $this->search_fields = ['name'];
+        $model=$this->model;
+        $search=trim($this->_GET('search'));
+        $this->assign("search",$search);
+        if (!$search) {
+            $model->addWhere('id', 0);
+        } else {
+            foreach($this->search_fields as $field){
+                $model->addWhere($field, $search);
+            }
+        }
+        $this->_index();
+        $this->display("admin/base/select.html");
     }
 }
 
