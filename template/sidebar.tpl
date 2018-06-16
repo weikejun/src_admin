@@ -58,6 +58,7 @@
                     </a>
                 </li>
                 {%/if%}
+                <!--
                 {%if $c=='EntityRel'%}
                 <li class="start {%if $executeInfo.controllerName=='EntityRel'%} active {%/if%}">
                     <a href="/admin/entityRel">
@@ -76,6 +77,7 @@
                     </a>
                 </li>
                 {%/if%}
+                -->
                 {%if $c=='Admin'%}
 				<li class="start {%if $executeInfo.controllerName=='Admin'%} active {%/if%}">
 					<a href="/admin/admin">

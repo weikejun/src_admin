@@ -20,6 +20,7 @@ class CompanyController extends Page_Admin_Base {
         foreach(Form_Company::getFieldsMap() as $field) {
             if ($field['type'] != 'seperator') {
                 $this->list_display[] = [
+                    'name' => $field['name'],
                     'label' => $field['label'],
                     'field' => (isset($field['field']) ? $field['field'] : $field['name']),
                 ];
@@ -58,15 +59,28 @@ class CompanyController extends Page_Admin_Base {
         return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
     }
 
-    public function select() {
+    protected function _initSelect() {
         $this->list_filter = [];
         $this->search_fields = ['name'];
+        $reqModel = WinRequest::getModel();
+        unset($reqModel['tableWrap']);
+        WinRequest::setModel($reqModel);
+        $list_display = [];
+        foreach($this->list_display as $i => $field) {
+            if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type', 'region', 'register_region'])) {
+                $list_display[] = $field;
+            }
+        }
+        $this->list_display = $list_display;
+    }
+
+    public function select() {
+        $this->_initSelect();
         $this->display("admin/base/select.html");
     }
 
     public function select_search(){
-        $this->list_filter = [];
-        $this->search_fields = ['name'];
+        $this->_initSelect();
         $model=$this->model;
         $search=trim($this->_GET('search'));
         $this->assign("search",$search);

@@ -1,7 +1,7 @@
 <?php
 abstract class Page_Admin_Base extends BaseController{
     protected static $PAGE_SIZE=10;
-    private $_assigned=array();
+    protected $_assigned=array();
     protected static $_objCache = [];
 
     public static function getResource($id, $key, $finder, $selCol = 'id') {
@@ -33,7 +33,7 @@ abstract class Page_Admin_Base extends BaseController{
         }
         return $this->_assigned[$k];
     }
-    private $_templateName;
+    protected $_templateName;
     protected function display($templateName){
         $this->_templateName=$templateName;
     }
