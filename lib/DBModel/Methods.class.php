@@ -7,6 +7,7 @@ Trait DBModel_Methods {
             $FIELD_LIST = [];
             foreach($formClass::getFieldsMap() as $field) {
                 if ($field['type'] == 'seperator' 
+                    || $field['type'] == 'seperator2'
                     || $field['type'] == 'rawText'
                     || $field['name'] == 'id') {
                     continue;

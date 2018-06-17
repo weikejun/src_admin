@@ -55,51 +55,9 @@
                             {%/foreach%}
                         </tbody>
                     </table>
+                    {%if $dealDataList %}
                     <p></p>
                     <p>【Captable】</p>
-                    <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
-
-                        <thead>
-                            <tr role="row">
-                                {%foreach from=$pageAdmin->captable_display item=list_item%}
-                                <th>
-                                    {%if is_string($list_item)%}
-                                    {%$list_item%}
-                                    {%elseif isset($list_item['label'])%}
-                                    {%$list_item.label%}
-                                    {%else%}
-                                    {%strval($list_item)%}
-                                    {%/if%}
-                                </th>
-                                {%/foreach%}
-                            </tr>
-                        </thead>
-
-
-                        <tbody>
-                            {%foreach from=$captableDataList item=captableData%}
-                            <tr class="gradeX {%cycle values="odd,even"%}">
-                                {%foreach from=$pageAdmin->captable_display item=list_item%}
-                                <td>
-                                    {%if is_array($list_item)&&isset($list_item.label)%}
-                                    {%$list_item=$list_item.field%}
-                                    {%/if%}
-
-                                    {%if is_string($list_item) %}
-                                    {%$captableData->getData($list_item)%}
-                                    {%elseif is_callable($list_item)%}
-                                    {%call_user_func($list_item,$captableData,$pageAdmin,$captableDataList)%}
-                                    {%else%}
-                                    {%strval($list_item)%}
-                                    {%/if%}
-                                </td>
-                                {%/foreach%}
-                            </tr>
-                            {%/foreach%}
-                        </tbody>
-                    </table>
-                    <p></p>
-                    <p>【交割记录】</p>
                     <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
 
                         <thead>
@@ -143,6 +101,51 @@
                             {%/foreach%}
                         </tbody>
                     </table>
+                    {%/if%}
+                    {%if $captableDataList%}
+                    <p></p>
+                    <p>【投退概况】</p>
+                    <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
+
+                        <thead>
+                            <tr role="row">
+                                {%foreach from=$pageAdmin->captable_display item=list_item%}
+                                <th>
+                                    {%if is_string($list_item)%}
+                                    {%$list_item%}
+                                    {%elseif isset($list_item['label'])%}
+                                    {%$list_item.label%}
+                                    {%else%}
+                                    {%strval($list_item)%}
+                                    {%/if%}
+                                </th>
+                                {%/foreach%}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {%foreach from=$captableDataList item=captableData%}
+                            <tr class="gradeX {%cycle values="odd,even"%}">
+                                {%foreach from=$pageAdmin->captable_display item=list_item%}
+                                <td>
+                                    {%if is_array($list_item)&&isset($list_item.label)%}
+                                    {%$list_item=$list_item.field%}
+                                    {%/if%}
+
+                                    {%if is_string($list_item) %}
+                                    {%$captableData->getData($list_item)%}
+                                    {%elseif is_callable($list_item)%}
+                                    {%call_user_func($list_item,$captableData,$pageAdmin,$captableDataList)%}
+                                    {%else%}
+                                    {%strval($list_item)%}
+                                    {%/if%}
+                                </td>
+                                {%/foreach%}
+                            </tr>
+                            {%/foreach%}
+                        </tbody>
+                    </table>
+                    {%/if%}
                 </div>
             </div>
             <!-- END EXAMPLE TABLE PORTLET-->

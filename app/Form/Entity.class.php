@@ -11,7 +11,7 @@ class Form_Entity extends Form {
                 ['name'=>'id','label'=>'主体ID','type'=>'hidden','default'=>null,'required'=>false,],
                 ['name'=>'name','label'=>'名称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入准确全称'],
                 ['name'=>'_hold_company','label'=>'持股公司','type'=>'rawText','field'=>function($model) {
-                    return '<a href="/admin/project/entity?entity_id='.$model->getData('id').'">'.查看.'</a>';
+                    return '<a target="_blank" href="/admin/project/entity?entity_id='.$model->getData('id').'">'.查看.'</a>';
                 }],
                 ['name'=>'_invest_num','label'=>'投资记录','type'=>'rawText','field'=>function($model) {
                     $project = new Model_Project;

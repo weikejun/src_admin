@@ -1,5 +1,27 @@
 <?php
 
+class Form_Seperator2Field extends Form_Field{
+    public function __construct($config){
+        parent::__construct($config);
+    }
+
+    public function to_html($is_new){
+        $html = "<div class='control-seperator2'><div><i>".str_pad("", 500, "*")."</i><div class='seperator2-label'><i>".htmlspecialchars($this->label)."</i></div></div></div>";
+        return $html;
+    }
+
+    public function head_css() {
+        $css=<<<EOF
+<style>
+.control-seperator2 {width:100%;overflow:hidden;color:#ccc;padding-top:5px;}
+.seperator2-label {color:gray;font:14px bold;position:relative;bottom:20px;text-align:center;}
+.seperator2-label i {background-color:#fff;padding:0 8px;}
+</style>
+EOF;
+        return $css;
+    }
+}
+
 class Form_Project extends Form {
     use Form_Traits;
 
@@ -169,12 +191,16 @@ class Form_Project extends Form {
                 ['name'=>'stocknum_all','label'=>'本轮企业总股数','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
                     return number_format($model->getData('stocknum_all'));
                 }],
-                ['name'=>'_stocknum_new','label'=>'源码本主体最新持有本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'field-seperator-shareholding-our','label'=>'源码本轮','type'=>'seperator2'],
+                ['name'=>'_stocknum_new','label'=>'源码本主体最新持有本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model)use(&$deals){
+                    return number_format($model->getData('stocknum_get') - $model->getData('exit_stock_number'));
                 }],
-                ['name'=>'_shareholding_ratio','label'=>'源码本主体最新持有本轮股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体最新持有本轮股数“除以”本轮企业总股数“','field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'_shareholding_ratio','label'=>'源码本主体最新持有本轮股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体最新持有本轮股数“除以”本轮企业总股数“','field'=>function($model)use(&$deals){
+                    if ($model->getData('stocknum_all')) {
+                        return sprintf('%.2f%%', ($model->getData('stocknum_get') - $model->getData('exit_stock_number'))/$model->getData('stocknum_all'));
+                    }
                 }],
+                ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
                 ['name'=>'shareholding_founder','label'=>'最主要创始人股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return is_numeric($model->getData('shareholding_founder')) ? number_format($model->getData('shareholding_founder')) : $model->getData('shareholding_founder');
                 }],
@@ -192,11 +218,39 @@ class Form_Project extends Form {
                         return sprintf('%.2f%%', $model->getData('shareholding_esop') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'_shareholding_sum','label'=>'源码各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体统计','type'=>'seperator2'],
+                ['name'=>'_shareholding_sum','label'=>'源码各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals){
+                    $deal = new Model_Project;
+                    $deal->addWhere('status', 'valid');
+                    $deal->addWhere('company_id', $model->getData('company_id'));
+                    $deal->addWhere('entity_id', $model->getData('entity_id'));
+                    $deal->addWhere('close_date', '0', '>');
+                    $deal->orderBy('close_date', 'DESC');
+                    $deals = $deal->find();
+                    $stockNum = 0;
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('deal_type') == '源码退出'
+                            && $deal->getData('turn_sub') == $model->getData('turn_sub')) {
+                            $stockNum -= $deal->getData('exit_stock_number');
+                        } else {
+                            $stockNum += $deal->getData('stocknum_get');
+                        }
+                    }
+                    return number_format($stockNum);
                 }],
-                ['name'=>'_shareholding_ratio_sum','label'=>'源码各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'_shareholding_ratio_sum','label'=>'源码各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals){
+                    $stockNum = 0;
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('deal_type') == '源码退出'
+                            && $deal->getData('turn_sub') == $model->getData('turn_sub')) {
+                            $stockNum -= $deal->getData('exit_stock_number');
+                        } else {
+                            $stockNum += $deal->getData('stocknum_get');
+                        }
+                    }
+                    foreach($deals as $i => $deal) {
+                        return sprintf('%.2f%%', $stockNum / $deal->getData('stocknum_all') * 100);
+                    }
                 }],
                 ['name'=>'field-index-term-investorlimit','label'=>'核心条款：对本轮投资人限制','type'=>'seperator'],
                 ['name'=>'invest_competitor_limit','label'=>'投资人投资竞品限制','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
@@ -211,31 +265,35 @@ class Form_Project extends Form {
                 ['name'=>'founder_vesting_memo','label'=>'创始人Vesting备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'founder_bussiness_limit','label'=>'创始人竞业限制','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'founder_limit_memo','label'=>'创始人限制备忘','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
-                ['name'=>'field-index-management','label'=>'核心条款：企业治理及信息权','type'=>'seperator'],
+                ['name'=>'field-index-management','label'=>'核心条款：企业治理','type'=>'seperator'],
                 ['name'=>'board_number','label'=>'公司董事席位数','type'=>'text','default'=>null,'required'=>false,'help'=>'示范“3”'],
                 ['name'=>'our_board','label'=>'源码董事会席位','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false,],
                 ['name'=>'our_board_person','label'=>'源码董事姓名','type'=>'text','default'=>null,'required'=>false,'help'=>'填入全名，若已退则写“***退出席位”'],
                 ['name'=>'our_board_status','label'=>'源码董事状态','type'=>'choice','choices'=>Model_Project::getOurBoardStatusChoices(),'required'=>false,],
                 ['name'=>'our_board_register','label'=>'源码董事登记','type'=>'choice','choices'=>Model_Project::getOurBoardRegisterChoices(),'required'=>false,],
                 ['name'=>'observer','label'=>'源码观察员','type'=>'choice','choices'=>Model_Project::getObserverChoices(),'required'=>false,],
+                ['name'=>'holder_veto','label'=>'源码股东会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false,],
+                ['name'=>'board_veto','label'=>'源码董事会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false],
+                ['name'=>'veto_memo','label'=>'Veto备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'field-index-inforight','label'=>'核心条款：信息权','type'=>'seperator'],
                 ['name'=>'info_right','label'=>'源码信息权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'info_right_threshold','label'=>'信息权门槛','type'=>'selectInput','choices'=>[['门槛无特别约定','门槛无特别约定']],'required'=>false,],
                 ['name'=>'info_right_memo','label'=>'信息权说明','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,],
                 ['name'=>'check_right','label'=>'源码检查权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'audit_right','label'=>'源码审计权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
-                ['name'=>'holder_veto','label'=>'源码股东会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false,],
-                ['name'=>'board_veto','label'=>'源码董事会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false],
-                ['name'=>'veto_memo','label'=>'Veto备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-right','label'=>'核心条款：本轮轮次优先权','type'=>'seperator'],
+                ['name'=>'field-seperator-warrant','label'=>'Warrant','type'=>'seperator2'],
                 ['name'=>'warrant','label'=>'源码是否有Warrant','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'warrant_memo','label'=>'Warrant备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'others_warrant','label'=>'其他投资人是否有Warrant','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'others_warrant_memo','label'=>'其他投资人Warrant备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'field-seperator-preright','label'=>'优先认购权、优先购买权及共售权','type'=>'seperator2'],
                 ['name'=>'preemptive','label'=>'优先认购权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'excess_preemptive','label'=>'超额优先认购权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false,],
                 ['name'=>'pri_assignee','label'=>'对创始人优先受让权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'sell_together','label'=>'对创始人共售权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'pri_common_stock','label'=>'对非创始人普通股优先权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
+                ['name'=>'field-seperator-buyback','label'=>'回购权及QIPO','type'=>'seperator2'],
                 ['name'=>'buyback_right','label'=>'回购权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'buyback_obligor','label'=>'回购义务人','type'=>'selectInput','choices'=>Model_Project::getBuybackObligorChoices(),'required'=>false,],
                 ['name'=>'buyback_standard','label'=>'回购金额计算标准','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,],
@@ -243,15 +301,19 @@ class Form_Project extends Form {
                     return $model->getData('buyback_date') ? date('Ymd', $model->getData('buyback_date')) : false;
                 }],
                 ['name'=>'buyback_memo','label'=>'回购权备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
-                ['name'=>'qualified_ipo_period','label'=>'QIPO简述','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'help'=>'格式示范“5年”'],
+                ['name'=>'qualified_ipo_period','label'=>'QIPO简述','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
+                ['name'=>'field-seperator-antidilution','label'=>'反稀释权','type'=>'seperator2'],
                 ['name'=>'anti_dilution','label'=>'反稀释权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false,],
                 ['name'=>'anti_dilution_way','label'=>'反稀释方法','type'=>'choice','choices'=>Model_Project::getAntiDilutionWayChoices(),'required'=>false],
+                ['name'=>'field-seperator-dragalong','label'=>'拖售权','type'=>'seperator2'],
                 ['name'=>'drag_along','label'=>'拖售权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'drag_along_veto','label'=>'源码对拖售权独立Veto','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'drag_along_memo','label'=>'拖售权备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'field-seperator-liquidation','label'=>'优先清算权','type'=>'seperator2'],
                 ['name'=>'liquidation_preference','label'=>'优先清算权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'liquidation_preference_way','label'=>'优先清算权方法','type'=>'choice','choices'=>Model_Project::getLiquidationPreferenceWayChoices(),'required'=>false],
                 ['name'=>'liquidation_preference_memo','label'=>'优先清算权备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'field-seperator-register','label'=>'登记、分红、对赌','type'=>'seperator2'],
                 ['name'=>'register_right','label'=>'登记权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'dividends_preference','label'=>'（优先）分红权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'dividends_preference_memo','label'=>'（优先）分红权备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
@@ -259,6 +321,7 @@ class Form_Project extends Form {
                 ['name'=>'valuation_adjustment_memo','label'=>'源码对赌/估值调整简述','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'others_valuation_adjustment','label'=>'其他投资人对赌/估值调整','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'others_valuation_adjustment_memo','label'=>'其他投资人对赌/估值调整简述','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'field-seperator-other','label'=>'源码其他权利','type'=>'seperator2'],
                 ['name'=>'most_favored','label'=>'源码是否有最惠国待遇','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
                 ['name'=>'rights_memo','label'=>'源码权利备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-other-terms','label'=>'交易文件其他重要条款','type'=>'seperator'],

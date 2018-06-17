@@ -116,7 +116,7 @@ class Form_Company extends Form {
                     $dataList = array_values($dataList);
                     $num = count($dataList);
                     if ($num && $dataList[$num - 1]->getData('post_money')) {
-                        return sprintf('%.2f%%', $dataList[0]->getData('post_money') / $dataList[$num - 1]->getData('post_money') * 100);
+                        return sprintf('%.2f%%', ($dataList[0]->getData('post_money') / $dataList[$num - 1]->getData('post_money') - 1) * 100);
                     }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -184,7 +184,7 @@ class Form_Company extends Form {
                 }],
                 ['name'=>'field-index-enterexit','label'=>'源码投退信息','type'=>'seperator'],
                 ['name'=>'_captable','label'=>'投退CapTable','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
-                    return '<a href="/admin/project/captable?company_id='.$model->getData('id').'">查看</a>';
+                    return '<a href="/admin/project/captable?company_id='.$model->getData('id').'" target="_blank">查看</a>';
                 }],
                 ['name'=>'_first_close_date','label'=>'首次投资交割日期','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
@@ -210,7 +210,7 @@ class Form_Company extends Form {
                     }
                     return $dataList ? '是' : '否';
                 }],
-                ['name'=>'_lastest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_latest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     $stockNum = 0;
                     foreach($project as $i => $dataItem) {
@@ -225,7 +225,7 @@ class Form_Company extends Form {
                     }
                     return number_format($stockNum);
                 }],
-                ['name'=>'_lastest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_latest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     $stockNum = 0;
                     foreach($project as $i => $dataItem) {
@@ -384,20 +384,31 @@ class Form_Company extends Form {
                     }
                 }],
                 ['name'=>'field-index-return','label'=>'源码投资回报','type'=>'seperator'],
-                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
+                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts){
                     $dataList = [];
-                    $amounts = [];
+                    $investExitAmounts = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') 
-                            && strpos($dataItem->getData('deal_type'), '企业融资（源码投）') !== false) {
-                            $amounts[$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
+                        if ($dataItem->getData('close_date')) {
+                            if (strpos($dataItem->getData('deal_type'), '源码退出') !== false) {
+                                $investExitAmounts['exit'][$dataItem->getData('exit_turn')][$dataItem->getData('exit_currency')] += $dataItem->getData('exit_amount');
+                            } elseif (strpos($dataItem->getData('deal_type'), '源码投') !== false) {
+                                $investExitAmounts['invest'][$dataItem->getData('turn_sub')][$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
+                            }
                         }
                     }
-                    foreach($amounts as $currency => $amount) {
-                        echo "$currency " . number_format($amount, 2) . '<br />';
+                    $amounts = [];
+                    foreach($investExitAmounts['invest'] as $turn => $turnAmount) {
+                        foreach($turnAmount as $currency => $amount) {
+                            $amounts[$currency] += $amount;
+                        }
                     }
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        $output .= "$currency " . number_format($amount, 2) . '<br />';
+                    }
+                    return $output;
                 }],
-                ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$holdValue) {
                     $dataList = [];
                     $stockNum = 0;
                     foreach($project as $i => $dataItem) {
@@ -413,31 +424,80 @@ class Form_Company extends Form {
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         if ($dataItem->getData('stocknum_all')&& $stockNum > 0) {
-                            return $dataItem->getData('value_currency') . ' ' . number_format($stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money'), 2);
+                            $currency = $dataItem->getData('value_currency');
+                            $holdValue[$currency] = $stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money');
+                            return "$currency " . number_format($holdValue[$currency], 2);
                         }
                     }
                 }],
-                ['name'=>'_hold_return_rate','label'=>'在管投资回报倍数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    return '算法待补充';
-                }],
-                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
-                    $dataList = [];
+                ['name'=>'_hold_return_rate','label'=>'在管投资回报倍数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$holdValue){
                     $amounts = [];
-                    foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') 
-                            && strpos($dataItem->getData('deal_type'), '源码退出') !== false) {
-                            $amounts[$dataItem->getData('exit_currency')] += $dataItem->getData('exit_amount');
+                    foreach($investExitAmounts['invest'] as $turn => $turnAmounts) {
+                        foreach($turnAmounts as $currency => $amount) {
+                            $amounts[$currency] += $amount;
                         }
                     }
-                    foreach($amounts as $currency => $amount) {
-                        echo "$currency " . number_format($amount, 2) . '<br />';
+                    foreach($investExitAmounts['exit'] as $turn => $turnAmounts) {
+                        foreach($turnAmounts as $currency => $amount) {
+                            $amounts[$currency] -= $amount;
+                        }
+                    }
+                    if (count($amounts) == count($holdValue)) {
+                        $output = '';
+                        foreach($holdValue as $currency => $amount) {
+                            $output .= "$currency ".sprintf('%.2f%%', ($amount/$amounts[$currency]-1)*100) . '<br />';
+                        }
+                        return $output;
                     }
                 }],
-                ['name'=>'_exit_amount_cost','label'=>'已退出金额对应成本','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts){
+                    $amounts = [];
+                    foreach($investExitAmounts['exit'] as $turn => $turnAmounts) {
+                        foreach($turnAmounts as $currency => $amount) {
+                            $amounts[$currency] += $amount;
+                        }
+                    }
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        $output .= "$currency " . number_format($amount, 2) . '<br />';
+                    }
+                    return $output;
                 }],
-                ['name'=>'_exit_return_rate','label'=>'已退出部分回报率','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'_exit_amount_cost','label'=>'已退出金额对应成本','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts){
+                    $amounts = $investExitAmounts;
+                    $costs = [];
+                    foreach($amounts['exit'] as $turn => $item) {
+                        foreach($item as $currency => $amount) {
+                            $costs[$currency] += $amounts['invest'][$turn][$currency];
+                        }
+                    }
+                    $_exit_amount_cost = $amounts;
+
+                    $output = '';
+                    foreach($costs as $currency => $cost) {
+                        $output .= "$currency " . number_format($cost, 2) . '<br />';
+                    }
+                    return $output;
+                }],
+                ['name'=>'_exit_return_rate','label'=>'已退出部分回报率','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$investExitAmounts){
+                    $amounts = $investExitAmounts;
+                    $costs = [
+                        'exit' => [],
+                        'invest' => []
+                    ];
+                    foreach($amounts['exit'] as $turn => $item) {
+                        foreach($item as $currency => $amount) {
+                            $costs['invest'][$currency] += $amounts['invest'][$turn][$currency];
+                            $costs['exit'][$currency] += $amount;
+                        }
+                    }
+                    $output = '';
+                    foreach($costs['exit'] as $currency => $amount) {
+                        if ($amount) {
+                            $output .= "$currency " . sprintf('%.2f%%', $amount/$costs['invest'][$currency] - 1) . '<br />';
+                        }
+                    }
+                    return $output;
                 }],
                 ['name'=>'field-index-staff','label'=>'当前项目组成员','type'=>'seperator'],
                 ['name'=>'partner','label'=>'主管合伙人','type'=>'text','default'=>null,'required'=>false,],
@@ -478,11 +538,13 @@ class Form_Company extends Form {
                 ['name'=>'field-index-memo','label'=>'备注及未决事项','type'=>'seperator'],
                 ['name'=>'_pending_detail','label'=>'未决事项说明','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
+                    $output = '';
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('pending') == '有') {
-                            echo $dataItem->getData('pending_detail') . '<br />';
+                            $output .= $dataItem->getData('pending_detail') . '<br />';
                         }
                     }
+                    return $output;
                 }],
                 ['name'=>'memo','label'=>'备注','type'=>'textarea','required'=>false],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','default'=>time(),'required'=>false,'auto_update'=>true,'readonly'=>true,'field'=>function($model){

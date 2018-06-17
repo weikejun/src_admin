@@ -10,10 +10,10 @@ class ProjectController extends Page_Admin_Base {
     }
 
     private function _initListDisplay() {
-        $companyCache = new Model_Company;
         $this->list_display = [];
         foreach(Form_Project::getFieldsMap() as $field) {
-            if ($field['type'] != 'seperator') {
+            if ($field['type'] != 'seperator'
+                && $field['type'] != 'seperator2') {
                 $this->list_display[] = [
                     'label' => $field['label'],
                     'field' => (isset($field['field']) ? $field['field'] : $field['name']),
@@ -101,24 +101,45 @@ class ProjectController extends Page_Admin_Base {
 
         $this->model->addWhere('status', 'valid');
         WinRequest::mergeModel(array(
-            'tableWrap' => '2048px',
+            'tableWrap' => '6000px',
         ));
 
         $briefFields = [
-            '交易ID' => [],
-            '目标企业' => [],
-            '项目简称' => [],
-            '整理状态' => [],
-            '项目新老类型' => [],
-            '源码投资主体' => [],
-            '决策日期' => [],
-            '交易状态' => [],
-            '签约日期' => [],
-            '交割日期' => [],
-            '本轮交易类型' => [],
-            '企业所处轮次' => [],
-            '企业轮次归类' => [],
+            Form_Project::getFieldViewName('id') => [],
+            Form_Project::getFieldViewName('_company_short') => [],
+            Form_Project::getFieldViewName('_company_id') => [],
+            Form_Project::getFieldViewName('kickoff_date') => [],
+            Form_Project::getFieldViewName('close_date') => [],
+            Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('turn_sub') => [],
+            Form_Project::getFieldViewName('financing_amount') => [],
+            Form_Project::getFieldViewName('post_money') => [],
+            Form_Project::getFieldViewName('stocknum_all') => [],
+            Form_Project::getFieldViewName('_stock_price') => [],
+            Form_Project::getFieldViewName('entity_id') => [],
+            Form_Project::getFieldViewName('enter_exit_type') => [],
+            Form_Project::getFieldViewName('our_amount') => [],
+            Form_Project::getFieldViewName('pay_amount') => [],
+            Form_Project::getFieldViewName('_invest_stock_price') => [],
+            Form_Project::getFieldViewName('invest_turn') => [],
+            Form_Project::getFieldViewName('stocknum_get') => [],
+            Form_Project::getFieldViewName('_stock_ratio') => [],
+            Form_Project::getFieldViewName('stock_property') => [],
+            Form_Project::getFieldViewName('_stocknum_new') => [],
+            Form_Project::getFieldViewName('_shareholding_ratio') => [],
+            Form_Project::getFieldViewName('other_investor_summary') => [],
+            Form_Project::getFieldViewName('loan_cb') => [],
+            Form_Project::getFieldViewName('exit_type') => [],
+            Form_Project::getFieldViewName('exit_turn') => [],
+            Form_Project::getFieldViewName('_exit_stock_ratio') => [],
+            Form_Project::getFieldViewName('exit_amount') => [],
+            Form_Project::getFieldViewName('exit_receive_amount') => [],
+            Form_Project::getFieldViewName('_exit_return_rate') => [],
+            Form_Project::getFieldViewName('risk_tip') => [],
+            Form_Project::getFieldViewName('pending_detail') => [],
+            Form_Project::getFieldViewName('work_memo') => [],
         ];
+
         $list_display = $this->list_display;
         $this->list_display = [];
         for($i = 0; $i < count($list_display); $i++) {
@@ -233,12 +254,6 @@ class ProjectController extends Page_Admin_Base {
         $this->assign('captableDataList', $captableList);
 
         $this->deal_display = [
-            ['label' => '交割日期', 'field' => function($model) {
-                return date('Ymd', $model->getData('close_date'));
-            }],
-            ['label' => '交易类型', 'field' => function($model) {
-                return $model->getData('deal_type');
-            }],
             ['label' => '交易主体', 'field' => function($model) {
                 if ($model->getData('deal_type') == '源码退出') {
                     $entityId = $model->getData('exit_entity_id');
@@ -253,7 +268,10 @@ class ProjectController extends Page_Admin_Base {
             ['label' => '股份类型', 'field' => function($model) {
                 return $model->getData('new_old_stock');
             }],
-            ['label' => '交易所属轮次', 'field' => function($model) {
+            ['label' => '交割日期', 'field' => function($model) {
+                return date('Ymd', $model->getData('close_date'));
+            }],
+            ['label' => '轮次', 'field' => function($model) {
                 if ($model->getData('deal_type') == '源码退出') {
                     $field = 'exit_turn'; 
                 } else {
@@ -261,42 +279,65 @@ class ProjectController extends Page_Admin_Base {
                 }
                 return $model->getData($field);
             }],
-            ['label' => '交易股数', 'field' => function($model) {
-                if ($model->getData('deal_type') == '源码退出') {
-                    $field = 'exit_stock_number'; 
-                } else {
-                    $field = 'stocknum_get';
-                }
-                return number_format($model->getData($field));
-            }],
-            ['label' => '交易金额', 'field' => function($model) {
-                if ($model->getData('deal_type') == '源码退出') {
-                    $currency = $model->getData('exit_currency');
-                    $amount = $model->getData('exit_amount');
-                } else {
-                    $currency = $model->getData('invest_currency');
-                    $amount = $model->getData('our_amount');
-                }
+            ['label' => '投资金额', 'field' => function($model) {
+                $currency = $model->getData('invest_currency');
+                $amount = $model->getData('our_amount');
                 $amount = $amount ? $amount : 0;
                 return $currency . ' ' . number_format($amount, 2);
             }],
-            ['label' => '交易价格', 'field' => function($model) {
-                if ($model->getData('deal_type') == '源码退出') {
-                    $currency = $model->getData('exit_currency');
-                    $amount = $model->getData('exit_amount');
-                    $stockNum = $model->getData('exit_stock_number');
-                } else {
-                    $currency = $model->getData('invest_currency');
-                    $amount = $model->getData('our_amount');
-                    $stockNum = $model->getData('stocknum_get');
-                }
+            ['label' => '股数', 'field' => function($model) {
+                return number_format($model->getData('stocknum_get'));
+            }],
+            ['label' => '股价', 'field' => function($model) {
+                $currency = $model->getData('invest_currency');
+                $amount = $model->getData('our_amount');
+                $stockNum = $model->getData('stocknum_get');
                 $amount = $amount ? $amount : 0;
                 if ($stockNum) {
                     return "$currency " . number_format($amount/$stockNum, 2); 
                 }
             }],
-            ['label' => '交易企业估值', 'field' => function($model) {
+            ['label' => 'Post估值', 'field' => function($model) {
                 return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
+            }],
+            ['label' => '退出金额', 'field' => function($model)use(&$exitDataList) {
+                $turn = $model->getData('turn_sub');
+                $amounts = [];
+                foreach($exitDataList as $i => $turnData) {
+                    if ($turnData->getData('exit_turn') == $turn) {
+                        $amounts[$turnData->getData('exit_currency')] += $turnData->getData('exit_amount');
+                    }
+                }
+                $output = '';
+                foreach($amounts as $currency => $amount) {
+                    $output .= "$currency " . number_format($amount, 2) . '<br />';
+                }
+                return $output;
+            }],
+            ['label' => '退出股数', 'field' => function($model)use(&$exitDataList) {
+                $turn = $model->getData('turn_sub');
+                $amount = [];
+                foreach($exitDataList as $i => $turnData) {
+                    if ($turnData->getData('exit_turn') == $turn) {
+                        $amount += $turnData->getData('exit_stock_number');
+                    }
+                }
+                return number_format($amount);
+            }],
+            ['label' => '投时股比', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
+                if ($model->getData('stocknum_all')) {
+                    return sprintf('%.2f%%',$model->getData('stocknum_get')/$model->getData('stocknum_all')*100);
+                }
+            }],
+            ['label' => '最新股比', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
+                $turn = $model->getData('turn_sub');
+                $exitStockNum = 0;
+                foreach($exitDataList as $i => $turnData) {
+                    if ($turnData->getData('exit_turn') == $turn) {
+                        $exitStockNum += $turnData->getData('exit_stock_number');
+                    }
+                }
+                return sprintf('%.2f%%',($model->getData('stocknum_get') - $exitStockNum)/$latestDeal->getData('stocknum_all')*100);
             }],
         ];
 
@@ -418,6 +459,20 @@ class ProjectController extends Page_Admin_Base {
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
             }],
+            ['label' => '投资股数', 'field' => function($model)use($dataList, &$investStocks){
+                if (!$model->getData('id')) {
+                    return number_format($investStocks);
+                }
+                $stockNum = 0;
+                foreach($dataList as $i => $dataItem) {
+                    if ($dataItem->getData('entity_id') == $model->getData('id') 
+                        && $dataItem->getData('close_date')) {
+                        $stockNum += $dataItem->getData('stocknum_get');
+                    }
+                }
+                $investStocks += $stockNum;
+                return number_format($stockNum);
+            }],
             ['label' => '退出金额', 'field' => function($model)use($dataList, &$exitValues){
                 if (!$model->getData('id')) {
                     if (!$exitValues) {
@@ -443,20 +498,6 @@ class ProjectController extends Page_Admin_Base {
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
             }],
-            ['label' => '投资股数', 'field' => function($model)use($dataList, &$investStocks){
-                if (!$model->getData('id')) {
-                    return number_format($investStocks);
-                }
-                $stockNum = 0;
-                foreach($dataList as $i => $dataItem) {
-                    if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum += $dataItem->getData('stocknum_get');
-                    }
-                }
-                $investStocks += $stockNum;
-                return number_format($stockNum);
-            }],
             ['label' => '退出股数', 'field' => function($model)use($dataList, &$exitStocks){
                 if (!$model->getData('id')) {
                     return number_format($exitStocks);
@@ -476,10 +517,18 @@ class ProjectController extends Page_Admin_Base {
         $this->assign('pageAdmin',$this);
 
         $dealDataList = [];
+        $exitDataList = [];
         foreach($dataList as $i => $dataItem) {
-            if ($dataItem->getData('close_date') > 0)
-                $dealDataList[] = $dataItem;
+            if ($dataItem->getData('close_date') > 0) {
+                if (strpos($dataItem->getData('deal_type'),'源码投') !== false) {
+                    $dealDataList[] = $dataItem;
+                } 
+                if (strpos($dataItem->getData('deal_type'),'源码退出') !== false) {
+                    $exitDataList[] = $dataItem;
+                }
+            }
         }
+        $latestDeal = $dataList[0];
         $this->assign("dealDataList",$dealDataList);
         $project->setAutoClear(true);
         $this->assign("allDealCount",count($dealDataList));
@@ -518,27 +567,24 @@ class ProjectController extends Page_Admin_Base {
         $this->assign('captableDataList', $captableList);
         
         $this->deal_display = [
-            ['label' => '交割日期', 'field' => function($model) {
-                return date('Ymd', $model->getData('close_date'));
-            }],
-            ['label' => '交易类型', 'field' => function($model) {
-                return $model->getData('deal_type');
-            }],
             ['label' => '目标公司', 'field' => function($model) {
                 $company = new Model_Company;
                 $company->addWhere('id', $model->getData('company_id'));
                 $company->select();
                 return $company->getData('name');
             }],
+            ['label' => '交割日期', 'field' => function($model) {
+                return date('Ymd', $model->getData('close_date'));
+            }],
             ['label' => '股份类型', 'field' => function($model) {
                 return $model->getData('new_old_stock');
             }],
-            ['label' => '交易所属轮次', 'field' => function($model) {
+            ['label' => '轮次', 'field' => function($model) {
                 $field = $model->getData('deal_type') == '源码退出' 
                     ? 'exit_turn' : 'turn_sub';
                 return $model->getData($field);
             }],
-            ['label' => '交易股数', 'field' => function($model) {
+            ['label' => '股数', 'field' => function($model) {
                 $field = $model->getData('deal_type') == '源码退出' 
                     ? 'exit_stock_number' : 'stocknum_get'; 
                 if ($model->getData($field)) {
@@ -546,7 +592,7 @@ class ProjectController extends Page_Admin_Base {
                 }
                 return 0;
             }],
-            ['label' => '交易金额', 'field' => function($model) {
+            ['label' => '金额', 'field' => function($model) {
                 if ($model->getData('deal_type') == '源码退出') {
                     $currency = $model->getData('exit_currency');
                     $amount = $model->getData('exit_amount');
@@ -557,7 +603,7 @@ class ProjectController extends Page_Admin_Base {
                 $amount = $amount ? $amount : 0;
                 return $currency . ' ' . number_format($amount, 2);
             }],
-            ['label' => '交易价格', 'field' => function($model) {
+            ['label' => '股价', 'field' => function($model) {
                 if ($model->getData('deal_type') == '源码退出') {
                     $currency = $model->getData('exit_currency');
                     $amount = $model->getData('exit_amount');
@@ -571,7 +617,7 @@ class ProjectController extends Page_Admin_Base {
                     return "$currency " . number_format($amount/$stockNum, 2); 
                 }
             }],
-            ['label' => '交易企业估值', 'field' => function($model) {
+            ['label' => 'Post估值', 'field' => function($model) {
                 if ($model->getData('post_money')) {
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
                 }
@@ -787,7 +833,7 @@ class ProjectController extends Page_Admin_Base {
             if ($dataItem->getData('close_date') > 0)
                 $dealDataList[] = $dataItem;
         }
-        $this->assign("dealDataList",$dealDataList);
+        $this->assign("dealDataList",[]);
         $project->setAutoClear(true);
 
         return ['admin/project/captable.html', $this->_assigned];
