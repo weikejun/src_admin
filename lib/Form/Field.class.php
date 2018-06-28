@@ -1,6 +1,7 @@
 <?php
 
 abstract class Form_Field{
+    use Form_FieldTraits;
     protected $value;
     protected $name;
     protected $required;

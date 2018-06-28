@@ -17,7 +17,7 @@ class Form_RawTextField extends Form_Field{
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
-            "<div class='controls'><div style='color:gray;display:inline-block;padding-top:7px;'><i>$value</i></div>";
+            "<div class='controls'><div class='raw-text'><i>$value</i></div>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         } else {
@@ -26,5 +26,18 @@ class Form_RawTextField extends Form_Field{
         $html.='</div>';
         $html.='</div>';
         return $html;
+    }
+
+    public function head_css() {
+        $css = <<<EOF
+<style>
+.control-group .raw-text {display:inline-block;padding-top:7px;};
+</style>
+EOF;
+        return $css;
+    }
+
+    public function to_text() {
+        return $this->to_html(false);
     }
 }

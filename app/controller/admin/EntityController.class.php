@@ -37,10 +37,15 @@ class EntityController extends Page_Admin_Base {
             'delete' => false,
         ];
 
-        /*$this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'主体名称','paramName'=>'name','fusion'=>true]),
-        );*/
-        $this->search_fields = ['name','description','tp'];
+        $this->list_filter=array(
+            new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('name'),'paramName'=>'name','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('register_country'),'paramName'=>'register_country','fusion'=>true]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices()]),
+
+        );
+        //$this->search_fields = ['name','description','tp'];
     }
 
     protected function _initSelect() {
@@ -54,6 +59,7 @@ class EntityController extends Page_Admin_Base {
             }
         }
         $this->list_display = $list_display;
+        $this->list_filter = [];
         $this->search_fields = ['name'];
     }
 
@@ -69,8 +75,11 @@ class EntityController extends Page_Admin_Base {
         $search=trim($this->_GET('search'));
         $this->assign("search",$search);
         foreach($this->search_fields as $field){
-            $model->addWhereRaw("($field = '$search' or (`tp` = '主基金相关' and $field like '%$search%'))");
-            //$model->addWhere($field,"%$search%",'like','or');
+            //$model->addWhereRaw("($field = '$search' or (`tp` = '主基金相关' and $field like '%$search%'))");
+            $model->addWhere($field, $search, '=');
+            $model->addWhere('tp', '主基金相关', '=', 'or (');
+            $model->addWhere($field, "%$search%", 'like', 'and');
+            $model->addWhere($field, $search, '=', ') or');
         }
         $this->_index();
         $this->display("admin/base/select.html");

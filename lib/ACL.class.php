@@ -8,7 +8,7 @@ class ACL{
         "Entity",
         "EntityRel",
         "Payment",
-        "ProjectMemo",
+        "CompanyMemo",
         "DataStat",
         "Admin",
         "Permission",

@@ -43,6 +43,22 @@ CREATE TABLE `company` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `companyMemo`
+--
+
+DROP TABLE IF EXISTS `companyMemo`; /*企业备注*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `companyMemo` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `company_id` int(11) DEFAULT NULL COMMENT '企业ID',
+    `content` text DEFAULT NULL COMMENT '内容', 
+    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+--
 -- Table structure for table `entity`
 --
 
@@ -146,6 +162,7 @@ CREATE TABLE `project` (
     `stock_property` varchar(32) DEFAULT NULL COMMENT '本主体购买股权属性', 
     `pay_amount` varchar(512) DEFAULT NULL COMMENT '源码实际支付投资金额', 
     `amount_memo` varchar(512) DEFAULT NULL COMMENT '金额备注', 
+    `committee_view` text DEFAULT NULL COMMENT '投决意见', 
     `loan_cb` varchar(32) DEFAULT NULL COMMENT '源码借款或CB', 
     `loan_currency` varchar(32) DEFAULT NULL COMMENT '借款计价货币', 
     `loan_type` varchar(32) DEFAULT NULL COMMENT '借款类型', 
@@ -237,6 +254,9 @@ CREATE TABLE `project` (
     `latest_right_changes` varchar(512) DEFAULT NULL COMMENT '本轮与上轮投资权利变化', 
     `spouse_consent` varchar(32) DEFAULT NULL COMMENT '配偶同意函', 
     `risk_tip` text DEFAULT NULL COMMENT '重大风险提示', 
+    `ts_changes` varchar(8) DEFAULT NULL COMMENT '与TS比重大变化', 
+    `ts_changes_memo` text DEFAULT NULL COMMENT '与TS比重大变化备注', 
+    `risk_management_view` text DEFAULT NULL COMMENT '风控保留意见', 
     `good_item` varchar(512) DEFAULT NULL COMMENT '好条款摘选', 
     `terms_memo` varchar(512) DEFAULT NULL COMMENT '条款其他备注', 
     `entity_odi` varchar(32) DEFAULT NULL COMMENT '源码主体ODI', 
@@ -260,6 +280,10 @@ CREATE TABLE `project` (
     `pending_detail` varchar(512) DEFAULT NULL COMMENT '未决事项说明', 
     `work_memo` varchar(512) DEFAULT NULL COMMENT '工作备忘', 
     `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    `finance_check_sign` varchar(8) DEFAULT NULL COMMENT '财务审核签名',
+    `finance_check_time` varchar(11) DEFAULT NULL COMMENT '财务审核时间', 
+    `legal_check_sign` varchar(8) DEFAULT NULL COMMENT '法务审核签名',
+    `legal_check_time` varchar(11) DEFAULT NULL COMMENT '法务审核时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;

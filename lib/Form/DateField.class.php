@@ -5,6 +5,10 @@ class Form_DateField extends Form_Field{
         parent::__construct($config);
     }
 
+    public function format_value() {
+        return $this->value() ? date('Ymd', $this->value()) : '';
+    }
+
     public function to_html($is_new){
         $class=$this->config['class'];
         $value=$this->value?htmlspecialchars($this->value):$this->config['default'];
@@ -41,7 +45,7 @@ EOF;
             var dt_picker=$(elem);
             var input=dt_picker.clone().attr({"type":"text","name":''}).insertAfter(dt_picker);
             input[controlType]({
-                format:'yyyy-mm-dd',
+                format:'yyyymmdd',
                 autoclose: true,
                 rtl : App.isRTL()
             });

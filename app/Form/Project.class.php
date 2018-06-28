@@ -5,6 +5,10 @@ class Form_Seperator2Field extends Form_Field{
         parent::__construct($config);
     }
 
+    public function to_text() {
+        return $this->to_html(false);
+    }
+
     public function to_html($is_new){
         $html = "<div class='control-seperator2'><div><i>".str_pad("", 500, "*")."</i><div class='seperator2-label'><i>".htmlspecialchars($this->label)."</i></div></div></div>";
         return $html;
@@ -14,8 +18,11 @@ class Form_Seperator2Field extends Form_Field{
         $css=<<<EOF
 <style>
 .control-seperator2 {width:100%;overflow:hidden;color:#ccc;padding-top:5px;}
-.seperator2-label {color:gray;font:14px bold;position:relative;bottom:20px;text-align:center;}
-.seperator2-label i {background-color:#fff;padding:0 8px;}
+.seperator2-label {color:grey;font:14px bold;position:relative;bottom:20px;text-align:center;}
+.seperator2-label i {background-color:#fff !important;padding:0 8px;}
+@media print {
+    .seperator2-label i {background-color:#fff !important;padding:0 8px;-webkit-print-color-adjust: exact;}
+}
 </style>
 EOF;
         return $css;
@@ -110,16 +117,16 @@ class Form_Project extends Form {
                 ['name'=>'our_amount','label'=>'源码合同投资金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
                 }],
-                ['name'=>'stocknum_get','label'=>'本主体投时持有本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
-                ['name'=>'_stock_ratio','label'=>'本主体投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
+                ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'invest_turn','label'=>'本主体购买股权所属轮次','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'stock_property','label'=>'本主体购买股权属性','type'=>'choice','choices'=>Model_Project::getStockPropertyChoices(),'required'=>false,],
+                ['name'=>'invest_turn','label'=>'本主体购股轮次','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'stock_property','label'=>'股权属性','type'=>'choice','choices'=>Model_Project::getStockPropertyChoices(),'required'=>false,],
                 ['name'=>'_invest_stock_price','label'=>'投资时每股单价','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_get')) {
                         return $model->getData('invest_currency') . ' ' . sprintf('%.2f', $model->getData('our_amount') / $model->getData('stocknum_get'));
@@ -131,6 +138,7 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'amount_memo','label'=>'金额备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'committee_view','label'=>'投决意见','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-loan','label'=>'源码借款或源码CB','type'=>'seperator'],
                 ['name'=>'loan_cb','label'=>'源码借款或CB','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'loan_currency','label'=>'借款计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
@@ -155,12 +163,14 @@ class Form_Project extends Form {
                     $entity = Page_Admin_Base::getResource($model->getData('exit_entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
+                /*
                 ['name'=>'exit_company_value','label'=>'源码退出时企业估值','type'=>'number','required'=>false,'field'=>function($model){
                     return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_company_value'), 2);
                 }],
+                 */
                 ['name'=>'_exit_company_stock_price','label'=>'源码退出时企业每股单价','type'=>'rawText','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all'));
-                    return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_company_value')/$model->getData('stocknum_all'), 2);
+                    return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
                 }],
                 ['name'=>'exit_stock_number','label'=>'源码退出的股数','type'=>'number','required'=>false,'field'=>function($model){
                     return number_format($model->getData('exit_stock_number'));
@@ -178,7 +188,7 @@ class Form_Project extends Form {
                         return sprintf('%.2f%%', $model->getData('exit_stock_number') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'exit_turn','label'=>'源码出售股权所属轮次','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'exit_turn','label'=>'源码售股轮次','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'exit_stock_property','label'=>'源码股权出售的属性','type'=>'choice','choices'=>Model_Project::getStockPropertyChoices(),'required'=>false,],
                 ['name'=>'exit_receive_amount','label'=>'源码本次退出实收金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_receive_amount'), 2);
@@ -190,15 +200,6 @@ class Form_Project extends Form {
                 ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
                 ['name'=>'stocknum_all','label'=>'本轮企业总股数','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
                     return number_format($model->getData('stocknum_all'));
-                }],
-                ['name'=>'field-seperator-shareholding-our','label'=>'源码本轮','type'=>'seperator2'],
-                ['name'=>'_stocknum_new','label'=>'源码本主体最新持有本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model)use(&$deals){
-                    return number_format($model->getData('stocknum_get') - $model->getData('exit_stock_number'));
-                }],
-                ['name'=>'_shareholding_ratio','label'=>'源码本主体最新持有本轮股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体最新持有本轮股数“除以”本轮企业总股数“','field'=>function($model)use(&$deals){
-                    if ($model->getData('stocknum_all')) {
-                        return sprintf('%.2f%%', ($model->getData('stocknum_get') - $model->getData('exit_stock_number'))/$model->getData('stocknum_all'));
-                    }
                 }],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
                 ['name'=>'shareholding_founder','label'=>'最主要创始人股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
@@ -218,38 +219,101 @@ class Form_Project extends Form {
                         return sprintf('%.2f%%', $model->getData('shareholding_esop') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体统计','type'=>'seperator2'],
-                ['name'=>'_shareholding_sum','label'=>'源码各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals){
+                ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体本轮统计','type'=>'seperator2'],
+                ['name'=>'_shareholding_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
-                    $deal->addWhere('entity_id', $model->getData('entity_id'));
                     $deal->addWhere('close_date', '0', '>');
                     $deal->orderBy('close_date', 'DESC');
                     $deals = $deal->find();
                     $stockNum = 0;
+                    if (!$model->getData('close_date')) {
+                        return '未交割';
+                    }
                     foreach($deals as $i => $deal) {
-                        if ($deal->getData('deal_type') == '源码退出'
-                            && $deal->getData('turn_sub') == $model->getData('turn_sub')) {
+                        if ($deal->getData('close_date') > $model->getData('close_date')) {
+                            continue;
+                        }
+                        if ($deal->getData('deal_type') == '源码退出') {
                             $stockNum -= $deal->getData('exit_stock_number');
-                        } else {
+                        } elseif (strpos($deal->getData('deal_type'), '源码投') !== false) {
                             $stockNum += $deal->getData('stocknum_get');
                         }
                     }
+                    $shareholdingSum = $stockNum;
                     return number_format($stockNum);
                 }],
-                ['name'=>'_shareholding_ratio_sum','label'=>'源码各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals){
+                ['name'=>'_shareholding_ratio_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
+                    $dataList = [];
+                    if (!$model->getData('close_date')) {
+                        return '未交割';
+                    }
+                    foreach($deals as $i => $dataItem) {
+                        if ($dataItem->getData('close_date') > $model->getData('close_date')) {
+                            continue;
+                        }
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    krsort($dataList);
+                    foreach($dataList as $i => $deal) {
+                        return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
+                    }
+                }],
+                ['name'=>'field-index-shareholding-latest','label'=>'源码最新持股情况','type'=>'seperator'],
+                ['name'=>'field-seperator-shareholding-our','label'=>'源码所持本轮次股权最新','type'=>'seperator2'],
+                ['name'=>'_stocknum_new','label'=>'本主体最新持本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model)use(&$deals,&$stockNumNew){
                     $stockNum = 0;
                     foreach($deals as $i => $deal) {
-                        if ($deal->getData('deal_type') == '源码退出'
-                            && $deal->getData('turn_sub') == $model->getData('turn_sub')) {
+                        if ($model->getData('entity_id') && $deal->getData('entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('invest_turn')) {
+                            $stockNum += $deal->getData('stocknum_get');
+                        }
+                        if ($model->getData('entity_id') && $deal->getData('exit_entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
+                            $stockNum -= $deal->getData('stocknum_get');
+                        }
+                    }
+                    $stockNumNew = $stockNum;
+                    return number_format($stockNum);
+                }],
+                ['name'=>'_shareholding_ratio','label'=>'本主体最新持本轮股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体最新持有本轮股数“除以”最新企业总股数“','field'=>function($model)use(&$deals,&$stockNumNew){
+                    $dataList = [];
+                    foreach($deals as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    krsort($dataList);
+                    foreach($dataList as $i => $deal) {
+                        if ($deal->getData('stocknum_all')) {
+                            return sprintf('%.2f%%', $stockNumNew / $deal->getData('stocknum_all') * 100);
+                        }
+                    }
+                }],
+                ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体最新情况统计','type'=>'seperator2'],
+                ['name'=>'_shareholding_sum','label'=>'源码各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
+                    $stockNum = 0;
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('deal_type') == '源码退出') {
                             $stockNum -= $deal->getData('exit_stock_number');
-                        } else {
+                        } elseif (strpos($deal->getData('deal_type'), '源码投') !== false) {
                             $stockNum += $deal->getData('stocknum_get');
                         }
                     }
-                    foreach($deals as $i => $deal) {
-                        return sprintf('%.2f%%', $stockNum / $deal->getData('stocknum_all') * 100);
+                    $shareholdingSum = $stockNum;
+                    return number_format($stockNum);
+                }],
+                ['name'=>'_shareholding_ratio_sum','label'=>'源码各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
+                    $dataList = [];
+                    foreach($deals as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    krsort($dataList);
+                    foreach($dataList as $i => $deal) {
+                        return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
                     }
                 }],
                 ['name'=>'field-index-term-investorlimit','label'=>'核心条款：对本轮投资人限制','type'=>'seperator'],
@@ -331,6 +395,9 @@ class Form_Project extends Form {
                 ['name'=>'latest_right_changes','label'=>'本轮与上轮投资权利变化','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,],
                 ['name'=>'spouse_consent','label'=>'配偶同意函','type'=>'choice','choices'=>Model_Project::getStandard4OptionChoices(),'required'=>false],
                 ['name'=>'risk_tip','label'=>'重大风险提示','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'ts_changes','label'=>'与TS比重大变化','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
+                ['name'=>'ts_changes_memo','label'=>'与TS比重大变化备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'risk_management_view','label'=>'风控保留意见','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'terms_memo','label'=>'条款其他备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'good_item','label'=>'好条款摘选','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-entity-detail','label'=>'源码投退主体详情','type'=>'seperator'],
@@ -354,19 +421,19 @@ class Form_Project extends Form {
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
                 ['name'=>'_current_partner','label'=>'最新主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company->getData('partner');
+                    return $company ? $company->getData('partner') : '';
                 }],
                 ['name'=>'_current_manager','label'=>'最新项目负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company->getData('manager');
+                    return $company ? $company->getData('manager') : '';
                 }],
                 ['name'=>'_current_finance_person','label'=>'最新财务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company->getData('finance_person');
+                    return $company ? $company->getData('finance_person') : '';
                 }],
                 ['name'=>'_current_legal_person','label'=>'最新法务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
                     $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company->getData('legal_person');
+                    return $company ? $company->getData('legal_person') : '';
                 }],
                 ['name'=>'partner','label'=>'本轮主管合伙人','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'manager','label'=>'本轮项目负责人','type'=>'text','default'=>null,'required'=>false,],
@@ -387,6 +454,17 @@ class Form_Project extends Form {
                 ['name'=>'work_memo','label'=>'工作备忘','type'=>'textarea','required'=>false],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
+                }],
+                ['name'=>'field-index-recheck','label'=>'记录校对情况','type'=>'seperator'],
+                ['name'=>'finance_check_sign','label'=>'财务签名','type'=>'text','required'=>false],
+                ['name'=>'finance_check_time','label'=>'财务校对时间','type'=>'datetime','default'=>null,'field'=>function($model){
+                    if ($model->getData('finance_check_time'))
+                        return date('Ymd H:i:s', $model->getData('finance_check_time'));
+                }],
+                ['name'=>'legal_check_sign','label'=>'法务签名','type'=>'text','required'=>false],
+                ['name'=>'legal_check_time','label'=>'法务校对时间','type'=>'datetime','default'=>null,'field'=>function($model){
+                    if ($model->getData('legal_check_time'))
+                        return date('Ymd H:i:s', $model->getData('legal_check_time'));
                 }],
             ];
         }

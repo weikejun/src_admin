@@ -45,8 +45,11 @@ class Page_Admin_TextFilter extends Page_Admin_IFilter{
                     " value={$params[$paramName]}>";
                  */
             $paramVal = (isset($params[$paramName]) ? $params[$paramName] : '');
-            $html.='<ul style="margin:0;'.($this->hidden?'display:none;':'').'" class="nav nav-pills filter">'.
-                '<li class="span1">'.htmlspecialchars($Names[$i]).'</li>'.
+            if ($paramVal !== '') {
+                $this->class .= ' keep-all';
+            }
+            $html.='<ul style="margin:0;'.($this->hidden?'display:none;':'').'" class="'.$this->class.' nav nav-pills filter">'.
+                '<li class="filter-text">'.htmlspecialchars($Names[$i]).'</li>'.
                 '<li><label class="radio-inline"><input value="'.htmlspecialchars($paramVal).'" type="text" name="'.$paramName.'"></label></li>'."\n";
             $html.='</ul>';
         }

@@ -41,7 +41,7 @@
                 </li>
                 {%/if%}
                 {%if $c=='Company'%}
-                <li class="start {%if $executeInfo.controllerName=='Company'%} active {%/if%}">
+                <li class="start {%if strpos($executeInfo.controllerName, 'Company') === 0%} active {%/if%}">
                     <a href="/admin/company">
                         <i class="icon-home"></i>
                         <span class="title">目标企业</span>

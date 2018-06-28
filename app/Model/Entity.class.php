@@ -9,4 +9,11 @@ class Model_Entity extends Base_Entity{
             ['其他','其他'],
         ];
     }
+
+    public static function getCoInvestmentChoices() {
+        return [
+            ['是','是'],
+            ['否','否'],
+        ];
+    }
 }

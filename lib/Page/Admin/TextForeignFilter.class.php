@@ -32,8 +32,12 @@ class Page_Admin_TextForeignFilter extends Page_Admin_IFilter{
                     $html.="<input type='hidden' name='".$paramName."' ".
                     " value={$params[$paramName]}>";
                  */
-            $html.='<ul style="margin:0;" class="nav nav-pills filter">'.
-                '<li class="span1">'.htmlspecialchars($Names[$i]).'</li>'.
+            $paramVal = (isset($params[$paramName]) ? $params[$paramName] : '');
+            if ($paramVal !== '') {
+                $this->class .= ' keep-all';
+            }
+            $html.='<ul style="margin:0;" class="'.$this->class.' nav nav-pills filter">'.
+                '<li class="filter-text">'.htmlspecialchars($Names[$i]).'</li>'.
                 '<li><label class="radio-inline"><input value="'.htmlspecialchars($params[$paramName]).'" type="text" name="'.$paramName.'"></label></li>'."\n";
             $html.='</ul>';
         }

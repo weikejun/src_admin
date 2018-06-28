@@ -14,7 +14,12 @@
         .portlet-body .form-horizontal{margin-top: 20px;}
         .help-inline {font-size: 10px; color: red;}
         .help-inline .tips {color: gray;}
+        .breadcrumb a.not-selected {color:gray;}
+        .breadcrumb a.not-selected:hover {color:black;}
         #save-tip {color: gray;}
+        @media print {
+            #btn_submit {display:none;}
+        }
     </style>
 {%/block%}
 {%block name="content"%}
@@ -36,7 +41,7 @@
                 <span class="icon-angle-right"></span>
                 </li>
                         
-		<li><a href="javascript:;">{%if $__is_new%}新增{%else%}编辑{%/if%}</a></li>
+                <li>{%if $__is_new%}<a href="javascript:;">新增</a>{%else%}<a href="javascript:void 0;">编辑</a>{%if $executeInfo.controllerName == 'Project'%}&nbsp;<a class="not-selected" href="{%$__controller->getUrlPrefix()%}/{%$executeInfo.controllerName|escape%}/check?id={%$smarty.get.id%}">预览</a>{%/if%}{%/if%}</li>
             </ul>
         </div>
     </div>

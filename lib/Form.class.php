@@ -98,10 +98,14 @@ class Form{
             return $this->values[$name];
         }
     }
-    public function to_html($is_new){
+    public function to_html($is_new, $output){
         $html='';
         foreach($this->fields as $field){
-            $html.=$field->to_html($is_new);
+            if ($output == 'text') {
+                $html.=$field->to_text();
+            } else {
+                $html.=$field->to_html($is_new);
+            }
         }
         return $html;
     }

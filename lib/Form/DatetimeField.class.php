@@ -8,10 +8,10 @@ class Form_DatetimeField extends Form_Field{
     public function to_html($is_new){
         $class=$this->config['class'];
         $html="<div class='control-group'>";
-        $value=$this->value?htmlspecialchars($this->value):time();
+        $value=$this->value?htmlspecialchars($this->value):$this->config['default'];
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".(isset($this->config['readonly']) && $this->config['readonly']
-            ? '<input size="16" type="text" value="'.date('Y-m-d H:i:s', $value).'" readonly><input size="16" name='.$this->name.'  type="hidden" value="'.$value.'">'
+            ? '<input size="16" type="text" value="'.($value?date('Ymd H:i:s',$value):$value).'" readonly><input size="16" name='.$this->name.'  type="hidden" value="'.$value.'">'
             : '<input size="16" name='.$this->name.' type="hidden" value="'.$value.'" class="m-wrap m-ctrl-medium datetimepicker">'); 
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
@@ -43,11 +43,13 @@ EOF;
             var dt_picker=$(elem);
             var input=dt_picker.clone().attr({"type":"text","name":''}).insertAfter(dt_picker);
             input[controlType]({
-                format:'yyyy-mm-dd hh:ii:ss',
+                format:'yyyymmdd hh:ii:ss',
                 autoclose: true,
                 rtl : App.isRTL()
             });
-            input.data(controlType).update(new Date(dt_picker.val()*1000));
+            if (input.val()) {
+                input.data(controlType).update(new Date(dt_picker.val()*1000));
+            }
             //console.debug(dt_picker.parents("form"));
             dt_picker.parents("form").submit(function(e){
                 var d=input.data(controlType).getDate();

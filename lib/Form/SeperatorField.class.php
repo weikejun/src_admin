@@ -5,6 +5,10 @@ class Form_SeperatorField extends Form_Field{
         parent::__construct($config);
     }
 
+    public function to_text() {
+        return $this->to_html(false);
+    }
+
     public function to_html($is_new){
         $html = "<div class='control-seperator'><a name='$this->name'></a><li name='$this->name'>".htmlspecialchars($this->label)."&nbsp;<a href='javascript:void 0' class='seperator-reset'>清空</a></li></div>";
         return $html;
@@ -17,6 +21,9 @@ class Form_SeperatorField extends Form_Field{
 #seperator-index {position:fixed;top:110px;right:31px;background-color:#fff;padding:5px 10px;border:1px solid #eee;}
 #seperator-index a {color:black;}
 .seperator-reset {display:none;}
+@media print {
+#seperator-index {display:none;}
+}
 </style>
 EOF;
         return $css;

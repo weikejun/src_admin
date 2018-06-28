@@ -6,7 +6,6 @@
         {%/foreach%}
         <button type="submit" class="btn blue"><i class="icon-ok"></i>筛选</button>
         &nbsp;<a href="{%$pageAdmin->getUrl()%}?{%if $smarty.get.action%}action={%$smarty.get.action|escape:url%}{%/if%}{%if $smarty.get.field%}&field={%$smarty.get.field|escape:url%}&show={%$smarty.get.show|escape:url%}{%/if%}">重置</a>
-        &nbsp;<a id="fold_filter" href="javascript:void 0">收起∧</a>
     </form>
     {%/if%}
     {%if $pageAdmin->search_fields%}

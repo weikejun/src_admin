@@ -41,8 +41,16 @@ class CompanyController extends Page_Admin_Base {
 
     private function _initListFilter() {
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'公司ID','paramName'=>'id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'公司名称','paramName'=>'name','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'hidden'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('short'),'paramName'=>'short','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('hold_status'),'paramName'=>'hold_status','choices'=>Model_Company::getHoldStatusChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('management'),'paramName'=>'management','choices'=>Model_Company::getManagementChoices()]),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true]),
         );
     }
 
@@ -94,7 +102,10 @@ class CompanyController extends Page_Admin_Base {
             Form_Company::getFieldViewName('id') => [],
             Form_Company::getFieldViewName('short') => [],
             Form_Company::getFieldViewName('project_type') => [],
+            Form_Company::getFieldViewName('_captable') => [],
+            Form_Company::getFieldViewName('_deal_num') => [],
             Form_Company::getFieldViewName('_latest_invest_turn') => [],
+            Form_Company::getFieldViewName('_financing_amount_all') => [],
             Form_Company::getFieldViewName('_latest_post_moeny') => [],
             Form_Company::getFieldViewName('_latest_shareholding_ratio_sum') => [],
             Form_Company::getFieldViewName('_invest_amount') => [],
@@ -105,11 +116,12 @@ class CompanyController extends Page_Admin_Base {
             Form_Company::getFieldViewName('_director_name') => [],
             Form_Company::getFieldViewName('_board_veto') => [],
             Form_Company::getFieldViewName('_holder_veto') => [],
+            Form_Company::getFieldViewName('_first_manager') => [],
             Form_Company::getFieldViewName('manager') => [],
             Form_Company::getFieldViewName('legal_person') => [],
             Form_Company::getFieldViewName('finance_person') => [],
             Form_Company::getFieldViewName('_pending_detail') => [],
-            Form_Company::getFieldViewName('memo') => [],
+            Form_Company::getFieldViewName('_memo') => [],
         ];
 
         $list_display = $this->list_display;
@@ -138,6 +150,13 @@ class CompanyController extends Page_Admin_Base {
             $this->indexAction();
         }
         return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
+    }
+
+    /*
+     * 重载ExportActions.initData方法
+     */
+    public function initData() {
+        $this->_initFullAction();
     }
 
     protected function _initSelect() {
