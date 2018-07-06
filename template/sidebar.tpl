@@ -31,6 +31,15 @@
                     </a>
                 </li>
                 {%/if%}
+                {%if $c=='MailSend'%}
+                <li class="start {%if $executeInfo.controllerName=='MailSend'%} active {%/if%}">
+                    <a href="/admin/MailSend">
+                        <i class="icon-home"></i>
+                        <span class="title">邮件模板</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
                 {%if $c=='DataStat'%}
                 <li class="start {%if $executeInfo.controllerName=='DataStat'%} active {%/if%}">
                     <a href="/admin/dataStat">

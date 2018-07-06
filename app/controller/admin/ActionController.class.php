@@ -15,8 +15,8 @@ class ActionController extends Page_Admin_Base {
             array('name'=>'name','label'=>'访问名称','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'description','label'=>'访问说明','type'=>"text",'default'=>null,'required'=>false,),
             array('name'=>'permission_id','label'=>'权限ID','type'=>"choosemodel",'model'=>'Model_Permission','default'=>null,'required'=>true,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'readonly'=>true,'default'=>null,'required'=>false,),
-            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime",'readonly'=>true,'default'=>null,'required'=>false,'auto_update'=>true,),
+            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'readonly'=>true,'default'=>time(),'required'=>false),
+            array('name'=>'update_time','label'=>'更新时间','type'=>"datetime",'readonly'=>true,'default'=>time(),'required'=>false,'auto_update'=>true,'auto_update'=>true),
         ));
         $this->list_display=[
             ['label'=>'访问名称','field'=>function($model){

@@ -70,6 +70,9 @@ use("popup",function(){
     window.choosemodel=function(model,field,id,text){
         $(document.forms.main).find('[name="'+field+'"]').val(id);
         $(document.forms.main).find('[_name="'+field+'"]').val(text);
+        if (window.choose_callback) {
+            choose_callback();
+        }
     };
 });
 </script>

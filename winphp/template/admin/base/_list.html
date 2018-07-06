@@ -65,7 +65,10 @@
         <thead>
             <tr role="row">
                 <!--th><input type="checkbox" id="selectAll"/></th-->
+                {%if ($pageAdmin->hide_item_op)%}
+                {%else%}
                 <th>操作</th>
+                {%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <th>
                     {%if is_string($list_item)%}
@@ -84,6 +87,8 @@
         <tbody>
             {%foreach from=$modelDataList item=modelData%}
             <tr class="gradeX {%cycle values="odd,even"%}">
+                {%if ($pageAdmin->hide_item_op)%}
+                {%else%}
                 <td>
 		    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.edit %}<a id="read_{%$modelData->mId%}" href="?action=read&id={%$modelData->mId%}">编辑</a>{%/if%}
                     {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.delete %}<a confirm="你确定要删除么？" href="?action=delete&id={%$modelData->mId%}">删除</a>{%/if%}
@@ -101,6 +106,7 @@
                     {%/if%}
                     {%/foreach%}
                 </td><!--td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td-->
+                {%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <td>
 
@@ -126,10 +132,12 @@
     </table>
     </div>
     <div class="row-fluid">
+        {%if $_allCount%}
         <div class="span4">
             <div class="dataTables_info" id="sample_1_info">
                  本页显示第 {%$_startIndex+1%} 到 {%$_startIndex+count($modelDataList)%} 结果，共 {%$_allCount%} 结果</div>
         </div>
+        {%/if%}
         <div class="span8">
             <div class="dataTables_paginate paging_bootstrap pagination">
                 {%$_pageAll=ceil($_allCount/$_pageSize)%}

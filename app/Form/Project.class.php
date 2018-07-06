@@ -37,7 +37,13 @@ class Form_Project extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
+                    $deal = new Model_Project;
+                    $deal->addWhere('status', 'valid');
+                    $deal->addWhere('company_id', $model->getData('company_id'));
+                    $deal->addWhere('close_date', '0', '>');
+                    $deal->orderBy('close_date', 'DESC');
+                    $deals = $deal->find();
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
@@ -193,8 +199,23 @@ class Form_Project extends Form {
                 ['name'=>'exit_receive_amount','label'=>'源码本次退出实收金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_receive_amount'), 2);
                 }],
-                ['name'=>'_exit_return_rate','label'=>'源码本次退出回报倍数（gross）','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    return '算法待补充';
+                ['name'=>'_exit_return_rate','label'=>'源码本次退出回报倍数（gross）','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
+                    if (strpos($model->getData('deal_type'), '源码退') === false) {
+                        return;
+                    }
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('close_date')
+                            && strpos($deal->getData('deal_type'), '源码投') !== false
+                            && $deal->getData('invest_turn') == $model->getData('exit_turn')) {
+                            $exitStock = $model->getData('exit_stock_number');
+                            $costPrice = $deal->getData('our_amount') / $deal->getData('stocknum_get');
+                            if (!$costPrice) {
+                                return '股权购买成本无记录';
+                            } else {
+                                return sprintf('%.2f%%', ($model->getData('exit_amount') / ($exitStock * $costPrice) - 1) * 100);
+                            }
+                        }
+                    }
                 }],
                 ['name'=>'exit_memo','label'=>'源码退出备注','type'=>'text','default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
@@ -220,13 +241,7 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体本轮统计','type'=>'seperator2'],
-                ['name'=>'_shareholding_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
-                    $deal = new Model_Project;
-                    $deal->addWhere('status', 'valid');
-                    $deal->addWhere('company_id', $model->getData('company_id'));
-                    $deal->addWhere('close_date', '0', '>');
-                    $deal->orderBy('close_date', 'DESC');
-                    $deals = $deal->find();
+                ['name'=>'_shareholding_turn_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $stockNum = 0;
                     if (!$model->getData('close_date')) {
                         return '未交割';
@@ -244,7 +259,7 @@ class Form_Project extends Form {
                     $shareholdingSum = $stockNum;
                     return number_format($stockNum);
                 }],
-                ['name'=>'_shareholding_ratio_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
+                ['name'=>'_shareholding_ratio_turn_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $dataList = [];
                     if (!$model->getData('close_date')) {
                         return '未交割';

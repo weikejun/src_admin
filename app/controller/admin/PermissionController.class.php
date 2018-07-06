@@ -14,7 +14,7 @@ class PermissionController extends Page_Admin_Base {
         $this->form=new Form(array(
             array('name'=>'name','label'=>'权限名','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'description','label'=>'权限说明','type'=>"text",'default'=>null,'required'=>false,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>null,'null'=>false,'readonly'=>true),
+            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'null'=>false,'readonly'=>true,'auto_update'=>true),
         ));
         $this->list_display=array(
             ['label'=>'权限ID','field'=>function($model) {

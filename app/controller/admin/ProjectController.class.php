@@ -15,6 +15,7 @@ class ProjectController extends Page_Admin_Base {
             if ($field['type'] != 'seperator'
                 && $field['type'] != 'seperator2') {
                 $this->list_display[] = [
+                    'name' => $field['name'],
                     'label' => $field['label'],
                     'field' => (isset($field['field']) ? $field['field'] : $field['name']),
                 ];
@@ -50,8 +51,8 @@ class ProjectController extends Page_Admin_Base {
 
     private function _initListFilter() {
         $this->list_filter=array(
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'entity_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('exit_entity_id'),'paramName'=>'exit_entity_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','foreignTable'=>'Model_Entity','fusion'=>true]),
@@ -129,6 +130,7 @@ class ProjectController extends Page_Admin_Base {
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('_company_id') => [],
             Form_Project::getFieldViewName('kickoff_date') => [],
+            Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('close_date') => [],
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
@@ -266,6 +268,9 @@ class ProjectController extends Page_Admin_Base {
             if ($dataItem->getData('exit_entity_id')) {
                 $captableIds[$dataItem->getData('exit_entity_id')] = 1;
             }
+            if ($dataItem->getData('loan_entity_id')) {
+                $captableIds[$dataItem->getData('loan_entity_id')] = 1;
+            }
         }
         $captable = new Model_Entity;
         $captable->addWhere('id', array_keys($captableIds), 'IN', DBTable::ESCAPE);
@@ -306,10 +311,19 @@ class ProjectController extends Page_Admin_Base {
             ['label' => '投时股数', 'field' => function($model) {
                 return number_format($model->getData('stocknum_get'));
             }],
-            ['label' => '股价', 'field' => function($model) {
+            ['label' => '源码股价', 'field' => function($model) {
                 $currency = $model->getData('invest_currency');
                 $amount = $model->getData('our_amount');
                 $stockNum = $model->getData('stocknum_get');
+                $amount = $amount ? $amount : 0;
+                if ($stockNum) {
+                    return "$currency " . number_format($amount/$stockNum, 2); 
+                }
+            }],
+            ['label' => '企业股价', 'field' => function($model) {
+                $currency = $model->getData('value_currency');
+                $amount = $model->getData('post_money');
+                $stockNum = $model->getData('stocknum_all');
                 $amount = $amount ? $amount : 0;
                 if ($stockNum) {
                     return "$currency " . number_format($amount/$stockNum, 2); 
@@ -420,37 +434,51 @@ class ProjectController extends Page_Admin_Base {
             }],
             ['label' => '最新持股比例', 'field' => function($model)use($dataList, &$holdStocks){
                 if (!$model->getData('id')) {
-                    return sprintf('%.2f%%', $holdStocks/$dataList[0]->getData('stocknum_all')*100);
+                    $stockNum = $holdStocks;
+                } else {
+                    $stockNum = 0;
+                    foreach($dataList as $i => $dataItem) {
+                        if ($dataItem->getData('entity_id') == $model->getData('id') 
+                            && $dataItem->getData('close_date')) {
+                            $stockNum += $dataItem->getData('stocknum_get');
+                        }
+                        if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
+                            && $dataItem->getData('close_date')) {
+                            $stockNum -= $dataItem->getData('exit_stock_number');
+                        }
+                    }
                 }
-                $stockNum = 0;
                 foreach($dataList as $i => $dataItem) {
-                    if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum += $dataItem->getData('stocknum_get');
-                    }
-                    if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum -= $dataItem->getData('exit_stock_number');
+                    if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                        return sprintf('%.2f%%', $stockNum/$dataItem->getData('stocknum_all')*100);
                     }
                 }
-                return sprintf('%.2f%%', $stockNum/$dataList[0]->getData('stocknum_all')*100);
+                return '0.00%';
             }],
             ['label' => '最新账面价值', 'field' => function($model)use($dataList, &$holdStocks){
                 if (!$model->getData('id')) {
-                    return $dataList[0]->getData('value_currency') . ' ' . number_format($holdStocks/$dataList[0]->getData('stocknum_all')*$dataList[0]->getData('post_money'), 2);
+                    $stockNum = $holdStocks;
+                } else {
+                    $stockNum = 0;
+                    foreach($dataList as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            if ($dataItem->getData('entity_id') == $model->getData('id') 
+                                && strpos($dataItem->getData('deal_type'), '源码投') !== false) {
+                                $stockNum += $dataItem->getData('stocknum_get');
+                            }
+                            if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
+                                && strpos($dataItem->getData('deal_type'), '源码退') !== false) {
+                                $stockNum -= $dataItem->getData('exit_stock_number');
+                            }
+                        }
+                    }
                 }
-                $stockNum = 0;
                 foreach($dataList as $i => $dataItem) {
-                    if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum += $dataItem->getData('stocknum_get');
-                    }
-                    if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum -= $dataItem->getData('exit_stock_number');
+                    if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                        return $dataItem->getData('value_currency') . ' ' . number_format($stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money'), 2);
                     }
                 }
-                return $dataList[0]->getData('value_currency') . ' ' . number_format($stockNum/$dataList[0]->getData('stocknum_all')*$dataList[0]->getData('post_money'), 2);
+                return 0;
             }],
             ['label' => '投资金额', 'field' => function($model)use($dataList, &$investValues){
                 if (!$model->getData('id')) {
@@ -464,9 +492,11 @@ class ProjectController extends Page_Admin_Base {
                 }
                 $amounts = [];
                 foreach($dataList as $i => $dataItem) {
-                    if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $amounts[$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
+                    if ($dataItem->getData('close_date')) {
+                        if ($dataItem->getData('entity_id') == $model->getData('id') 
+                            && strpos($dataItem->getData('deal_type'), '源码投') !== false) {
+                            $amounts[$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
+                        }
                     }
                 }
                 if (!$amounts) {
@@ -474,6 +504,34 @@ class ProjectController extends Page_Admin_Base {
                 }
                 foreach($amounts as $currency => $amount) {
                     $investValues[$currency] += $amount;
+                    echo "$currency " . number_format($amount, 2) . '<br />';
+                }
+            }],
+            ['label' => '独立CB金额', 'field' => function($model)use($dataList, &$cbValues){
+                if (!$model->getData('id')) {
+                    if (!$cbValues) {
+                        return 0;
+                    }
+                    foreach($cbValues as $currency => $amount) {
+                        echo "$currency " . number_format($amount, 2) . '<br />';
+                    }
+                    return;
+                }
+                $amounts = [];
+                foreach($dataList as $i => $dataItem) {
+                    if ($dataItem->getData('close_date')) {
+                        if ($dataItem->getData('loan_entity_id') == $model->getData('id') 
+                            && stripos($dataItem->getData('deal_type'), '源码独立CB') !== false
+                            && $dataItem->getData('loan_process') == '待处理') {
+                            $amounts[$dataItem->getData('loan_currency')] += $dataItem->getData('loan_amount');
+                        }
+                    }
+                }
+                if (!$amounts) {
+                    return 0;
+                }
+                foreach($amounts as $currency => $amount) {
+                    $cbValues[$currency] += $amount;
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
             }],
@@ -558,6 +616,29 @@ class ProjectController extends Page_Admin_Base {
         $_REQUEST['action'] = 'read';
         $this->indexAction();
         return ['admin/project/check.html', $this->_assigned];
+    }
+
+    protected function _initSelect() {
+        $this->list_filter = [
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
+        ];
+        $reqModel = WinRequest::getModel();
+        unset($reqModel['tableWrap']);
+        WinRequest::setModel($reqModel);
+        $list_display = [];
+        foreach($this->list_display as $i => $field) {
+            if (in_array($field['name'], ['id', '_company_short', 'turn_sub', 'close_date', 'deal_type', 'invest_turn', 'our_amount', '_stock_ratio','exit_turn', 'exit_amount', '_exit_stock_ratio'])) {
+                $list_display[] = $field;
+            }
+        }
+        $this->list_display = $list_display;
+    }
+
+    public function select() {
+        $this->_initSelect();
+        $this->_index();
+        $this->display("admin/base/select.html");
     }
 }
 

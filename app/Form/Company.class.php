@@ -195,6 +195,7 @@ class Form_Company extends Form {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')
+                            && strpos($dataItem->getData('deal_type'), '企业融资') !== false
                             && $dataItem->getData('financing_amount')) { 
                             $turn = $dataItem->getData('turn_sub');
                             $currency = $dataItem->getData('value_currency');
@@ -443,7 +444,7 @@ class Form_Company extends Form {
                     }
                 }],
                 ['name'=>'field-index-return','label'=>'源码投资回报','type'=>'seperator'],
-                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks){
+                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$cbAmounts){
                     $dataList = [];
                     $investExitAmounts = [];
                     foreach($project as $i => $dataItem) {
@@ -454,6 +455,9 @@ class Form_Company extends Form {
                             } elseif (strpos($dataItem->getData('deal_type'), '源码投') !== false) {
                                 $investExitAmounts['invest'][$dataItem->getData('invest_turn')][$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
                                 $investExitStocks['invest'][$dataItem->getData('invest_turn')][$dataItem->getData('invest_currency')] += $dataItem->getData('stocknum_get');
+                            } elseif (stripos($dataItem->getData('deal_type'), '源码独立CB') !== false
+                                && $dataItem->getData('loan_process') == '待处理') {
+                                $cbAmounts[$dataItem->getData('loan_currency')] += $dataItem->getData('loan_amount');
                             }
                         }
                     }
@@ -536,9 +540,9 @@ class Form_Company extends Form {
                     $amounts = $investExitAmounts;
                     $stocks = $investExitStocks;
                     $holds = [];
-                    foreach($stocks['exit'] as $turn => $item) {
+                    foreach($stocks['invest'] as $turn => $item) {
                         foreach($item as $currency => $stock) {
-                            $holds[$currency] += ($stocks['invest'][$turn][$currency] - $stock)/$stocks['invest'][$turn][$currency]*$amounts['invest'][$turn][$currency];
+                            $holds[$currency] += ($stock - $stocks['exit'][$turn][$currency])/$stock*$amounts['invest'][$turn][$currency];
                         }
                     }
                     if (count($holds) == 1) {
@@ -548,6 +552,13 @@ class Form_Company extends Form {
                         }
                         return $output;
                     }
+                }],
+                ['name'=>'_cb_amount','label'=>'未偿还CB金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$cbAmounts){
+                    $output = '';
+                    foreach($cbAmounts as $currency => $amount) {
+                        $output .= "$currency ". number_format($amount, 2)  . '<br />';
+                    }
+                    return $output;
                 }],
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
                 ['name'=>'partner','label'=>'主管合伙人','type'=>'text','default'=>null,'required'=>false,],

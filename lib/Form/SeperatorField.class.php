@@ -18,11 +18,10 @@ class Form_SeperatorField extends Form_Field{
         $css=<<<EOF
 <style>
 .control-seperator {font-size:14px;background-color:#eee;padding:5px;margin-bottom:10px;border:1px solid #eee;}
-#seperator-index {position:fixed;top:110px;right:31px;background-color:#fff;padding:5px 10px;border:1px solid #eee;}
+#seperator-index {position:fixed;top:110px;right:31px;background-color:#fff !important;padding:5px 10px;border:1px solid #eee;}
 #seperator-index a {color:black;}
 .seperator-reset {display:none;}
 @media print {
-#seperator-index {display:none;}
 }
 </style>
 EOF;
@@ -115,6 +114,9 @@ $(document).ready(function() {
             success: function(ret) {
                 if (ret.id) {
                     $('#save-tip').html('&nbsp;<i>自动保存于 '+ret.stamp+'</i>');
+                    if ($('#main_form input[name=id]').length == 0) {
+                        $('#main_form').prepend('<input type=hidden name=id />');
+                    }
                     $('#main_form input[name=id]').val(ret.id);
                     $('#main_form input[name=action]').val('update');
                 }
