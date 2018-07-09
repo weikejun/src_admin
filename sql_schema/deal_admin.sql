@@ -52,6 +52,7 @@ DROP TABLE IF EXISTS `companyMemo`; /*企业备注*/
 CREATE TABLE `companyMemo` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `company_id` int(11) DEFAULT NULL COMMENT '企业ID',
+    `title` text DEFAULT NULL COMMENT '事项', 
     `content` text DEFAULT NULL COMMENT '内容', 
     `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
     `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 

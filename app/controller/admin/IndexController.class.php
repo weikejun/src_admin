@@ -1,4 +1,7 @@
 <?php
+include_once ROOT_PATH.'/lib/AliCaptcha/aliyun-php-sdk-core/Config.php';
+use afs\Request\V20180112 as Afs;
+
 class IndexController extends Page_Admin_Base{
     
     public function __construct(){
@@ -6,15 +9,35 @@ class IndexController extends Page_Admin_Base{
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
     }
+
     public function indexAction(){
         return array("admin/index.tpl",array('url'=>$_GET['url']));
         //return array("redirect: /admin/Project");
+    }
+
+    protected function _checkCaptcha() {
+        //YOUR ACCESS_KEY、YOUR ACCESS_SECRET请替换成您的阿里云accesskey id和secret  
+        $iClientProfile = DefaultProfile::getProfile("cn-hangzhou", "LTAI8xlavAUSjQPA", "7cf79hg7wgR8h794nyGIli2hgC9hLJ");
+        $client = new DefaultAcsClient($iClientProfile);
+        DefaultProfile::addEndpoint("cn-hangzhou", "cn-hangzhou", "afs", "afs.aliyuncs.com");
+        //
+        $request = new Afs\AuthenticateSigRequest();
+        $request->setSessionId($_POST['csessionid']);// 必填参数，从前端获取，不可更改，android和ios只变更这个参数即可，下面参数不变保留xxx
+        $request->setToken($_POST['nc_token']);// 必填参数，从前端获取，不可更改
+        $request->setSig($_POST['sig']);// 必填参数，从前端获取，不可更改
+        $request->setScene($_POST['scene']);// 必填参数，从前端获取，不可更改
+        $request->setAppKey("FFFF0N000000000064AF");//必填参数，后端填写
+        $request->setRemoteIp(Utils::getClientIP());//必填参数，后端填写
+        //
+        $response = $client->getAcsResponse($request);//返回code 100表示验签通过，900表示验签失败
+        //print_r($response);
+        return $response && ($response->Code == 100);
     }
     
     public function loginAction(){
         if($_POST){
             $admin=$this->valid($_POST['name'],$_POST['password']);
-            if($admin){
+            if($admin && $this->_checkCaptcha()) {
                 $_SESSION['admin']=$admin;
                 return array("redirect:".(isset($_REQUEST['url'])?$_REQUEST['url']:$this->getUrlPrefix()."/index"));
             }else{

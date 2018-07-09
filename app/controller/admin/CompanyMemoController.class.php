@@ -24,7 +24,7 @@ class CompanyMemoController extends Page_Admin_Base {
         }
 
         $this->single_actions_default = [
-            'edit' => false,
+            'edit' => true,
             'delete' => true,
         ];
 

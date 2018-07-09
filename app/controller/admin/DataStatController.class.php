@@ -1,5 +1,6 @@
 <?php
 class DataStatController extends Page_Admin_Base {
+    use ExportActions;
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -399,7 +400,7 @@ class DataStatController extends Page_Admin_Base {
                     if ($deal->getData($timeField) >= strtotime($selectDate['start'])
                         && $deal->getData($timeField) <= strtotime($selectDate['end'])
                         && stripos($deal->getData('deal_type'),'源码独立CB') !== false
-                    && strpos($deal->getData('deal_type'), '待处理') !== false) {
+                        && strpos($deal->getData('loan_process'), '待处理') !== false) {
                         $amounts[$deal->getData('loan_currency')] += $deal->getData('loan_amount');
                     }
                 }
@@ -417,6 +418,46 @@ class DataStatController extends Page_Admin_Base {
     public function index() {
         $this->_initIndex();
         $this->display("admin/base/index.html");
+    }
+
+    public function exportToCsvAction(){
+        $this->_initIndex();
+        $exeInfo = WinRequest::getModel('executeInfo');
+		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+		header("Content-type: text/x-csv");
+		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".csv");
+
+        $row=[];
+        foreach ($this->list_display as $list_item){
+            if(is_string($list_item)){
+                $row[]=$list_item;
+            }elseif(isset($list_item['label'])){
+                $row[]=$list_item['label'];
+            }else{
+                $row=strval($list_item);
+            }
+        }
+        self::printCsvRow($row);
+
+        foreach ($this->model as $i => $modelData) {
+            $row=[];
+            foreach ($this->list_display as $list_item){
+                if(is_array($list_item)&&isset($list_item['label'])){
+                    $list_item=$list_item['field'];
+                }
+                if(is_string($list_item)){
+                    $val=$modelData->getData($list_item);
+                } elseif(is_callable($list_item)){
+                    $val=call_user_func($list_item,$modelData,$this,$csv_data);
+                }else{
+                    $val=strval($list_item);
+                }
+                $row[]=trim(strip_tags($val));
+            }
+            self::printCsvRow($row);
+        }
+
+        exit;
     }
 }
 

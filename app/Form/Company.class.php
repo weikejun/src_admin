@@ -628,7 +628,7 @@ class Form_Company extends Form {
                     $memo->select();
                     $output = '';
                     if ($memo->getData('id')) {
-                        $output .= date('Ymd H:i:s', $memo->getData('update_time'))." ".$memo->getData('operator')." ".$memo->getData('content').' <a target="_blank" href="/admin/companyMemo?__filter='.urlencode('short|company_id='.$model->getData('short')).'">列表 </a>';
+                        $output .= date('Ymd H:i:s', $memo->getData('update_time'))." ".$memo->getData('operator')." ".$memo->getData('title')." ".$memo->getData('content').' <a target="_blank" href="/admin/companyMemo?__filter='.urlencode('short|company_id='.$model->getData('short')).'">列表 </a>';
                     }
                     return $output .= '<a target="_blank" href="/admin/companyMemo?action=read&company_id='.$model->getData('id').'">添加+</a>';
                 }],
