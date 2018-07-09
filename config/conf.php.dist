@@ -19,10 +19,7 @@ else
 }
 date_default_timezone_set('Asia/Shanghai');
 
-
-#DB::init("mysql:host=127.0.0.1;dbname=aimeizhuyi;port:3306",'root','');
-#DB::init("mysql:host=127.0.0.1;dbname=aimeizhuyi;port:3306",'root','aimei753951');
-DB::init("mysql:host=localhost;dbname=aimeizhuyi;port:3306",'root','aimei753951');
+DB::init("mysql:host=localhost;dbname=__mydb__;port:3306",'__dbuser__','__dbpass__');
 DB::execute_sql("set names utf8");
 if(php_sapi_name()!='cli'){
 //    ini_set("session.save_handler", "memcache");  
@@ -36,35 +33,7 @@ define("PRIVATE_IMAGE_BASE", ROOT_PATH."/private_upload/");
 define("IS_DEBUG", $IS_DEBUG);
 define("VERSION", 1);
 
-define("DOMAIN_NAME", $_SERVER['HTTP_HOST']);
-define("BASE_URL","http://".DOMAIN_NAME);
-
-# SMS config
-define("SMS_SN", "SDK-BBX-010-20083");
-define("SMS_PASSWORD", "F39Fe-a5");
-define("SMS_BASE_URL", "http://sdk2.zucp.net:8060/webservice.asmx/mt");
-define("SMS_MULTI_URL", "http://sdk2.zucp.net:8060/webservice.asmx/gxmt");
-SMS::init(SMS_SN, SMS_PASSWORD, SMS_BASE_URL, SMS_MULTI_URL);
-# PREPAY RATIO
-define("PREPAY_RATIO",0.2);
-# MY SITE
-define("SITE","http://218.244.144.114:8000");
-# ALIPAY INIT CONFIG
-
-// 2014-08-13 删除这个初始化
-//Alipay::init();
-
-define("EASEMOB_ORG","wwwppp0801");
-define("EASEMOB_APP","sandbox");
-define("EASEMOB_CLIENT_ID",'YXA6TUfhAAj6EeSAuHEMsOYsrw');
-define("EASEMOB_SECRET",'YXA6dgdN1xa4Ncx69_IWhTSCILEeQqI');
-
-# ORDER CONFIG
-define("ORDER_PREFIX", "AMZY");
-define("ORDER_BASE_NUM", 100100800);
-
-define("SMTP_HOST","smtp.exmail.qq.com");
-define("SMTP_USERNAME", 'service@aimeizhuyi.com');                 // SMTP username
-define("SMTP_PASSWORD", 'amzy1234');                 // SMTP username
-
-ImageMagick::$convert="/usr/bin/convert";
+# Aliyun config
+define("ALIYUN_ACCESS_KEY", "LTAI8xlavAUSjQPA");
+define("ALIYUN_SECRECT", "7cf79hg7wgR8h794nyGIli2hgC9hLJ");
+define("ALIYUN_CAPTCHA_APPKEY", "FFFF0N000000000064AF");

@@ -17,7 +17,7 @@ class IndexController extends Page_Admin_Base{
 
     protected function _checkCaptcha() {
         //YOUR ACCESS_KEY、YOUR ACCESS_SECRET请替换成您的阿里云accesskey id和secret  
-        $iClientProfile = DefaultProfile::getProfile("cn-hangzhou", "LTAI8xlavAUSjQPA", "7cf79hg7wgR8h794nyGIli2hgC9hLJ");
+        $iClientProfile = DefaultProfile::getProfile("cn-hangzhou", ALIYUN_ACCESS_KEY, ALIYUN_SECRECT);
         $client = new DefaultAcsClient($iClientProfile);
         DefaultProfile::addEndpoint("cn-hangzhou", "cn-hangzhou", "afs", "afs.aliyuncs.com");
         //
@@ -26,7 +26,7 @@ class IndexController extends Page_Admin_Base{
         $request->setToken($_POST['nc_token']);// 必填参数，从前端获取，不可更改
         $request->setSig($_POST['sig']);// 必填参数，从前端获取，不可更改
         $request->setScene($_POST['scene']);// 必填参数，从前端获取，不可更改
-        $request->setAppKey("FFFF0N000000000064AF");//必填参数，后端填写
+        $request->setAppKey(ALIYUN_CAPTCHA_APPKEY);//必填参数，后端填写
         $request->setRemoteIp(Utils::getClientIP());//必填参数，后端填写
         //
         $response = $client->getAcsResponse($request);//返回code 100表示验签通过，900表示验签失败
