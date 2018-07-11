@@ -117,11 +117,11 @@
 		jQuery(document).ready(function() {     
 		  Login.init();
 		});
-var nc_token = ["FFFF0N000000000064AF", (new Date()).getTime(), Math.random()].join(':');
+var nc_token = ["{%$captchaKey%}", (new Date()).getTime(), Math.random()].join(':');
 var NC_Opt = 
 {
 renderTo: "#your-dom-id",
-          appkey: "FFFF0N000000000064AF",
+          appkey: "{%$captchaKey%}",
           scene: "nc_login",
           token: nc_token,
           customWidth: 291,
