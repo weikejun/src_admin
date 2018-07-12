@@ -19,3 +19,4 @@ webroot/upload/_thumbs/
 webroot/upload/files/
 webroot/upload/images/
 mydb.sh
+config/conf.php
