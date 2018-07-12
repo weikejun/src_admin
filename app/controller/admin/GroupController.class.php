@@ -11,9 +11,9 @@ class GroupController extends Page_Admin_Base {
         ));
 
         $this->form=new Form(array(
-            array('name'=>'角色名','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'角色说明','type'=>"text",'default'=>null,'required'=>false,),
-            array('name'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
+            array('name'=>'name','label'=>'角色名','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'description','label'=>'角色说明','type'=>"text",'default'=>null,'required'=>false,),
+            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'角色ID','field'=>function($model) {
