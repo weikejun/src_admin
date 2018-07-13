@@ -37,8 +37,11 @@ class PermissionController extends Page_Admin_Base {
         );
 
         $this->single_actions=[
-            ['label'=>'权限分配','action'=>function($model){
+            ['label'=>'已分配角色','action'=>function($model){
                 return '/admin/rolePermission?__filter='.urlencode('permission_id='.$model->mId);
+            }],
+            ['label'=>'动作集合','action'=>function($model){
+                return '/admin/Action?__filter='.urlencode('name|permission_id='.$model->mName);
             }],
         ];
     }

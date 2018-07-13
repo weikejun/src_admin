@@ -136,7 +136,7 @@
 				<li class="start {%if $executeInfo.controllerName=='Action'%} active {%/if%}">
 					<a href="/admin/Action">
 					<i class="icon-home"></i> 
-                    <span class="title">访问权限管理</span>
+                    <span class="title">动作权限管理</span>
 					<span class="selected"></span>
 					</a>
 				</li>

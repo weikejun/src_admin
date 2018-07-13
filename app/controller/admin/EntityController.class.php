@@ -27,9 +27,6 @@ class EntityController extends Page_Admin_Base {
         }
 
         $this->single_actions=[
-            ['label'=>'关系','action'=>function($model){
-                return '/admin/entityRel?__filter='.urlencode('subject_id='.$model->mId);
-            }],
         ];
 
         $this->single_actions_default = [
