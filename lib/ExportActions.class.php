@@ -10,6 +10,7 @@ trait ExportActions{
         $fields_cnt = count($row);
         $tmp_str = '';
         foreach ($row as $v) {
+            $v = str_replace(array("\n","\r"), array('',''), $v);
             $tmp_str .= $csv_enclosed . str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $v) . $csv_enclosed . $csv_separator;
         }
 

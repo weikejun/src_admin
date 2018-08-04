@@ -107,7 +107,7 @@ class Form_Company extends Form {
                         return $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
                     }
                 }],
-                ['name'=>'_value_increase','label'=>'企业估值涨幅','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_value_increase','label'=>'企业估值涨幅倍数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     // TODO:以源码首次融资为分母 
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -124,8 +124,8 @@ class Form_Company extends Form {
                     }
                     $dataList = array_values($dataList);
                     $num = count($dataList);
-                    if ($num && $dataList[$num - 1]->getData('post_money')) {
-                        return sprintf('%.2f%%', ($dataList[0]->getData('post_money') / $firstDeal->getData('post_money') - 1) * 100);
+                    if ($num && $dataList[$num - 1]->getData('post_money') && $firstDeal) {
+                        return sprintf('%.2f', ($dataList[0]->getData('post_money') / $firstDeal->getData('post_money') - 0));
                     }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -548,7 +548,7 @@ class Form_Company extends Form {
                     if (count($holds) == 1) {
                         $output = '';
                         foreach($holds as $currency => $amount) {
-                            $output .= "$currency ".sprintf('%.2f%%', ($holdValue[$currency]/$amount-1)*100) . '<br />';
+                            $output .= "$currency ".sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
                         }
                         return $output;
                     }
