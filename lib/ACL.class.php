@@ -12,23 +12,34 @@ class ACL{
         "MailSend",
         "DataStat",
         "Admin",
+        "Action",
         "Permission",
         "Group",
         "AdminGroup",
         "RolePermission",
-        "Action",
+        "PermissionAction",
+        "ItemPermission",
         "SystemLog",
     );
 
     public static function checkPermission($permissionName){
         if(!ACL::checkPermissionResult($permissionName)){
             //throw new ModelAndViewException("no permission", 1, "json:",AppUtils::returnValue(['msg'=>'no permission'], '90001'));
-            throw new ModelAndViewException("no permission", 1, ROOT_PATH.'/template/no_permission.tpl');}
+            throw new ModelAndViewException("no permission", 1, ROOT_PATH.'/template/no_permission.tpl');
+        }
     }
 
     public static function checkPermissionResult($actionName){
         $admin_id = Model_Admin::getCurrentAdmin()->mId;
         if(!$admin_id)  return false;
+
+        // 判断用户状态
+        $admin = new Model_Admin;
+        $admin->addWhere('id', $admin_id);
+        $admin = $admin->select();
+        if (!$admin || $admin->getData('valid') != 'valid') {
+            return false;
+        }
 
         # 用户名为root直接获取权限
         $admin_name = Model_Admin::getCurrentAdmin()->mName;
@@ -39,17 +50,21 @@ class ACL{
         # 非root才走权限验证流程
         #$permissionName = Action::getAuth($actionName);
         #if(!$permissionName) return false;
-        $permissionId = Model_Action::getPermissionId($actionName);
-        if(!$permissionId) return false;
+        $permissionIds = Model_PermissionAction::getPermissionIds($actionName);
+        if(!$permissionIds) return false;
 
-        if(!Model_Permission::exist($permissionId))   return false;
+        if(!Model_Permission::exist($permissionIds))   return false;
 
         # 首先直接判断用户直接权限
-        $permission_ids = Model_RolePermission::getPermissionIdsByAdmin($admin_id);
+        $adminPermissionIds = Model_RolePermission::getPermissionIdsByAdmin($admin_id);
         #if(Permission::checkPermission($permission_ids, $permissionName)){
         #    return true;
         #}
-        if(in_array($permissionId, $permission_ids))    return true;
+        foreach($permissionIds as $i => $permissionId) {
+            if(in_array($permissionId, $adminPermissionIds)) {
+                return true;
+            }
+        }
 
         # 用户没有直接权限则查看用户的组权限
         $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
@@ -57,9 +72,13 @@ class ACL{
         if(Model_Group::isRoot($group_ids)){
             return true;
         }
-        $permission_ids = Model_RolePermission::getPermissionIdsByGroup($group_ids);
+        $groupPermissionIds = Model_RolePermission::getPermissionIdsByGroup($group_ids);
         #return Permission::checkPermission($permission_ids, $permissionName);
-        if(in_array($permissionId, $permission_ids))    return true;
+        foreach($permissionIds as $i => $permissionId) {
+            if(in_array($permissionId, $groupPermissionIds)) {
+                return true;
+            }
+        }
         return false;
     } 
 

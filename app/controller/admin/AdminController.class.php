@@ -24,6 +24,7 @@ class AdminController extends Page_Admin_Base {
              */
 
             array('name'=>'name','label'=>'用户名','type'=>"text",'default'=>null,'required'=>true,),
+            array('name'=>'real_name','label'=>'真实姓名','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>false,),
             array('name'=>'password_again','label'=>'密码确认','type'=>"password",'default'=>null,'required'=>false,'validator'=>function($values){
                 if(!$values['password']||
@@ -34,7 +35,7 @@ class AdminController extends Page_Admin_Base {
                 }
             }),
             array('name'=>'valid','label'=>'有效状态',"choices"=>array(array('valid',"有效"),array('invalid',"无效"),), 'type'=>"choice",'default'=>'valid','null'=>false,),
-            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>null,'readonly'=>true,),
+            array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
         ));
         $this->list_display=array(
             ['label'=>'id','field'=>function($model){
@@ -42,6 +43,9 @@ class AdminController extends Page_Admin_Base {
             }],
             ['label'=>'用户名','field'=>function($model){
                 return $model->mName;
+            }],
+            ['label'=>'真实姓名','field'=>function($model){
+                return $model->mRealName;
             }],
             ['label'=>'状态','field'=>function($model){
                 return $model->mValid;
@@ -52,7 +56,7 @@ class AdminController extends Page_Admin_Base {
         );
 
         $this->single_actions=[
-            ['label'=>'权限','action'=>function($model){
+            ['label'=>'角色','action'=>function($model){
                 return '/admin/adminGroup?__filter='.urlencode('admin_id='.$model->mId);
             }],
         ];
@@ -60,6 +64,7 @@ class AdminController extends Page_Admin_Base {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'用户ID','paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>'用户名','paramName'=>'name','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>'真实姓名','paramName'=>'real_name','fusion'=>true]),
             new Page_Admin_TimeRangeFilter(['name'=>'创建时间','paramName'=>'create_time']),
         );
     }

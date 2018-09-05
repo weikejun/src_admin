@@ -8,22 +8,22 @@ class RolePermissionController extends Page_Admin_Base {
         $this->model=new Model_RolePermission();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
-            'controllerText'=>"角色权限管理",
+            'controllerText'=>"角色权限",
         ));
 
         $this->form=new Form(array(
             array('name'=>'group_id','label'=>'角色ID','type'=>"choosemodel",'model'=>'Model_Group','default'=>null,'required'=>false,),
-            array('name'=>'admin_id','label'=>'用户ID','type'=>"choosemodel",'model'=>'Model_Admin','default'=>null,'required'=>false,),
+            //array('name'=>'admin_id','label'=>'用户ID','type'=>"choosemodel",'model'=>'Model_Admin','default'=>null,'required'=>false,),
             array('name'=>'permission_id','label'=>'权限ID','type'=>"choosemodel",'model'=>'Model_Permission','default'=>null,'required'=>true,),
         ));
         $this->list_display=array(
-            ['label'=>'用户','field'=>function($model){
+            /*['label'=>'用户','field'=>function($model){
                 if(!empty($model->mAdminId)) {
                     $admin = new Model_Admin();
                     $ret = $admin->addWhere("id", $model->mAdminId)->select();
                     return ($ret ? $admin->mName : '(id='.$model->mAdminId.')' );
                 }
-            }],
+            }],*/
             ['label'=>'角色','field'=>function($model){
                 if(!empty($model->mGroupId)) {
                     $group = new Model_Group();
@@ -31,7 +31,7 @@ class RolePermissionController extends Page_Admin_Base {
                     return ($ret ? ($group->mName) : '(id='.$model->mGroupId.')' );
                 }
             }],
-            ['label'=>'权限','field'=>function($model){
+            ['label'=>'权限组','field'=>function($model){
                 $permission = new Model_Permission();
                 $ret = $permission->addWhere("id", $model->mPermissionId)->select();
                 return ($ret ? ($permission->mName) : '(id='.$model->mPermissionId.')' );

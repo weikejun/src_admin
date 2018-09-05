@@ -1,9 +1,12 @@
 <?php
 class Model_Permission extends Base_Permission{
     public static function exist($permissionId){
+        if (!is_array($permissionId)) {
+            $permissionId = array($permissionId);
+        }
         $permission = new self();
-        $permission = $permission->addWhere("id", $permissionId)->select();
-        return $permission != null;
+        $permission = $permission->addWhere("id", $permissionId, 'IN', DBTable::ESCAPE)->count();
+        return $permission;
     }
 
     public static function checkPermission($permissionIds, $permissionName){

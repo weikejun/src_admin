@@ -8,7 +8,7 @@
                 {%$filter->toHtml()%}
         {%/foreach%}
         <button type="submit" class="btn blue"><i class="icon-ok"></i>筛选</button>
-        &nbsp;<a href="{%$_SERVER['REQUEST_URI']%}">重置筛选</a>
+        &nbsp;<a href="{%$smarty.server.SCRIPT_URL%}">重置筛选</a>
         &nbsp;<a id="fold_filter" href="javascript:void 0">收起筛选∧</a>
         <span id="multi_actions">
         {%foreach from=$pageAdmin->multi_actions item=action%}

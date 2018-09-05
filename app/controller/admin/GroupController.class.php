@@ -7,7 +7,7 @@ class GroupController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_Group();
         WinRequest::mergeModel(array(
-            'controllerText'=>"角色管理",
+            'controllerText'=>"角色",
         ));
 
         $this->form=new Form(array(
@@ -31,7 +31,7 @@ class GroupController extends Page_Admin_Base {
         );
 
         $this->single_actions=[
-            ['label'=>'权限','action'=>function($model){
+            ['label'=>'权限组配置','action'=>function($model){
                 return '/admin/RolePermission?__filter='.urlencode('group_id='.$model->mId);
             }],
         ];

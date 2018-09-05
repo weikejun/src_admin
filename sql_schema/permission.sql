@@ -141,11 +141,47 @@ DROP TABLE IF EXISTS `admin`;
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL,
+  `real_name` varchar(32) DEFAULT NULL,
   `password` varchar(32) DEFAULT NULL,
   `gender` varchar(3) DEFAULT NULL,
   `department` varchar(32) DEFAULT NULL,
   `create_time` int(11) DEFAULT NULL,
   `valid` enum('valid','invalid') DEFAULT 'valid',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `permission_action`
+--
+
+DROP TABLE IF EXISTS `permission_action`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permission_action` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `permission_id` varchar(11) NOT NULL,
+  `action_id` varchar(11) NOT NULL,
+  `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permission_id_action_id_index` (`permission_id`,`action_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='权限动作管理';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `item_permission`
+--
+
+DROP TABLE IF EXISTS `item_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `item_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `admin_id` varchar(16) DEFAULT NULL,
+  `company_id` varchar(16) DEFAULT NULL,
+  `project_id` varchar(16) DEFAULT NULL,
+  `operator_id` varchar(16) DEFAULT NULL,
+  `create_time` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

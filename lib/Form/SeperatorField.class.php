@@ -112,7 +112,7 @@ $(document).ready(function() {
             data: $('#main_form').serialize(),
             dataType: 'json',
             success: function(ret) {
-                if (ret.id) {
+                if (ret.id && ret.id != 0) {
                     $('#save-tip').html('&nbsp;<i>自动保存于 '+ret.stamp+'</i>');
                     if ($('#main_form input[name=id]').length == 0) {
                         $('#main_form').prepend('<input type=hidden name=id />');

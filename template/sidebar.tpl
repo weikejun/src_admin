@@ -100,7 +100,7 @@
 				<li class="start {%if $executeInfo.controllerName=='Permission'%} active {%/if%}">
 					<a href="/admin/Permission">
 					<i class="icon-home"></i> 
-                    <span class="title">权限管理</span>
+                    <span class="title">权限组</span>
 					<span class="selected"></span>
 					</a>
 				</li>
@@ -109,7 +109,7 @@
 				<li class="start {%if $executeInfo.controllerName=='RolePermission'%} active {%/if%}">
 					<a href="/admin/RolePermission">
 					<i class="icon-home"></i> 
-                    <span class="title">角色权限管理</span>
+                    <span class="title">角色权限</span>
 					<span class="selected"></span>
 					</a>
 				</li>
@@ -118,7 +118,7 @@
 				<li class="start {%if $executeInfo.controllerName=='Group'%} active {%/if%}">
 					<a href="/admin/Group">
 					<i class="icon-home"></i> 
-                    <span class="title">角色管理</span>
+                    <span class="title">角色</span>
 					<span class="selected"></span>
 					</a>
 				</li>
@@ -127,7 +127,7 @@
 				<li class="start {%if $executeInfo.controllerName=='AdminGroup'%} active {%/if%}">
 					<a href="/admin/AdminGroup">
 					<i class="icon-home"></i> 
-                    <span class="title">用户角色管理</span>
+                    <span class="title">用户角色</span>
 					<span class="selected"></span>
 					</a>
 				</li>
@@ -136,7 +136,25 @@
 				<li class="start {%if $executeInfo.controllerName=='Action'%} active {%/if%}">
 					<a href="/admin/Action">
 					<i class="icon-home"></i> 
-                    <span class="title">动作权限管理</span>
+                    <span class="title">权限</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='PermissionAction'%}
+				<li class="start {%if $executeInfo.controllerName=='PermissionAction'%} active {%/if%}">
+					<a href="/admin/PermissionAction">
+					<i class="icon-home"></i> 
+                    <span class="title">权限组配置</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='ItemPermission'%}
+				<li class="start {%if $executeInfo.controllerName=='ItemPermission'%} active {%/if%}">
+					<a href="/admin/ItemPermission">
+					<i class="icon-home"></i> 
+                    <span class="title">交易记录授权</span>
 					<span class="selected"></span>
 					</a>
 				</li>

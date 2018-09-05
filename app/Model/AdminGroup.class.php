@@ -13,4 +13,10 @@ class Model_AdminGroup extends Base_Admin_Group{
         }
         return $group_ids;
     }
+
+    public static function isCurrentAdminRoot() {
+        $admin = Model_Admin::getCurrentAdmin();
+        $groupIds = self::getGroupIdsByAdmin($admin->mId);
+        return Model_Group::isRoot($groupIds);
+    }
 }

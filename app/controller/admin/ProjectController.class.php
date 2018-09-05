@@ -80,7 +80,32 @@ class ProjectController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
 
         $this->model=new Model_Project();
+        $this->model->on('after_insert', function($model) {
+            if (!$model->getData('id')) 
+                return;
+            $adminId = Model_Admin::getCurrentAdmin()->mId;
+            $finder = new Model_ItemPermission;
+            $finder->addWhere('admin_id', $adminId);
+            $finder->addWhere('company_id', $model->getData('company_id'));
+            $finder->addWhere('project_id', '');
+            if ($finder->count()) {
+                return;
+            }
+            $itemPer = new Model_ItemPermission;
+            $itemPer->setData([
+                'admin_id' => $adminId,
+                'project_id' => $model->getData('id'),
+                'company_id' => '',
+                'operator_id' => '',
+                'create_time' => time(),
+            ]);
+            $itemPer->save();
+        });
         $this->model->orderBy('id', 'DESC');
+        if (!Model_AdminGroup::isCurrentAdminRoot()) {
+            $persIds = Model_ItemPermission::getAdminItem();
+            $this->model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+        }
 
         WinRequest::mergeModel(array(
             'controllerText' => '交易记录',

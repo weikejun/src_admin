@@ -7,7 +7,7 @@ class AdminGroupController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_AdminGroup();
         WinRequest::mergeModel(array(
-            'controllerText'=>"用户角色管理",
+            'controllerText'=>"用户角色",
         ));
 
         $this->form=new Form(array(

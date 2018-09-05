@@ -44,7 +44,6 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('short'),'paramName'=>'short','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('hold_status'),'paramName'=>'hold_status','choices'=>Model_Company::getHoldStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('management'),'paramName'=>'management','choices'=>Model_Company::getManagementChoices()]),
@@ -65,7 +64,32 @@ class CompanyController extends Page_Admin_Base {
 
         $this->model=new Model_Company();
         $this->model->orderBy('update_time', 'DESC');
-
+        $this->model->on('after_insert', function($model) {
+            if (!$model->getData('id')) {
+                return false;
+            }
+            $adminId = Model_Admin::getCurrentAdmin()->mId;
+            $finder = new Model_ItemPermission;
+            $finder->addWhere('admin_id', $adminId);
+            $finder->addWhere('company_id', $model->getData('id'));
+            $finder->addWhere('project_id', '');
+            if ($finder->count()) {
+                return;
+            }
+            $itemPer = new Model_ItemPermission;
+            $itemPer->setData([
+                'admin_id' => $adminId,
+                'company_id' => $model->getData('id'),
+                'project_id' => '',
+                'operator_id' => '',
+                'create_time' => time(),
+            ]);
+            $itemPer->save();
+        });
+        if (!Model_AdminGroup::isCurrentAdminRoot()) {
+            $persIds = Model_ItemPermission::getAdminItem();
+            $this->model->addWhere('id', $persIds['company'], 'IN', DBTable::ESCAPE);
+        }
     }
 
     private function _initFullAction() {
@@ -160,14 +184,15 @@ class CompanyController extends Page_Admin_Base {
     }
 
     protected function _initSelect() {
+        $this->_initListDisplay();
         $this->list_filter = [];
-        $this->search_fields = ['name'];
+        $this->search_fields = ['name','short'];
         $reqModel = WinRequest::getModel();
         unset($reqModel['tableWrap']);
         WinRequest::setModel($reqModel);
         $list_display = [];
         foreach($this->list_display as $i => $field) {
-            if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type', 'region', 'register_region'])) {
+            if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type'])) {
                 $list_display[] = $field;
             }
         }
@@ -176,7 +201,13 @@ class CompanyController extends Page_Admin_Base {
 
     public function select() {
         $this->_initSelect();
+        return parent::select();
+        /*
+        if(Model_AdminGroup::isCurrentAdminRoot()) { // root用户展示全部信息
+            return parent::select();
+        }
         $this->display("admin/base/select.html");
+         */
     }
 
     public function select_search(){
@@ -188,7 +219,7 @@ class CompanyController extends Page_Admin_Base {
             $model->addWhere('id', 0);
         } else {
             foreach($this->search_fields as $field){
-                $model->addWhere($field, $search);
+                $model->addWhere($field, $search, '=', 'OR');
             }
         }
         $this->_index();
