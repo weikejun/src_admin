@@ -30,9 +30,11 @@ class ActionController extends Page_Admin_Base {
                 return date('Y-m-d H:i:s', $model->mCreateTime);
             }],
         ];
+        /*
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'权限名','paramName'=>'name','fusion'=>true]),
-        );
+        );*/
+        $this->search_fields = ['id','name','description'];
         $this->single_actions=[
             ['label'=>'所属权限组','action'=>function($model){
                 return '/admin/PermissionAction?__filter='.urlencode('name|action_id='.$model->mName);

@@ -35,5 +35,18 @@
         $("body").delegate("[confirm]",'click',function(){
             return confirm($(this).attr("confirm"));
         });
+        // 搜索飘红
+        var urlParams = location.search.replace('?','').split('&');
+        for(i = 0; i < urlParams.length; i++) {
+            if (urlParams[i].substr(0,6) == 'search') {
+                var kw = decodeURIComponent(urlParams[i].substr(7)).replace(/\s/g, '');
+                if (kw == '') break;
+                $('#sample_1 td').each(function() {
+                    if ($(this).html() == $(this).text()) {
+                        $(this).html($(this).html().replace(new RegExp(kw, 'g'), '<b style="color:red;">'+kw+'</b>'));
+                    }
+                });
+            }
+        }
     })();
 </script>

@@ -186,13 +186,13 @@ class CompanyController extends Page_Admin_Base {
     protected function _initSelect() {
         $this->_initListDisplay();
         $this->list_filter = [];
-        $this->search_fields = ['name','short'];
+        $this->search_fields = ['name','short','partner','manager','legal_person','finance_person'];
         $reqModel = WinRequest::getModel();
         unset($reqModel['tableWrap']);
         WinRequest::setModel($reqModel);
         $list_display = [];
         foreach($this->list_display as $i => $field) {
-            if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type'])) {
+            if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type','partner','manager','legal_person','finance_person'])) {
                 $list_display[] = $field;
             }
         }
@@ -212,18 +212,7 @@ class CompanyController extends Page_Admin_Base {
 
     public function select_search(){
         $this->_initSelect();
-        $model=$this->model;
-        $search=trim($this->_GET('search'));
-        $this->assign("search",$search);
-        if (!$search) {
-            $model->addWhere('id', 0);
-        } else {
-            foreach($this->search_fields as $field){
-                $model->addWhere($field, $search, '=', 'OR');
-            }
-        }
-        $this->_index();
-        $this->display("admin/base/select.html");
+        return parent::select_search();
     }
 }
 

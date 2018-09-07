@@ -82,7 +82,7 @@ abstract class Page_Admin_Base extends BaseController{
         $search=trim($this->_GET('search'));
         $this->assign("search",$search);
         if (!$search) {
-            $model->addWhere('id', 0);
+            //$model->addWhere('id', 0);
             return;
         }
         foreach($this->search_fields as $field){

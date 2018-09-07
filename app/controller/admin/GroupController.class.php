@@ -35,11 +35,13 @@ class GroupController extends Page_Admin_Base {
                 return '/admin/RolePermission?__filter='.urlencode('group_id='.$model->mId);
             }],
         ];
+        $this->search_fields = ['id', 'name', 'description'];
         
+        /*
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'角色ID','paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>'角色名','paramName'=>'name','fusion'=>true]),
-        );
+        );*/
     }
 }
 

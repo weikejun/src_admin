@@ -1,4 +1,7 @@
 {%extends file="admin/framework.tpl"%}
+{%block name="head" append%}
+	<link href="/winphp/metronic/media/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
+{%/block%}
 {%block name="body"%}
 <div class="row-fluid">
     <div class="span12">
@@ -19,18 +22,43 @@
 <script>
     (function(){
         var itemDatas={%json_encode(array_map(create_function('$item','return $item->getData();'),$modelDataList))%};
-        $("tbody>tr").dblclick(function(){
-            var index=$(this).index();
-	    parent.window.choosemodel('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',itemDatas[index]['id'],itemDatas[index]['{%$smarty.get.show%}']);
-            parent.window.choosemodelPopup.close();
+        $("tbody>tr.sel-single").dblclick(function(){
+            if (parent.window.choosemodel) {
+                var index=$(this).index();
+                parent.window.choosemodel('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',itemDatas[index]['id'],itemDatas[index]['{%$smarty.get.show%}']);
+                parent.window.choosemodelPopup.close();
+            }
         });
-	$(":checkbox").each(function(elem) {
-		$(this).parentsUntil("tr").click(function(){
-			$(this).dblclick();
-		});
-	});
+        $(":checkbox[name=__item]").each(function(elem) {
+            $(this).parentsUntil("tr").click(function(){
+                $(this).dblclick();
+            });
+        });
+        $("#check_all").click(function(){
+            var _checkBtn = $(this);
+            $(":checkbox[name=__item]").each(function() {
+                if (_checkBtn.prop('checked') == $(this).prop('checked')) {
+                } else {
+                    $(this).click();
+                }
+            });
+        });
         $("form[name='search']").submit(function(){
             $(this).find('[name="action"]').val('select_search');
+        });
+        $("#multi-select").click(function() {
+            var selItems = new Array;
+            $(":checkbox[name=__item]").each(function(index) {
+                if ($(this).prop('checked')) {
+                    selItems.push(itemDatas[index]);
+                }
+                if (index == $(":checkbox[name=__item]").length - 1) {
+                    if (parent.window.choosemodelMulti && selItems.length) {
+                        parent.window.choosemodelMulti('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',selItems);
+                        parent.window.choosemodelMultiPopup.close();
+                    }
+                }
+            });
         });
     })();
 </script>

@@ -61,12 +61,7 @@ class AdminController extends Page_Admin_Base {
             }],
         ];
 
-        $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>'用户ID','paramName'=>'id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'用户名','paramName'=>'name','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>'真实姓名','paramName'=>'real_name','fusion'=>true]),
-            new Page_Admin_TimeRangeFilter(['name'=>'创建时间','paramName'=>'create_time']),
-        );
+        $this->search_fields = ['id', 'name', 'real_name'];
     }
     public function display_ctime($modelData){
         return strftime("%Y-%m-%d",$modelData->mCreateTime);

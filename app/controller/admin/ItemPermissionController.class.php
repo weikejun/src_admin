@@ -12,9 +12,9 @@ class ItemPermissionController extends Page_Admin_Base {
         ));
 
         $this->form=new Form(array(
-            array('name'=>'admin_id','label'=>'授权用户','type'=>"choosemodel",'model'=>'Model_Admin','default'=>null,'required'=>true,),
-            array('name'=>'company_id','label'=>'授权项目','type'=>"choosemodel",'model'=>'Model_Company','default'=>null,'required'=>false,'show'=>'short'),
-            array('name'=>'project_id','label'=>'授权交易','type'=>"choosemodel",'model'=>'Model_Project','default'=>null,'required'=>false,'show'=>'id'),
+            array('name'=>'admin_id','label'=>'授权用户','type'=>"choosemodelMulti",'model'=>'Model_Admin','default'=>null,'required'=>true,),
+            array('name'=>'company_id','label'=>'授权项目','type'=>"choosemodelMulti",'model'=>'Model_Company','default'=>null,'required'=>false,'show'=>'short'),
+            array('name'=>'project_id','label'=>'授权交易','type'=>"choosemodelMulti",'model'=>'Model_Project','default'=>null,'required'=>false,'show'=>'id'),
             array('name'=>'operator_id','label'=>'操作人','type'=>"hidden",'default'=>Model_Admin::getCurrentAdmin()->mId,'required'=>false,'readonly'=>true),
             array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
         ));
@@ -68,7 +68,47 @@ class ItemPermissionController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>'授权交易','paramName'=>'project_id','fusion'=>false]),
         );
 
-        //$this->search_fields=array('name', 'id');
+        $this->single_actions_default = ['delete'=>true,'edit'=>false];
+    }
+
+    public function _create(){
+        unset($_REQUEST['id']);
+        $adminIds = $_REQUEST['admin_id'];
+        $projIds = $_REQUEST['project_id'];
+        $compIds = $_REQUEST['company_id'];
+        if($adminIds && ($projIds || $compIds)) {
+            for($i = 0; $i < count($adminIds); $i++) {
+                if ($projIds) {
+                    for($j = 0; $j < count($projIds); $j++) {
+                        $model = new Model_ItemPermission;
+                        $model->setData([
+                            'admin_id' => $adminIds[$i],
+                            'project_id' => $projIds[$j],
+                            'company_id' => '',
+                            'operator_id' => Model_Admin::getCurrentAdmin()->mId,
+                            'create_time' => time()
+                        ]);
+                        $model->save();
+                    }
+                } elseif ($compIds) {
+                    for($j = 0; $j < count($compIds); $j++) {
+                        $model = new Model_ItemPermission;
+                        $model->setData([
+                            'admin_id' => $adminIds[$i],
+                            'project_id' => '',
+                            'company_id' => $compIds[$j],
+                            'operator_id' => Model_Admin::getCurrentAdmin()->mId,
+                            'create_time' => time()
+                        ]);
+                        $model->save();
+                    }
+                }
+            }
+            return true;
+        }
+        $this->assign("__is_new",true);
+        $this->assign("form",$this->form);
+        return false;
     }
 }
 

@@ -31,10 +31,12 @@ class PermissionController extends Page_Admin_Base {
             }],
         );
         
+        /*
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>'权限组ID','paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>'权限组名','paramName'=>'name','fusion'=>true]),
-        );
+        );*/
+        $this->search_fields = ['id', 'name', 'description'];
 
         $this->single_actions=[
             ['label'=>'已分配角色','action'=>function($model){

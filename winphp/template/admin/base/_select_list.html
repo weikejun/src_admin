@@ -1,4 +1,7 @@
 <div id="sample_1_wrapper" class="dataTables_wrapper form-inline" role="grid">
+    <style>
+    .filter-text {width: 10%;}
+    </style>
     {%if $pageAdmin->list_filter%}
     <form name='__filter'>
         {%foreach $pageAdmin->list_filter as $filter%}
@@ -26,10 +29,10 @@
                     条结果</label>
             </div-->
         </div>
-        <div class="span6">
+        <div class="span6 text-right">
             <div class="dataTables_filter" id="sample_1_filter">
                 <label>
-                    <form style="margin:0;" name="search">
+                    <form style="margin:0;" name="search" method="GET">
                         <input type="hidden" name="action" value="search">
                         搜索: <input name="search" value="{%$smarty.get.search|escape%}" type="text" aria-controls="sample_1" class="m-wrap medium">
                         {%if $smarty.get.field%}
@@ -37,6 +40,9 @@
                         {%/if%}
                         {%if $smarty.get.show%}
                         <input name="show" value="{%$smarty.get.show|escape%}" type="hidden">
+                        {%/if%}
+                        {%if $smarty.get.multi%}
+                        <input name="multi" value="{%$smarty.get.multi|escape%}" type="hidden">
                         {%/if%}
                         <button type="submit" class="btn blue"><i class="icon-ok"></i>提交</button>
                     </form>
@@ -57,7 +63,7 @@
 
         <thead>
             <tr role="row">
-                <th></th>
+                <th>{%if $smarty.get.multi%}<input type="checkbox" id="check_all"/>{%/if%}</th>
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <th>
                     {%if is_string($list_item)%}
@@ -75,7 +81,7 @@
 
         <tbody>
             {%foreach from=$modelDataList item=modelData%}
-            <tr class="gradeX {%cycle values="odd,even"%}">
+            <tr class="gradeX {%cycle values="odd,even"%} {%if $smarty.get.multi%}sel-multi{%else%}sel-single{%/if%}">
                 <td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td>
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <td>
@@ -148,8 +154,9 @@
         </div>
 
     </div>
-
-
+    {%if $smarty.get.multi %}
+    <div class="row-fluid text-center"><button id="multi-select" type="submit" class="btn blue"><i class="icon-ok"></i>完成选择</button></div>
+    {%/if%}
 </div>
 
 

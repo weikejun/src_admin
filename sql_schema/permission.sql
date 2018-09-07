@@ -182,6 +182,7 @@ CREATE TABLE `item_permission` (
   `project_id` varchar(16) DEFAULT NULL,
   `operator_id` varchar(16) DEFAULT NULL,
   `create_time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `admin_uni` (`admin_id`,`company_id`, `project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
