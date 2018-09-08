@@ -186,7 +186,7 @@ class CompanyController extends Page_Admin_Base {
     protected function _initSelect() {
         $this->_initListDisplay();
         $this->list_filter = [];
-        $this->search_fields = ['name','short','partner','manager','legal_person','finance_person'];
+        $this->search_fields = ['name','short','partner','manager','legal_person','finance_person','project_type'];
         $reqModel = WinRequest::getModel();
         unset($reqModel['tableWrap']);
         WinRequest::setModel($reqModel);

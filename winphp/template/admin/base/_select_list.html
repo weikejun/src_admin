@@ -7,6 +7,9 @@
         {%foreach $pageAdmin->list_filter as $filter%}
                 {%$filter->toHtml()%}
         {%/foreach%}
+        {%if $smarty.get.multi%}
+        <input name="multi" value="{%$smarty.get.multi|escape%}" type="hidden">
+        {%/if%}
         <button type="submit" class="btn blue"><i class="icon-ok"></i>筛选</button>
         &nbsp;<a href="{%$pageAdmin->getUrl()%}?{%if $smarty.get.action%}action={%$smarty.get.action|escape:url%}{%/if%}{%if $smarty.get.field%}&field={%$smarty.get.field|escape:url%}&show={%$smarty.get.show|escape:url%}{%/if%}">重置</a>
     </form>

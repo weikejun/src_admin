@@ -647,13 +647,14 @@ class ProjectController extends Page_Admin_Base {
         $this->list_filter = [
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','foreignTable'=>'Model_Entity','fusion'=>true,'class'=>'keep-all']),
         ];
         $reqModel = WinRequest::getModel();
         unset($reqModel['tableWrap']);
         WinRequest::setModel($reqModel);
         $list_display = [];
         foreach($this->list_display as $i => $field) {
-            if (in_array($field['name'], ['id', '_company_short', 'turn_sub', 'close_date', 'deal_type', 'invest_turn', 'our_amount', '_stock_ratio','exit_turn', 'exit_amount', '_exit_stock_ratio'])) {
+            if (in_array($field['name'], ['id', '_company_short', 'turn_sub', 'close_date', 'deal_type', 'invest_turn', 'decision_date', 'entity_id'])) {
                 $list_display[] = $field;
             }
         }
