@@ -21,7 +21,8 @@
 {%block name="footjs" append%}
 <script>
     (function(){
-        var itemDatas={%json_encode(array_map(create_function('$item','return $item->getData();'),$modelDataList))%};
+        var itemDatas={%json_encode(array_map(create_function('$item','return ["id"=>$item->getData("id"),$_GET["show"]=>$item->getData($_GET["show"])];'),$modelDataList))%};
+        var pathName = location.pathname.replace(/\//g, '_');
         $("tbody>tr.sel-single").dblclick(function(){
             if (parent.window.choosemodel) {
                 var index=$(this).index();
@@ -43,22 +44,60 @@
                 }
             });
         });
+        if ($("#check_all").length == 1) {
+            $(":checkbox[name=__item]").each(function() {
+                $(this).click(function() {
+                    var _selMulti = $.cookie('_selMulti');
+                    if (typeof _selMulti == 'string') {
+                        _selMulti = JSON.parse(_selMulti);
+                    }
+                    if (_selMulti == null) {
+                        _selMulti = new Object;
+                    }
+                    if (typeof _selMulti[pathName] != 'object'
+                            || _selMulti[pathName] == null) {
+                        _selMulti[pathName] = new Object;
+                    }
+                    if ($(this).prop('checked')) {
+                        for (var i = 0; i < itemDatas.length; i++) {
+                            if (itemDatas[i].id == $(this).val())
+                                _selMulti[pathName][$(this).val()] = itemDatas[i];
+                        }
+                    } else {
+                        delete _selMulti[pathName][$(this).val()];
+                    }
+                    $.cookie('_selMulti', JSON.stringify(_selMulti));
+                });
+            });
+            var selMulti = $.cookie('_selMulti');
+            if (typeof selMulti == 'string') {
+                selMulti = JSON.parse(selMulti);
+                if (selMulti != null) {
+                    for(sid in selMulti[pathName]) {
+                        $(":checkbox[value="+sid+"]").click();
+                    }
+                }
+            }
+        }
         $("form[name='search']").submit(function(){
             $(this).find('[name="action"]').val('select_search');
         });
         $("#multi-select").click(function() {
             var selItems = new Array;
-            $(":checkbox[name=__item]").each(function(index) {
-                if ($(this).prop('checked')) {
-                    selItems.push(itemDatas[index]);
+            var selMulti = $.cookie('_selMulti');
+            if (typeof selMulti == 'string') {
+                selMulti = JSON.parse(selMulti);
+                for(sid in selMulti[pathName]) {
+                    selItems.push(selMulti[pathName][sid]);
                 }
-                if (index == $(":checkbox[name=__item]").length - 1) {
-                    if (parent.window.choosemodelMulti && selItems.length) {
-                        parent.window.choosemodelMulti('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',selItems);
-                        parent.window.choosemodelMultiPopup.close();
-                    }
-                }
-            });
+            }
+            if (parent.window.choosemodelMulti && selItems.length) {
+                parent.window.choosemodelMulti('{%$executeInfo.controllerName%}','{%$smarty.get.field%}',selItems);
+                parent.window.choosemodelMultiPopup.close();
+                selMulti[pathName] = new Object;
+                $.cookie('_selMulti', JSON.stringify(selMulti));
+            }
+            return;
         });
     })();
 </script>

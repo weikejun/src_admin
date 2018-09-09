@@ -5,11 +5,12 @@ class Page_Admin_TextForeignFilter extends Page_Admin_IFilter{
     public function setFilter(DBModel $model){
         parse_str($_GET['__filter'],$params);
         $paramName=$this->getParamName();
+        $forSelField = $this->forSelField ? $this->forSelField : 'id';
         if(isset($params[$paramName])&&strlen($params[$paramName])!=0){
             $val = $params[$paramName];
             list($paramName, $foreignKey) = explode('|', $paramName);
             $fFinder = new $this->foreignTable;
-            $objs = $fFinder->addWhere($paramName, ($this->fusion ? "%$val%" : $val), ($this->fusion ? 'like' : '='))->setCols(['id'])->findMap('id');
+            $objs = $fFinder->addWhere($paramName, ($this->fusion ? "%$val%" : $val), ($this->fusion ? 'like' : '='))->setCols([$forSelField])->findMap($forSelField);
             $model->addWhere($foreignKey, array_keys($objs), 'IN');
         }
     }

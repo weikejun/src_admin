@@ -50,6 +50,7 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
         );
     }
 
@@ -190,7 +191,9 @@ class CompanyController extends Page_Admin_Base {
         $reqModel = WinRequest::getModel();
         unset($reqModel['tableWrap']);
         WinRequest::setModel($reqModel);
-        $list_display = [];
+        $this->list_filter=array(
+            new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
+        );
         foreach($this->list_display as $i => $field) {
             if (in_array($field['name'], ['id', 'name', 'short', 'bussiness', 'project_type','partner','manager','legal_person','finance_person'])) {
                 $list_display[] = $field;

@@ -59,9 +59,9 @@ class SystemLogController extends Page_Admin_Base {
                         $kvs1[$k] = "<s>".$kvs2[$k]."</s>&nbsp;".$kvs1[$k];
                 }
             }
-            $formClass = 'Form_'.ucwords($_GET['resource']);
-            return ['admin/system_log/diff.tpl', array('kvs1'=>$kvs1,'kvs2'=>$kvs2,'logs1'=>$logs[0],'logs2'=>$logs[1],'formClass'=>$formClass)];
         }
+        $formClass = 'Form_'.ucwords($_GET['resource']);
+        return ['admin/system_log/diff.tpl', array('kvs1'=>$kvs1,'kvs2'=>$kvs2,'logs1'=>$logs[0],'logs2'=>$logs[1],'formClass'=>$formClass)];
     }
     public function __construct(){
         parent::__construct();

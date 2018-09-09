@@ -62,6 +62,8 @@ class AdminController extends Page_Admin_Base {
         ];
 
         $this->search_fields = ['id', 'name', 'real_name'];
+
+        $this->single_actions_default = ['edit'=>true,'delete'=>false];
     }
     public function display_ctime($modelData){
         return strftime("%Y-%m-%d",$modelData->mCreateTime);
@@ -79,6 +81,12 @@ class AdminController extends Page_Admin_Base {
         return ["jsonp:",["json"=>$data]];
     }
 
+    /*
+     * 重载_delete()方法
+     */
+    public function _delete() {
+        $this->model->addWhere('id', $_REQUEST['id'])->update(['valid'=>['"invalid"', DBTable::NO_ESCAPE]]);
+    }
 }
 
 
