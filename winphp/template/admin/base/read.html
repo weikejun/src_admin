@@ -214,9 +214,6 @@
     $('#control-clear').click(function() {
         var pDiv = $(this).parents('div.control-group');
         pDiv.find('input').val('');
-        pDiv.find(':radio').removeAttr('checked');
-        pDiv.find(':radio').parent().removeClass('checked');
-        pDiv.find('textarea').val('');
     });
 })();
 </script>

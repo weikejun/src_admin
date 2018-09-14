@@ -109,7 +109,7 @@
 				<li class="start {%if $executeInfo.controllerName=='RolePermission'%} active {%/if%}">
 					<a href="/admin/RolePermission">
 					<i class="icon-home"></i> 
-                    <span class="title">角色权限</span>
+                    <span class="title">角色权限组</span>
 					<span class="selected"></span>
 					</a>
 				</li>

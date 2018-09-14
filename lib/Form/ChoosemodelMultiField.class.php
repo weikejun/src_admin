@@ -94,6 +94,11 @@ use("popup",function(){
             choose_callback();
         }
     };
+    $('#control-clear').click(function() {
+        var pDiv = $(this).parents('div.control-group');
+        pDiv.find('input').remove();
+        pDiv.find('a.msel-item').remove();
+    });
 });
 </script>
 EOF;

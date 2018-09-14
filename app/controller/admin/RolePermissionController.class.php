@@ -8,7 +8,7 @@ class RolePermissionController extends Page_Admin_Base {
         $this->model=new Model_RolePermission();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
-            'controllerText'=>"角色权限",
+            'controllerText'=>"角色权限组",
         ));
 
         $this->form=new Form(array(

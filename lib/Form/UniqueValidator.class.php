@@ -8,7 +8,7 @@ class Form_UniqueValidator{
     public function validate($value){
         $this->model->addWhere($this->field_name,$value);
         if($this->model->count()){
-            $this->error="$this->field_name 字段的值必须是唯一的！";
+            $this->error="$this->field_name 不能重复";
             return false;
         }else{
             return true;

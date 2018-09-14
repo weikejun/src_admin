@@ -39,4 +39,17 @@ class Form_ChoiceField extends Form_Field{
         $html.="</div>";
         return $html;
     }
+
+    public function foot_js(){
+        $js=<<<EOF
+<script>
+    $('#control-clear').click(function() {
+        var pDiv = $(this).parents('div.control-group');
+        pDiv.find(':radio').removeAttr('checked');
+        pDiv.find(':radio').parent().removeClass('checked');
+    });
+</script>
+EOF;
+        return $js;
+    }
 }

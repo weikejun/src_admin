@@ -42,3 +42,8 @@ CREATE TABLE `item_permission` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 insert into permission_action (action_id, permission_id, create_time) select id,permission_id,unix_timestamp() from action;
+
+alter table role_permission modify `group_id` varchar(16) COMMENT '权限组ID';
+alter table role_permission modify `admin_id` varchar(16) COMMENT '系统用户ID';
+alter table role_permission modify `permission_id` varchar(16) DEFAULT NULL COMMENT '权限ID';
+alter table role_permission add UNIQUE KEY `uniq_key` (`group_id`,`permission_id`);

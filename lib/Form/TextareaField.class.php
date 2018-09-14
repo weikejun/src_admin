@@ -18,4 +18,16 @@ class Form_TextareaField extends Form_Field{
         $html.='</div>';
         return $html;
     }
+
+    public function foot_js(){
+        $js=<<<EOF
+<script>
+    $('#control-clear').click(function() {
+        var pDiv = $(this).parents('div.control-group');
+        pDiv.find('textarea').val('');
+    });
+</script>
+EOF;
+        return $js;
+    }
 }

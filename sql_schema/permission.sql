@@ -24,10 +24,11 @@ DROP TABLE IF EXISTS `role_permission`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `role_permission` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` text COMMENT '权限组ID',
-  `admin_id` text COMMENT '系统用户ID',
-  `permission_id` text NOT NULL COMMENT '权限ID',
-  PRIMARY KEY (`id`)
+  `group_id` varchar(16) COMMENT '权限组ID',
+  `admin_id` varchar(16) COMMENT '系统用户ID',
+  `permission_id` varchar(16) DEFAULT NULL COMMENT '权限ID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_key` (`group_id`,`permission_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户  权限组-权限 多对多关系';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
