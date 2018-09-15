@@ -47,3 +47,12 @@ alter table role_permission modify `group_id` varchar(16) COMMENT '权限组ID';
 alter table role_permission modify `admin_id` varchar(16) COMMENT '系统用户ID';
 alter table role_permission modify `permission_id` varchar(16) DEFAULT NULL COMMENT '权限ID';
 alter table role_permission add UNIQUE KEY `uniq_key` (`group_id`,`permission_id`);
+
+alter table `project` modify `partner` varchar(16) DEFAULT NULL COMMENT '本轮主管合伙人';
+alter table `project` modify `manager` varchar(16) DEFAULT NULL COMMENT '本轮项目负责人';
+alter table `project` modify `finance_person` varchar(16) DEFAULT NULL COMMENT '本轮法务负责人';
+alter table `project` modify `legal_person` varchar(16) DEFAULT NULL COMMENT '本轮法务负责人';
+
+alter table `project` add `count_captable` varchar(8) DEFAULT NULL COMMENT '是否计入Captable' after `close_date`;
+update project set count_captable='Y' where close_date > 0;
+update project set count_captable='N' where close_date = 0 or close_date is null;

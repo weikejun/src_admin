@@ -61,7 +61,7 @@ class Form_Project extends Form {
                 ['name'=>'first_financing','label'=>'企业是否首次融资','type'=>'choice','choices'=>Model_Project::getFirstFinancingChoices(),'required'=>true,],
                 ['name'=>'company_period','label'=>'目标企业阶段','type'=>'selectInput','choices'=>Model_Project::getCompanyPeriodChoices(),'required'=>false,],
                 ['name'=>'company_character','label'=>'目标企业性质','type'=>'selectInput','choices'=>Model_Project::getCompanyCharacterChoices(),'required'=>false,],
-                ['name'=>'item_status','label'=>'整理状态','type'=>'choice','choices'=>Model_Project::getItemStatusChoices(),'required'=>true,],
+                ['name'=>'item_status','label'=>'整理状态','type'=>'choice','choices'=>Model_Project::getItemStatusChoices(),'required'=>true,'default'=>'待完成'],
                 ['name'=>'field-index-status','label'=>'本轮交易状态','type'=>'seperator'],
                 ['name'=>'decision_date','label'=>'决策日期','type'=>'date','default'=>null,'required'=>false,'help'=>'TS日期（优先）、IC决策日期、投资部告知的大致日期，尽量精确到月','field'=>function($model){
                     if ($model->getData('decision_date')) {
@@ -80,6 +80,7 @@ class Form_Project extends Form {
                         return date('Ymd', $model->getData('close_date'));
                     }
                 }],
+                ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'N','required'=>false],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],

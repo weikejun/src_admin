@@ -281,7 +281,7 @@ class ProjectController extends Page_Admin_Base {
         $project = new Model_Project;
         $project->addWhere('company_id', $_GET['company_id']);
         $project->addWhere('status', 'valid');
-        $project->orderBy('close_date', 'DESC');
+        $project->orderBy('id', 'DESC');
         $project->setAutoClear(false);
         $dataList=$project->find();
 
@@ -295,6 +295,10 @@ class ProjectController extends Page_Admin_Base {
             }
             if ($dataItem->getData('loan_entity_id')) {
                 $captableIds[$dataItem->getData('loan_entity_id')] = 1;
+            }
+            if ($dataItem->getData('count_captable') == 'Y'
+                && !$dataItem->getData('close_date')) {
+                $dataList[$i]->setDataMerge(['close_date'=>1]);
             }
         }
         $captable = new Model_Entity;
@@ -319,6 +323,9 @@ class ProjectController extends Page_Admin_Base {
                 return $model->getData('new_old_stock');
             }],
             ['label' => '交割日期', 'field' => function($model) {
+                if ($model->getData('close_date') == 1) {
+                    return '暂未交割';
+                }
                 return date('Ymd', $model->getData('close_date'));
             }],
             ['label' => '企业轮次', 'field' => function($model) {

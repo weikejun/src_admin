@@ -409,4 +409,11 @@ class Model_Project extends Base_Project{
             ['其他','其他']
         ];
     }
+
+    public static function getCountCaptableChoices() {
+        return [
+            ['Y','计入'],
+            ['N','不计入'],
+        ];
+    }
 }
