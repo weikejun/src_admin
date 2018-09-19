@@ -50,7 +50,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 			<div class="container-fluid">
 				<!-- BEGIN LOGO -->
 				<a class="brand" href="index">
-				<img src="http://www.sourcecodecap.com/favicon.ico" width="24" alt="logo"/>
+				<!--img src="http://cdn.sourcecodecap.com/wp-content/uploads/2018/08/logo.png" width="24" alt="logo"/-->
 				</a>
 				<!-- END LOGO -->
 				<!-- BEGIN RESPONSIVE MENU TOGGLER -->

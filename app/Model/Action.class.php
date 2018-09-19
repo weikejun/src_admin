@@ -9,8 +9,10 @@ class Model_Action extends Base_Action{
     public static function getActionNames($permissionIds){
         $actionNames = array();
         if(count($permissionIds) > 0){
-            $action = new self();
-            $actions = $action->addWhere("permission_id", $permissionIds, 'in')->find();
+            $permAction = new Model_PermissionAction();
+            $actionIds = $permAction->addWhere("permission_id", $permissionIds, 'IN', DBTable::ESCAPE)->findMap('action_id');
+            $actions = new self();
+            $actions = $actions->addWhere('id', array_keys($actionIds), 'IN', DBTable::ESCAPE)->find();
             if($actions){ 
                 foreach($actions as $action){
                     $name = $action->mName;
