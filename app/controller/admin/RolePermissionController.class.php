@@ -31,10 +31,13 @@ class RolePermissionController extends Page_Admin_Base {
                     return ($ret ? ($group->mName) : '(id='.$model->mGroupId.')' );
                 }
             }],
-            ['label'=>'权限组','field'=>function($model){
+            ['label'=>'权限组','field'=>function($model)use(&$permission){
                 $permission = new Model_Permission();
                 $ret = $permission->addWhere("id", $model->mPermissionId)->select();
-                return ($ret ? ($permission->mName) : '(id='.$model->mPermissionId.')' );
+                return ($ret ? ('<a href="/admin/PermissionAction?__filter='.urlencode('permission_id='.$permission->mId).'">'.$permission->mName.'</a>') : '(id='.$model->mPermissionId.')' );
+            }],
+            ['label'=>'权限组说明','field'=>function($model)use(&$permission){
+                return $permission ? $permission->mDescription : '' ;
             }],
         );
 

@@ -38,6 +38,7 @@ class PermissionActionController extends Page_Admin_Base {
             }],
         ];
         $this->list_filter=array(
+            new Page_Admin_TextFilter(['name'=>'权限组ID','paramName'=>'permission_id','fusion'=>false]),
             new Page_Admin_TextForeignFilter(['name'=>'权限组','paramName'=>'name|permission_id','foreignTable'=>'Model_Permission','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'权限','paramName'=>'name|action_id','foreignTable'=>'Model_Action','fusion'=>true]),
         );
