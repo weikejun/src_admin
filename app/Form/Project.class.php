@@ -100,11 +100,13 @@ class Form_Project extends Form {
                 ['name'=>'financing_amount','label'=>'本轮新股融资总额','type'=>'number','default'=>null,'required'=>false,'help'=>'仅为新股融资金额，不包括老股金额','field'=>function($model){
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('financing_amount'), 2);
                 }],
-                ['name'=>'post_money','label'=>'企业投后估值','type'=>'number','required'=>false,'help'=>'（1）默认值为“企业投前估值“+”本轮新股融资总金额“；若有打折等情况影响估值计算，则手动计算填写；<br />（2）企业若本轮未发生融资则写上轮估值。','field'=>function($model) {
+                ['name'=>'post_money','label'=>'企业投后估值','type'=>'number','required'=>false,'help'=>'（1）值为“企业投前估值“+“本轮新股融资总金额“；若有打折等情况影响估值计算，与财务确认；<br />（2）企业若本轮未发生融资则写上轮估值。','field'=>function($model) {
+                    /*
                     if ($model->getData('post_money')) {
                         return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
                     }
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('pre_money') + $model->getData('financing_amount'), 2);
+                     */
                 }],
                 ['name'=>'_stock_price','label'=>'企业每股单价','type'=>'rawText','required'=>false,'help'=>'本轮“企业投后估值“除以本轮“企业投后总股数”','field'=>function($model){
                     $postMoney = $model->getData('pre_money') + $model->getData('financing_amount');
@@ -150,7 +152,10 @@ class Form_Project extends Form {
                 ['name'=>'loan_cb','label'=>'源码借款或CB','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'loan_currency','label'=>'借款计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'loan_type','label'=>'借款类型','type'=>'choice','choices'=>Model_Project::getLoanTypeChoices(),'required'=>false,],
-                ['name'=>'loan_entity_id','label'=>'源码出借主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,],
+                ['name'=>'loan_entity_id','label'=>'源码出借主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'field'=>function($model) {
+                    $entity = Page_Admin_Base::getResource($model->getData('loan_entity_id'), 'Model_Entity', new Model_Entity);
+                    return $entity ? $entity->getData('name') : false;
+                }],
                 ['name'=>'loan_amount','label'=>'源码借款合同金额','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return $model->getData('loan_currency') . ' ' . number_format($model->getData('loan_amount'), 2);
                 }],
@@ -224,6 +229,14 @@ class Form_Project extends Form {
                     return number_format($model->getData('stocknum_all'));
                 }],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
+                ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model){
+                    if ($model->getData('company_id')) {
+                        $co = new Model_Company;
+                        $co->addWhere('id', $model->getData('company_id'));
+                        $co->select();
+                        return $co->getData('main_founders');
+                    }
+                }],
                 ['name'=>'shareholding_founder','label'=>'最主要创始人股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return is_numeric($model->getData('shareholding_founder')) ? number_format($model->getData('shareholding_founder')) : $model->getData('shareholding_founder');
                 }],
@@ -287,7 +300,7 @@ class Form_Project extends Form {
                             $stockNum += $deal->getData('stocknum_get');
                         }
                         if ($model->getData('entity_id') && $deal->getData('exit_entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
-                            $stockNum -= $deal->getData('stocknum_get');
+                            $stockNum -= $deal->getData('exit_stock_number');
                         }
                     }
                     $stockNumNew = $stockNum;
@@ -352,6 +365,7 @@ class Form_Project extends Form {
                 ['name'=>'our_board_status','label'=>'源码董事状态','type'=>'choice','choices'=>Model_Project::getOurBoardStatusChoices(),'required'=>false,],
                 ['name'=>'our_board_register','label'=>'源码董事登记','type'=>'choice','choices'=>Model_Project::getOurBoardRegisterChoices(),'required'=>false,],
                 ['name'=>'observer','label'=>'源码观察员','type'=>'choice','choices'=>Model_Project::getObserverChoices(),'required'=>false,],
+                ['name'=>'supervisor','label'=>'源码监事','type'=>'choice','choices'=>Model_Project::getSupervisorChoices(),'required'=>false,],
                 ['name'=>'holder_veto','label'=>'源码股东会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false,],
                 ['name'=>'board_veto','label'=>'源码董事会veto','type'=>'choice','choices'=>Model_Project::getStandardVetoChoices(),'required'=>false],
                 ['name'=>'veto_memo','label'=>'Veto备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],

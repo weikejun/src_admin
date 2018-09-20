@@ -31,7 +31,7 @@ class AdminController extends Page_Admin_Base {
                     ($values['password']&&md5($values['password_again'])==$values['password'])){
                     return true;
                 }else{
-                    return "please retype the password";
+                    return "请输入相同密码";
                 }
             }),
             array('name'=>'valid','label'=>'有效状态',"choices"=>array(array('valid',"有效"),array('invalid',"无效"),), 'type'=>"choice",'default'=>'valid','null'=>false,),

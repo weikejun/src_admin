@@ -1,5 +1,22 @@
 <?php
 class Model_Entity extends Base_Entity{
+    public static function getOrgTypeChoices() {
+        return [
+            ['合伙企业','合伙企业'],
+            ['公司','公司'],
+            ['其他','其他'],
+        ];
+    }
+
+    public static function getCateChoices() {
+        return [
+            ['集合基金','集合基金'],
+            ['专项基金','专项基金'],
+            ['SPV','SPV'],
+            ['其他','其他'],
+        ];
+    }
+
     public static function getTpChoices() {
         return [
             ['主基金相关','主基金相关'],

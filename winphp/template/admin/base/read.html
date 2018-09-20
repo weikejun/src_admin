@@ -40,8 +40,7 @@
                     <a href="{%$__controller->getUrlPrefix()%}/{%$executeInfo.controllerName|escape%}"><b>{%$controllerText%}</b> 列表</a>
                 <span class="icon-angle-right"></span>
                 </li>
-                        
-                <li>{%if $__is_new%}<a href="javascript:;">新增</a>{%else%}<a href="javascript:void 0;">编辑</a>{%if $executeInfo.controllerName == 'Project'%}&nbsp;<a class="not-selected" href="{%$__controller->getUrlPrefix()%}/{%$executeInfo.controllerName|escape%}/check?id={%$smarty.get.id%}">预览</a>{%/if%}{%/if%}</li>
+                <li>{%if $__is_new%}<a href="javascript:;">新增</a>{%else%}<a href="javascript:void 0;">编辑</a>{%if $_preview%}&nbsp;<a class="not-selected" href="{%$__controller->getUrlPrefix()%}/{%$executeInfo.controllerName|escape%}/check?id={%$smarty.get.id%}">预览</a>{%/if%}{%/if%}</li>
             </ul>
         </div>
     </div>

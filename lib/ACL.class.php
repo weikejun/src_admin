@@ -43,7 +43,9 @@ class ACL{
 
         # 用户名为root直接获取权限
         $admin_name = Model_Admin::getCurrentAdmin()->mName;
-        if($admin_name == 'root'){
+        $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
+        if(count($group_ids) == 0)  return false;
+        if(Model_Group::isRoot($group_ids)){
             return true;
         }
 
@@ -67,11 +69,6 @@ class ACL{
         }
 
         # 用户没有直接权限则查看用户的组权限
-        $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
-        if(count($group_ids) == 0)  return false;
-        if(Model_Group::isRoot($group_ids)){
-            return true;
-        }
         $groupPermissionIds = Model_RolePermission::getPermissionIdsByGroup($group_ids);
         #return Permission::checkPermission($permission_ids, $permissionName);
         foreach($permissionIds as $i => $permissionId) {

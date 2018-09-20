@@ -11,6 +11,7 @@ class Model_Company extends Base_Company{
         return [
             ['人民币项目','人民币项目'],
             ['美元项目','美元项目'],
+            ['人民币及美元','人民币及美元'],
             ['其他', '其他'],
         ];
     }

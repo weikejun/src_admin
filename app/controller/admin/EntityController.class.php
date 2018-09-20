@@ -1,6 +1,8 @@
 <?php
 class EntityController extends Page_Admin_Base {
     use ControllerPreproc;
+    use ExportActions;
+
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
@@ -37,12 +39,15 @@ class EntityController extends Page_Admin_Base {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('name'),'paramName'=>'name','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('register_country'),'paramName'=>'register_country','fusion'=>true]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('cate'),'paramName'=>'cate','choices'=>Model_Entity::getCateChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices()]),
 
         );
-        //$this->search_fields = ['name','description','tp'];
+        $this->multi_actions=array(
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/entity/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],
+        );
     }
 
     protected function _initSelect() {

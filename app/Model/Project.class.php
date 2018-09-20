@@ -44,7 +44,7 @@ class Model_Project extends Base_Project{
         return [
             ['已存档','已存档'],
             ['待存档','待存档'],
-            ['无需存档','无需存档'],
+            ['无需存档','无'],
             ['不适用','不适用'],
             ['其他','其他'],
         ];
@@ -61,7 +61,7 @@ class Model_Project extends Base_Project{
 
     public static function getMirrorHoldChoices() {
         return [
-            ['RMB项目不适用','RMB项目不适用'],
+            ['RMB项目不适用','境内项目不适用'],
             ['USD项目有镜像','USD项目有镜像'],
             ['USD项目无镜像','USD项目无镜像'],
             ['其他','其他'],
@@ -124,6 +124,14 @@ class Model_Project extends Base_Project{
     }
 
     public static function getObserverChoices() {
+        return [
+            ['有席位','有席位'],
+            ['无席位','无席位'],
+            ['不适用','不适用'],
+        ];
+    }
+
+    public static function getSupervisorChoices() {
         return [
             ['有席位','有席位'],
             ['无席位','无席位'],

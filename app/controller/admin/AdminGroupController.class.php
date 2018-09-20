@@ -24,7 +24,7 @@ class AdminGroupController extends Page_Admin_Base {
             ['label'=>'角色名','field'=>function($model){
                 $group = new Model_Group();
                 $ret = $group->addWhere("id", $model->mGroupId)->select();
-                return ($ret ? $group->mName : '(id='.$model->mGroupId.')' );
+                return ($ret ? '<a href="/admin/RolePermission?__filter='.urlencode('group_id='.$group->mId).'">'.$group->mName.'</a>' : '(id='.$model->mGroupId.')' );
             }],
         );
 

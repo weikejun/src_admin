@@ -43,7 +43,7 @@ class RolePermissionController extends Page_Admin_Base {
 
         $this->list_filter=array(
             //new Page_Admin_TextFilter(['name'=>'用户ID','paramName'=>'admin_id','fusion'=>false]),
-            new Page_Admin_TextFilter(['name'=>'角色ID','paramName'=>'group_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>'角色ID','paramName'=>'group_id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>'权限ID','paramName'=>'permission_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
             //new Page_Admin_TextForeignFilter(['name'=>'用户名','paramName'=>'name|admin_id','foreignTable'=>'Model_Admin','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'角色名','paramName'=>'name|group_id','foreignTable'=>'Model_Group','fusion'=>true]),

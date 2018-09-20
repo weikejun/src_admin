@@ -15,8 +15,8 @@ class Form_Company extends Form {
                     $project = $project->find();
                     return $model->getData('id');
                 }],
-                ['name'=>'name','label'=>'目标企业','type'=>'text','default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称'],
-                ['name'=>'short','label'=>'项目简称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入项目唯一简称，后续变动可此处修改。'],
+                ['name'=>'name','label'=>'目标企业','type'=>'text','default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称','validator'=>new Form_UniqueValidator(new Model_Company, 'name')],
+                ['name'=>'short','label'=>'项目简称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入项目唯一简称，后续变动可此处修改。','validator'=>new Form_UniqueValidator(new Model_Company, 'short')],
                 ['name'=>'hold_status','label'=>'源码持有状态','type'=>'choice','choices'=>Model_Company::getHoldStatusChoices(),'default'=>'正常','required'=>true,],
                 ['name'=>'project_type','label'=>'项目类别','type'=>'choice','choices'=>Model_Company::getProjectTypeChoices(),'required'=>true,],
                 ['name'=>'management','label'=>'是否在管','type'=>'choice','choices'=>Model_Company::getManagementChoices(),'required'=>true,],
@@ -221,21 +221,34 @@ class Form_Company extends Form {
                 ['name'=>'_captable','label'=>'投退CapTable','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     return '<a href="/admin/project/captable?company_id='.$model->getData('id').'" target="_blank">查看</a>';
                 }],
-                /*
-                ['name'=>'_first_close_date','label'=>'首次投资交割日期','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_entity_list','label'=>'源码投资主体','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$stockNums) {
                     $dataList = [];
+                    $stockNums = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') 
-                            && strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                        if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
+                            if ($dataItem->getData('deal_type') == '源码退出') {
+                                $stockNums[$dataItem->getData('entity_id')] -= $dataItem->getData('exit_stock_number');
+                            } else {
+                                $stockNums[$dataItem->getData('entity_id')] += $dataItem->getData('stocknum_get');
+                            }
                         }
                     }
-                    ksort($dataList);
-                    foreach($dataList as $date => $dataItem) {
-                        return date('Ymd', $dataItem->getData('close_date'));
+                    $entityIds = array_keys($stockNums);
+                    if ($entityIds) {
+                        $entity = new Model_Entity;
+                        $entity->addWhere('id', $entityIds, 'IN');
+                        $entitys = $entity->findMap('id');
+                        $output = '';
+                        foreach($stockNums as $id => $num) {
+                            $output .= $entitys[$id]->mName."\n";
+                            if ($num <= 0) {
+                                $output .= '[已退出]';
+                            }
+                        }
+                        return $output;
                     }
                 }],
-                 */
                 ['name'=>'_have_exit','label'=>'是否发生过退出','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -293,19 +306,7 @@ class Form_Company extends Form {
                     }
                     return count($dataList) > 1 ? '是' : '否';
                 }],
-                ['name'=>'_multi_entity_hold','label'=>'当前是否多主体持股','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
-                    $dataList = [];
-                    $stockNums = [];
-                    foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                            if ($dataItem->getData('deal_type') == '源码退出') {
-                                $stockNums[$dataItem->getData('entity_id')] -= $dataItem->getData('exit_stock_number');
-                            } else {
-                                $stockNums[$dataItem->getData('entity_id')] += $dataItem->getData('stocknum_get');
-                            }
-                        }
-                    }
+                ['name'=>'_multi_entity_hold','label'=>'当前是否多主体持股','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$stockNums) {
                     $count = 0;
                     foreach($stockNums as $i => $stockNum) {
                         if ($stockNum > 0) {
@@ -369,6 +370,7 @@ class Form_Company extends Form {
                     }
                 }],
                 ['name'=>'field-index-govern','label'=>'企业治理','type'=>'seperator'],
+                ['name'=>'main_founders','label'=>'最主要创始人','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'_director_turn','label'=>'董事委派轮次','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -417,6 +419,18 @@ class Form_Company extends Form {
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         return $dataItem->getData('observer');
+                    }
+                }],
+                ['name'=>'_supervisor','label'=>'最新源码监事','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project){
+                    $dataList = [];
+                    foreach($project as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    krsort($dataList);
+                    foreach($dataList as $date => $dataItem) {
+                        return $dataItem->getData('supervisor');
                     }
                 }],
                 ['name'=>'_holder_veto','label'=>'最新股东会Veto','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project) {

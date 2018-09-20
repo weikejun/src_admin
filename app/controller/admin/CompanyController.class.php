@@ -22,6 +22,9 @@ class CompanyController extends Page_Admin_Base {
 
     private function _initSingleActions() {
         $this->single_actions=[
+            ['label'=>'预览','action'=>function($model){
+                return '/admin/company/check?id='.$model->mId;
+            }],
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=company&res_id='.$model->mId;
             }],
@@ -42,13 +45,14 @@ class CompanyController extends Page_Admin_Base {
     private function _initListFilter() {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'hidden'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('short'),'paramName'=>'short','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices()]),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('hold_status'),'paramName'=>'hold_status','choices'=>Model_Company::getHoldStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('management'),'paramName'=>'management','choices'=>Model_Company::getManagementChoices()]),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('partner'),'paramName'=>'partner','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
         );
@@ -61,6 +65,7 @@ class CompanyController extends Page_Admin_Base {
 
         WinRequest::mergeModel(array(
             'controllerText'=>"目标企业",
+            '_preview' => true,
         ));
 
         $this->model=new Model_Company();
@@ -142,6 +147,7 @@ class CompanyController extends Page_Admin_Base {
             Form_Company::getFieldViewName('_board_veto') => [],
             Form_Company::getFieldViewName('_holder_veto') => [],
             Form_Company::getFieldViewName('_first_manager') => [],
+            Form_Company::getFieldViewName('partner') => [],
             Form_Company::getFieldViewName('manager') => [],
             Form_Company::getFieldViewName('legal_person') => [],
             Form_Company::getFieldViewName('finance_person') => [],
@@ -216,6 +222,12 @@ class CompanyController extends Page_Admin_Base {
     public function select_search(){
         $this->_initSelect();
         return parent::select_search();
+    }
+
+    public function checkAction() {
+        $_REQUEST['action'] = 'read';
+        $this->indexAction();
+        return ['admin/company/check.html', $this->_assigned];
     }
 }
 

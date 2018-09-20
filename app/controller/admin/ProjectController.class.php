@@ -29,7 +29,7 @@ class ProjectController extends Page_Admin_Base {
                 return '/admin/project/check?id='.$model->mId;
             }],
             ['label'=>'复制','action'=>function($model){
-                return '/admin/project?action=clone&ex=kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo&id='.$model->mId;
+                return '/admin/project?action=clone&ex=deal_type,decision_date,proj_status,longstop_date,kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo&id='.$model->mId;
             }],
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=project&res_id='.$model->mId;
@@ -62,14 +62,18 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('item_status'),'paramName'=>'item_status','choices'=>Model_Project::getItemStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('proj_status'),'paramName'=>'proj_status','choices'=>Model_Project::getProjStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('invest_currency'),'paramName'=>'invest_currency','choices'=>Model_Project::getInvestCurrencyChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('new_follow'),'paramName'=>'new_follow','choices'=>Model_Project::getNewFollowChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('enter_exit_type'),'paramName'=>'enter_exit_type','choices'=>Model_Project::getEnterExitTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('loan_type'),'paramName'=>'loan_type','choices'=>Model_Project::getLoanTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('has_exit'),'paramName'=>'has_exit','choices'=>Model_Project::getStandardOptionChoices()]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_partner'),'paramName'=>'partner|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_legal_person'),'paramName'=>'legal_person|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_finance_person'),'paramName'=>'finance_person|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
             new Page_Admin_ChoiceFilter(['name'=>'财务校对','paramName'=>'finance_check_sign','choices'=>[['未校对','未校对', 'and (`finance_check_sign` = "" or `finance_check_sign` is NULL)'],['已校对','已校对','and `finance_check_sign` is not null and `finance_check_sign` != ""']]]),
             new Page_Admin_ChoiceFilter(['name'=>'法务校对','paramName'=>'legal_check_sign','choices'=>[['未校对','未校对', 'and (`legal_check_sign` = "" or `legal_check_sign` is NULL)'],['已校对','已校对','and `legal_check_sign` is not null and `legal_check_sign` != ""']]]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('pending'),'paramName'=>'pending','choices'=>Model_Project::getPendingChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>'交割情况','paramName'=>'_close_status','choices'=>[['未交割','未交割', 'and (`close_date` = 0 or `close_date` is NULL)']]]),
         );
     }
 
@@ -109,6 +113,7 @@ class ProjectController extends Page_Admin_Base {
 
         WinRequest::mergeModel(array(
             'controllerText' => '交易记录',
+            '_preview' => true,
         ));
     }
 
@@ -364,7 +369,7 @@ class ProjectController extends Page_Admin_Base {
             ['label' => 'Post估值', 'field' => function($model) {
                 return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
             }],
-            ['label' => '退出金额', 'field' => function($model)use(&$exitDataList) {
+            ['label' => '退出金额', 'field' => function($model)use(&$exitDataList,&$exitAmounts) {
                 $turn = $model->getData('invest_turn');
                 $amounts = [];
                 foreach($exitDataList as $i => $turnData) {
@@ -372,13 +377,14 @@ class ProjectController extends Page_Admin_Base {
                         $amounts[$turnData->getData('exit_currency')] += $turnData->getData('exit_amount');
                     }
                 }
+                $exitAmounts = $amounts;
                 $output = '';
                 foreach($amounts as $currency => $amount) {
                     $output .= "$currency " . number_format($amount, 2) . '<br />';
                 }
                 return $output;
             }],
-            ['label' => '退出股数', 'field' => function($model)use(&$exitDataList) {
+            ['label' => '退出股数', 'field' => function($model)use(&$exitDataList, &$exitStocks) {
                 $turn = $model->getData('invest_turn');
                 $amount = 0;
                 foreach($exitDataList as $i => $turnData) {
@@ -386,7 +392,16 @@ class ProjectController extends Page_Admin_Base {
                         $amount += $turnData->getData('exit_stock_number');
                     }
                 }
+                $exitStocks = $amount;
                 return number_format($amount);
+            }],
+            ['label' => '退出股价', 'field' => function($model)use(&$exitAmounts, &$exitStocks) {
+                if (count($exitAmounts) > 1) {
+                    return '多币种';
+                }
+                foreach($exitAmounts as $currency => $amount) {
+                    return "$currency " . number_format($amount/$exitStocks, 2);
+                }
             }],
             ['label' => '投时股比', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
                 if ($model->getData('stocknum_all')) {
@@ -412,6 +427,7 @@ class ProjectController extends Page_Admin_Base {
             Form_Company::getFieldViewName('short') => [],
             Form_Company::getFieldViewName('manager') => [],
             Form_Company::getFieldViewName('legal_person') => [],
+            Form_Company::getFieldViewName('finance_person') => [],
             Form_Company::getFieldViewName('_stocknum_all') => [],
             Form_Company::getFieldViewName('_latest_post_moeny') => [],
             ['label' => '最新企业每股单价', 'field' => function($model)use($dataList) {
@@ -419,6 +435,7 @@ class ProjectController extends Page_Admin_Base {
                     return $dataList[0]->getData('value_currency') . ' ' . number_format($dataList[0]->getData('post_money')/$dataList[0]->getData('stocknum_all'), 2);
                 }
             }],
+            Form_Company::getFieldViewName('_financing_amount_all') => [],
         ];
         $this->object_display = [];
         for($i = 0; $i < count($object_display); $i++) {
@@ -512,7 +529,7 @@ class ProjectController extends Page_Admin_Base {
                 }
                 return 0;
             }],
-            ['label' => '投资金额', 'field' => function($model)use($dataList, &$investValues){
+            ['label' => '历史投资金额', 'field' => function($model)use($dataList, &$investValues){
                 if (!$model->getData('id')) {
                     if (!$investValues) {
                         return 0;
@@ -538,6 +555,20 @@ class ProjectController extends Page_Admin_Base {
                     $investValues[$currency] += $amount;
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
+            }],
+            ['label' => '历史投资股数', 'field' => function($model)use($dataList, &$investStocks){
+                if (!$model->getData('id')) {
+                    return number_format($investStocks);
+                }
+                $stockNum = 0;
+                foreach($dataList as $i => $dataItem) {
+                    if ($dataItem->getData('entity_id') == $model->getData('id') 
+                        && $dataItem->getData('close_date')) {
+                        $stockNum += $dataItem->getData('stocknum_get');
+                    }
+                }
+                $investStocks += $stockNum;
+                return number_format($stockNum);
             }],
             ['label' => '独立CB金额', 'field' => function($model)use($dataList, &$cbValues){
                 if (!$model->getData('id')) {
@@ -566,20 +597,6 @@ class ProjectController extends Page_Admin_Base {
                     $cbValues[$currency] += $amount;
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
-            }],
-            ['label' => '投资股数', 'field' => function($model)use($dataList, &$investStocks){
-                if (!$model->getData('id')) {
-                    return number_format($investStocks);
-                }
-                $stockNum = 0;
-                foreach($dataList as $i => $dataItem) {
-                    if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
-                        $stockNum += $dataItem->getData('stocknum_get');
-                    }
-                }
-                $investStocks += $stockNum;
-                return number_format($stockNum);
             }],
             ['label' => '退出金额', 'field' => function($model)use($dataList, &$exitValues){
                 if (!$model->getData('id')) {
