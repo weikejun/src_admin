@@ -287,7 +287,7 @@ class Form_Project extends Form {
                             $stockNum += $deal->getData('stocknum_get');
                         }
                         if ($model->getData('entity_id') && $deal->getData('exit_entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
-                            $stockNum -= $deal->getData('stocknum_get');
+                            $stockNum -= $deal->getData('exit_stock_number');
                         }
                     }
                     $stockNumNew = $stockNum;
