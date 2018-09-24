@@ -75,6 +75,7 @@
 				<input type="checkbox" name="remember" value="1"/> Remember me
 				</label>
 *%}
+                <input type="hidden" name="url" value="{%$url%}" />
 				<button type="submit" class="btn green pull-right" style="display:none;" id="submit">
 				登录 <i class="m-icon-swapright m-icon-white"></i>
 				</button>            

@@ -11,6 +11,7 @@ class EntityController extends Page_Admin_Base {
         $this->model->orderBy('update_time', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",
+            '_preview' => true,
             'tableWrap' => "1536px",
         ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
@@ -29,6 +30,9 @@ class EntityController extends Page_Admin_Base {
         }
 
         $this->single_actions=[
+            ['label'=>'预览','action'=>function($model){
+                return '/admin/entity/check?id='.$model->mId;
+            }],
         ];
 
         $this->single_actions_default = [
@@ -85,6 +89,12 @@ class EntityController extends Page_Admin_Base {
         }
         $this->_index();
         $this->display("admin/base/select.html");
+    }
+
+    public function checkAction() {
+        $_REQUEST['action'] = 'read';
+        $this->indexAction();
+        return ['admin/project/check.html', $this->_assigned];
     }
 }
 

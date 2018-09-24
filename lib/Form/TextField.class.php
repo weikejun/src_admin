@@ -9,7 +9,7 @@ class Form_TextField extends Form_Field{
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $value=htmlspecialchars($this->value, ENT_QUOTES);
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
+        $html.= "<label class='control-label'>".$this->label."</label>".
             "<div class='controls'>".
             "<input class='$class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}'  value='".$value."' autocomplete=off>";
         if($this->error){

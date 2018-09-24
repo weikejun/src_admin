@@ -13,10 +13,10 @@ class Form_DateField extends Form_Field{
         $class=$this->config['class'];
         $value=$this->value?htmlspecialchars($this->value):$this->config['default'];
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
+        $html.= "<label class='control-label'>".$this->label."</label>".
             "<div class='controls'>".
 //                                            '<div class="input-append date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">'.
-                                                '<input size="16" name='.$this->name.'  type="hidden" value="'.$value.'" readonly class="m-wrap m-ctrl-medium datepicker '.$class.'">';
+                                                '<input size="16" name='.$this->name.'  type="hidden" value="'.$value.'" readonly class="m-wrap m-ctrl-medium datepicker '.$class.'"'.($this->tempValue?" _value=$this->tempValue":'').'>';
 //                                                '<span class="add-on"><i class="icon-calendar"></i></span>'.
 //                                            '</div>';
             //"<input class='date-input $class' type='hidden' name='{$this->name}'  value='".htmlspecialchars($this->value)."'>";
@@ -44,6 +44,30 @@ EOF;
         $('.'+controlType).each(function(i,elem){
             var dt_picker=$(elem);
             var input=dt_picker.clone().attr({"type":"text","name":''}).insertAfter(dt_picker);
+            var timer = null;
+            input.hover(function() {
+                if (dt_picker.attr('_value') > 0 && dt_picker.val() == '') {
+                    timer = setTimeout(function() {
+                        var dt = new Date(dt_picker.attr('_value') * 1000 - new Date().getTimezoneOffset() * 60 * 1000);
+                        var dateStr = dt.getFullYear() + '' + (dt.getMonth()<9?('0'+(dt.getMonth()+1)):(dt.getMonth()+1)) + '' + (dt.getDate()<10?('0'+dt.getDate()):dt.getDate());
+                        var ret = (confirm('使用上一条记录日期“'+dateStr+'”'));
+                        if (ret) {
+                            input.val(dt_picker.attr('_value'));
+                            dt_picker.val(dt_picker.attr('_value'));
+                            input.data(controlType).update(dt);
+                        } else {
+                            dt_picker.removeAttr('_value');
+                        }
+                    }, 100);
+                }
+                }, function() {
+                    clearTimeout(timer);
+                    timer = null;
+                });
+            input.click(function() {
+                clearTimeout(timer);
+                timer = null;
+            });
             input[controlType]({
                 format:'yyyymmdd',
                 autoclose: true,

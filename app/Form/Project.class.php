@@ -88,8 +88,14 @@ class Form_Project extends Form {
                 ['name'=>'new_follow','label'=>'项目新老类型','type'=>'choice','choices'=>Model_Project::getNewFollowChoices(),'required'=>false,],
                 ['name'=>'enter_exit_type','label'=>'源码投退类型','type'=>'choice','choices'=>Model_Project::getEnterExitTypeChoices(),'required'=>false,],
                 ['name'=>'other_enter_exit_type','label'=>'其他投资人投退类型','type'=>'choice','choices'=>Model_Project::getOtherEnterExitTypeChoices(),'required'=>false,],
-                /*['name'=>'res_consideration','label'=>'是否有资源作价','type'=>'choice','choices'=>Model_Project::getResConsiderationChoices(),'required'=>false,],
-                ['name'=>'consideration_memo','label'=>'资源作价备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],*/
+                ['name'=>'dilution_rate','label'=>'本轮稀释比例','type'=>'text','default'=>null,'required'=>false,'help'=>'“本轮新股融资总额”除以“企业投后估值”', 'field'=>function($model) {
+                    if (strpos($model->getData('deal_type'), '企业融资') !== false
+                        && $model->getData('post_money')
+                        && !$model->getData('dilution_rate')) {
+                        return number_format($model->getData('financing_amount')/$model->getData('post_money')*100, 2).'%';
+                    }
+                    return $model->getData('dilution_rate');
+                }],
                 ['name'=>'raw_stock_memo','label'=>'老股转让情况备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'deal_memo','label'=>'本轮交易方案备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-value','label'=>'企业估值及每股单价','type'=>'seperator'],
@@ -107,16 +113,38 @@ class Form_Project extends Form {
                     }
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('pre_money') + $model->getData('financing_amount'), 2);
                      */
+                    return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
                 }],
-                ['name'=>'_stock_price','label'=>'企业每股单价','type'=>'rawText','required'=>false,'help'=>'本轮“企业投后估值“除以本轮“企业投后总股数”','field'=>function($model){
+                ['name'=>'_stock_price','label'=>'企业每股单价','type'=>'rawText','required'=>false,'help'=>'本轮“企业投后估值“除以本轮“企业投后总股数”','field'=>function($model)use(&$stockPrice){
                     $postMoney = $model->getData('pre_money') + $model->getData('financing_amount');
                     if ($model->getData('post_money')) {
                         $postMoney = $model->getData('post_money');
                     }
-                    return $model->getData('stocknum_all') ? $model->getData('value_currency') . ' ' . number_format($postMoney/$model->getData('stocknum_all'), 2) : false;
+                    $stockPrice = $postMoney/$model->getData('stocknum_all');
+                    return $model->getData('stocknum_all') ? $model->getData('value_currency') . ' ' . number_format($stockPrice, 2) : false;
                 }],
-                ['name'=>'value_change','label'=>'企业估值涨幅（VS上轮）','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'help'=>'本轮“企业每股单价“除以”企业上一轮每股单价“；1X指平价未增资。'],
+                ['name'=>'value_change','label'=>'与上轮估值比','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'help'=>'本轮“企业每股单价“除以”企业上一轮每股单价“；1X指平价未增资。','field'=>function($model)use(&$deals, &$stockPrice) {
+                    if ($model->getData('value_change')) {
+                        return $model->getData('value_change');
+                    }
+                    $preStockPrice = 0;
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('id') < $model->getData('id')
+                            && $deal->getData('turn_sub') != $model->getData('turn_sub')) {
+                            $prePostMoney = $deal->getData('pre_money') + $deal->getData('financing_amount');
+                            if ($deal->getData('post_money')) {
+                                $prePostMoney = $deal->getData('post_money');
+                            }
+                            $preStockPrice = $prePostMoney/$deal->getData('stocknum_all');
+                            break;
+                        } 
+                    }
+                    if ($preStockPrice) {
+                        return number_format($stockPrice/$preStockPrice,2);
+                    }
+                }],
                 ['name'=>'field-index-plan','label'=>'源码投资方案','type'=>'seperator'],
+                ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
                 ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
                 ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
@@ -228,6 +256,7 @@ class Form_Project extends Form {
                 ['name'=>'stocknum_all','label'=>'本轮企业总股数','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
                     return number_format($model->getData('stocknum_all'));
                 }],
+                ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
                 ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model){
                     if ($model->getData('company_id')) {
@@ -245,7 +274,16 @@ class Form_Project extends Form {
                         return sprintf('%.2f%%', $model->getData('shareholding_founder') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'shareholding_member','label'=>'团队持股比例(不含ESOP)','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,],
+                ['name'=>'shareholding_cofounders','label'=>'co-founders股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
+                    return is_numeric($model->getData('shareholding_cofounders')) ? number_format($model->getData('shareholding_cofounders')) : $model->getData('shareholding_cofounders');
+                }],
+                ['name'=>'shareholding_member','label'=>'co-founders持股比例','type'=>'hidden','required'=>false], // 兼容老数据
+                ['name'=>'_shareholding_member','label'=>'co-founders持股比例','type'=>'rawText','required'=>false,'field'=>function($model) {
+                    if ($model->getData('stocknum_all') && $model->getData('shareholding_cofounders')) {
+                        return number_format($model->getData('shareholding_cofounders')/$model->getData('stocknum_all')*100,2).'%';
+                    }
+                    return $model->getData('shareholding_member');
+                }],
                 ['name'=>'shareholding_esop','label'=>'ESOP股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return is_numeric($model->getData('shareholding_esop')) ? number_format($model->getData('shareholding_esop')) : $model->getData('shareholding_esop');
                 }],
@@ -383,6 +421,7 @@ class Form_Project extends Form {
                 ['name'=>'others_warrant_memo','label'=>'其他投资人Warrant备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-preright','label'=>'优先认购权、优先购买权及共售权','type'=>'seperator2'],
                 ['name'=>'preemptive','label'=>'优先认购权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
+                ['name'=>'preemptive_memo','label'=>'优先认购权备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'excess_preemptive','label'=>'超额优先认购权','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false,],
                 ['name'=>'pri_assignee','label'=>'对创始人优先受让权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
                 ['name'=>'sell_together','label'=>'对创始人共售权','type'=>'choice','choices'=>Model_Project::getStandardRightChoices(),'required'=>false,],
@@ -417,8 +456,10 @@ class Form_Project extends Form {
                 ['name'=>'others_valuation_adjustment_memo','label'=>'其他投资人对赌/估值调整简述','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-other','label'=>'源码其他权利','type'=>'seperator2'],
                 ['name'=>'most_favored','label'=>'源码是否有最惠国待遇','type'=>'choice','choices'=>Model_Project::getStandard3OptionChoices(),'required'=>false],
+                ['name'=>'most_favored_memo','label'=>'最惠国待遇备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'rights_memo','label'=>'源码权利备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-other-terms','label'=>'交易文件其他重要条款','type'=>'seperator'],
+                ['name'=>'delivery_duty','label'=>'重要交割后义务','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'right_changes','label'=>'源码前轮重要权利变化','type'=>'choice','choices'=>Model_Project::getStandard4OptionChoices(),'required'=>false],
                 ['name'=>'right_update_record','label'=>'源码前轮权利更新记录','type'=>'choice','choices'=>Model_Project::getRightUpdateChoices(),'required'=>false],
                 ['name'=>'right_changes_memo','label'=>'源码前轮权利变化备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
@@ -481,7 +522,17 @@ class Form_Project extends Form {
                 ['name'=>'pending','label'=>'有无未决事项','type'=>'choice','choices'=>Model_Project::getPendingChoices(),'required'=>false],
                 ['name'=>'pending_detail','label'=>'未决事项说明','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
                 ['name'=>'field-index-memo','label'=>'工作记录及备忘','type'=>'seperator'],
-                ['name'=>'work_memo','label'=>'工作备忘','type'=>'textarea','required'=>false],
+                ['name'=>'_memo','label'=>'工作备忘','type'=>'rawText','required'=>false,'field'=>function($model){
+                    $memo = new Model_DealMemo;
+                    $memo->addWhere('project_id', $model->getData('id'));
+                    $memo->orderBy('update_time', 'desc');
+                    $memo->select();
+                    $output = '';
+                    if ($memo->getData('id')) {
+                        $output .= date('Ymd H:i:s', $memo->getData('update_time'))." ".$memo->getData('operator')." ".$memo->getData('title')." ".$memo->getData('content').' <a target="_blank" href="/admin/DealMemo?__filter='.urlencode('project_id='.$model->getData('id')).'">列表 </a>';
+                    }
+                    return $output .= '<a target="_blank" href="/admin/DealMemo?action=read&project_id='.$model->getData('id').'">添加+</a>';
+                }],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
                 }],

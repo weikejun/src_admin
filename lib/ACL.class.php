@@ -9,6 +9,7 @@ class ACL{
         "EntityRel",
         "Payment",
         "CompanyMemo",
+        "DealMemo",
         "MailSend",
         "DataStat",
         "Admin",

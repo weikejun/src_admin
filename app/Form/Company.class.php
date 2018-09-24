@@ -107,7 +107,7 @@ class Form_Company extends Form {
                         return $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
                     }
                 }],
-                ['name'=>'_value_increase','label'=>'企业估值涨幅倍数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     // TODO:以源码首次融资为分母 
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -194,15 +194,21 @@ class Form_Company extends Form {
                 ['name'=>'_financing_amount_all','label'=>'企业融资总金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')
-                            && strpos($dataItem->getData('deal_type'), '企业融资') !== false
-                            && $dataItem->getData('financing_amount')) { 
-                            $turn = $dataItem->getData('turn_sub');
-                            $currency = $dataItem->getData('value_currency');
-                            if (isset($dataList[$turn][$currency])) {
-                                continue;
+                        if ($dataItem->getData('close_date') || $dataItem->getData('count_captable') == 'Y') {
+                            if (strpos($dataItem->getData('deal_type'), '企业融资') !== false
+                                && $dataItem->getData('financing_amount')) { 
+                                $turn = $dataItem->getData('turn_sub');
+                                $currency = $dataItem->getData('value_currency');
+                                if (isset($dataList[$turn][$currency])) {
+                                    continue;
+                                }
+                                $dataList[$turn][$currency] += $dataItem->getData('financing_amount');
+                            } elseif (strpos($dataItem->getData('deal_type'), '独立CB') !== false
+                                && $dataItem->getData('loan_amount')) { 
+                                $turn = $dataItem->getData('turn_sub');
+                                $currency = $dataItem->getData('loan_currency');
+                                $dataList[$turn][$currency] += $dataItem->getData('loan_amount');
                             }
-                            $dataList[$turn][$currency] += $dataItem->getData('financing_amount');
                         }
                     }
                     $amounts = [];

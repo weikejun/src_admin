@@ -189,7 +189,7 @@ class ProjectController extends Page_Admin_Base {
             Form_Project::getFieldViewName('_exit_return_rate') => [],
             Form_Project::getFieldViewName('risk_tip') => [],
             Form_Project::getFieldViewName('pending_detail') => [],
-            Form_Project::getFieldViewName('work_memo') => [],
+            Form_Project::getFieldViewName('_memo') => [],
         ];
 
         $list_display = $this->list_display;
@@ -266,7 +266,7 @@ class ProjectController extends Page_Admin_Base {
             $fields = $this->form->getConfig();
             for($i = 0; $i < count($fields); $i++) {
                 if (in_array($fields[$i]->name(), $ex)) {
-                    $fields[$i]->clear();
+                    $fields[$i]->clone_clear();
                 }
             }
         }

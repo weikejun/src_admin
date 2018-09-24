@@ -36,7 +36,7 @@ class Form{
         foreach($fields as $field){
             if(is_array($field)){
                 $fieldClass=$this->get_field_class($field['type']);
-                unset($field['type']);
+                //unset($field['type']);
                 $this->fields[]=new $fieldClass($field);
             }elseif(is_subclass_of($field,"Form_Field")){
                 $this->fields[]=$field;

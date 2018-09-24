@@ -209,6 +209,13 @@ class Model_Project extends Base_Project{
         ]; 
     }
 
+    public static function getStandardYesNoChoices() {
+        return [
+            ['是','是'],
+            ['否','否'],
+        ]; 
+    }
+
     public static function getShareholdingESOPHolderChoices() {
         return [
             ['founder代持','founder代持'],

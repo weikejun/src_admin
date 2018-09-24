@@ -45,6 +45,25 @@ CREATE TABLE `companyMemo` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `project_memo`
+--
+
+DROP TABLE IF EXISTS `deal_memo`; /*交易备注*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deal_memo` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `project_id` int(11) DEFAULT NULL COMMENT '交易ID',
+    `title` text DEFAULT NULL COMMENT '事项', 
+    `content` text DEFAULT NULL COMMENT '内容', 
+    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
 --
 -- Table structure for table `entity`
 --
@@ -137,12 +156,14 @@ CREATE TABLE `project` (
     `res_consideration` varchar(32) DEFAULT NULL COMMENT '是否有资源作价', 
     `consideration_memo` text DEFAULT NULL COMMENT '资源作价备注', 
     `raw_stock_memo` text DEFAULT NULL COMMENT '老股转让情况备注', 
+    `dilution_rate` varchar(8) DEFAULT NULL COMMENT '本轮稀释比例', 
     `deal_memo` text DEFAULT NULL COMMENT '本轮交易方案备注', 
     `value_currency` varchar(32) DEFAULT NULL COMMENT '估值计价货币', 
     `pre_money` varchar(32) DEFAULT NULL COMMENT '企业投前估值', 
     `financing_amount` varchar(32) DEFAULT NULL COMMENT '本轮新股融资总额', 
     `post_money` varchar(32) DEFAULT NULL COMMENT '企业投后估值', 
     `value_change` varchar(32) DEFAULT NULL COMMENT '企业估值涨幅（VS上轮）', 
+    `affiliate_transaction` varchar(8) DEFAULT NULL COMMENT '是否为关联交易', 
     `new_old_stock` varchar(32) DEFAULT NULL COMMENT '源码购新股老股', 
     `invest_currency` varchar(32) DEFAULT NULL COMMENT '源码投资计价货币', 
     `entity_id` varchar(32) DEFAULT NULL COMMENT '源码投资主体', 
@@ -178,8 +199,10 @@ CREATE TABLE `project` (
     `exit_receive_amount` varchar(32) DEFAULT NULL COMMENT '源码本次退出实收金额', 
     `exit_memo` varchar(32) DEFAULT NULL COMMENT '源码退出备注', 
     `stocknum_all` varchar(32) DEFAULT NULL COMMENT '本轮企业总股数', 
+    `captable_memo` text DEFAULT NULL COMMENT 'Captable备注', 
     `shareholding_founder` text DEFAULT NULL COMMENT '最主要创始人股数', 
     `shareholding_member` text DEFAULT NULL COMMENT '团队持股比例(不含ESOP)', 
+    `shareholding_cofounders` text DEFAULT NULL COMMENT 'co-founders股数', 
     `shareholding_esop` varchar(32) DEFAULT NULL COMMENT 'ESOP股数', 
     `invest_competitor_limit` varchar(32) DEFAULT NULL COMMENT '投资人投资竞品限制', 
     `stock_transfer_limit` varchar(32) DEFAULT NULL COMMENT '投资人股权转让竞品限制', 
@@ -212,6 +235,7 @@ CREATE TABLE `project` (
     `others_warrant` varchar(32) DEFAULT NULL COMMENT '其他投资人是否有Warrant', 
     `others_warrant_memo` text DEFAULT NULL COMMENT '其他投资人Warrant备注', 
     `preemptive` varchar(32) DEFAULT NULL COMMENT '优先认购权', 
+    `preemptive_memo` text DEFAULT NULL COMMENT '优先认购权备注', 
     `excess_preemptive` varchar(32) DEFAULT NULL COMMENT '超额优先认购权', 
     `pri_assignee` varchar(32) DEFAULT NULL COMMENT '对创始人优先受让权', 
     `sell_together` varchar(32) DEFAULT NULL COMMENT '对创始人共售权', 
@@ -238,7 +262,9 @@ CREATE TABLE `project` (
     `others_valuation_adjustment` varchar(32) DEFAULT NULL COMMENT '本轮其他投资人对赌/估值调整', 
     `others_valuation_adjustment_memo` text DEFAULT NULL COMMENT '本轮其他投资人对赌/估值调整简述', 
     `most_favored` varchar(32) DEFAULT NULL COMMENT '源码是否有最惠国待遇', 
+    `most_favored_memo` text DEFAULT NULL COMMENT '最惠国待遇备注', 
     `rights_memo` text DEFAULT NULL COMMENT '源码权利备注', 
+    `delivery_duty` text DEFAULT NULL COMMENT '重要交割后义务', 
     `right_changes` varchar(32) DEFAULT NULL COMMENT '源码前轮重要权利变化', 
     `right_update_record` varchar(32) DEFAULT NULL COMMENT '源码前轮权利更新记录', 
     `right_changes_memo` text DEFAULT NULL COMMENT '源码前轮权利变化备注', 
