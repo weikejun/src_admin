@@ -9,19 +9,7 @@ class Form_Entity extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'主体ID','type'=>'hidden','default'=>null,'required'=>false,],
-                ['name'=>'name','label'=>'名称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入准确全称','validator'=>function($values) {
-                    if ($values['name']) {
-                        $model = new Model_Entity;
-                        $model->addWhere('name', $values['name']);
-                        if (isset($values['id']) && $values['id'] > 0) {
-                            $model->addWhere('id', $values['id'], '<>');
-                        }
-                        if ($model->count()) {
-                            return '名称"'.$values['name'].'"已存在，请重新输入';
-                        }
-                    }
-                    return true;
-                }],
+                ['name'=>'name','label'=>'名称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入准确全称','validator'=>new Form_UniqueValidator(new Model_Entity, 'name')],
                 ['name'=>'_hold_company','label'=>'持股企业','type'=>'rawText','field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('entity_id', $model->getData('id'));

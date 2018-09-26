@@ -22,3 +22,12 @@ CREATE TABLE `deal_memo` (
     `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+update `project` set count_captable="计入" where count_captable="Y";
+update `project` set count_captable="不计入" where count_captable="N";
+update `project` set mirror_hold="境内项目不适用" where mirror_hold="RMB项目不适用";
+update `project` set final_captable="无" where final_captable="无需存档";
+update `project` set final_word="无" where final_word="无需存档";
+update `project` set closing_pdf="无" where closing_pdf="无需存档";
+update `project` set closing_original="无" where closing_original="无需存档";
+update `project` set overseas_stockcert="无" where overseas_stockcert="无需存档";
