@@ -44,7 +44,7 @@ class IndexController extends Page_Admin_Base{
                 return array("redirect:".$_SERVER['REQUEST_URI']);
             }
         }
-        return array("admin/login.tpl",array('url'=>isset($_GET['url'])?$_GET['url']:'','captchaKey'=>ALIYUN_CAPTCHA_APPKEY));
+        return array("admin/login.tpl",array('url'=>isset($_GET['url'])?$_GET['url']:$this->getUrlPrefix()."/index",'captchaKey'=>ALIYUN_CAPTCHA_APPKEY));
     }
     public function logoutAction(){
         unset($_SESSION['admin']);

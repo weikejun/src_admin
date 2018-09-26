@@ -58,7 +58,7 @@ EOF;
                         } else {
                             dt_picker.removeAttr('_value');
                         }
-                    }, 100);
+                    }, 1);
                 }
                 }, function() {
                     clearTimeout(timer);

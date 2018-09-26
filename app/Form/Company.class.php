@@ -575,13 +575,15 @@ class Form_Company extends Form {
                             $holds[$currency] += ($stock - $stocks['exit'][$turn][$currency])/$stock*$amounts['invest'][$turn][$currency];
                         }
                     }
-                    if (count($holds) == 1) {
-                        $output = '';
-                        foreach($holds as $currency => $amount) {
-                            $output .= "$currency ".sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
+                    $output = '';
+                    foreach($holds as $currency => $amount) {
+                        if (count($holds) == 1) {
+                            $output .= sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
+                        } else {
+                            $output .= $currency."投资 ".sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
                         }
-                        return $output;
                     }
+                    return $output;
                 }],
                 ['name'=>'_cb_amount','label'=>'未偿还CB金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$cbAmounts){
                     $output = '';

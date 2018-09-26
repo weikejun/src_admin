@@ -123,7 +123,7 @@ class Form_Project extends Form {
                     $stockPrice = $postMoney/$model->getData('stocknum_all');
                     return $model->getData('stocknum_all') ? $model->getData('value_currency') . ' ' . number_format($stockPrice, 2) : false;
                 }],
-                ['name'=>'value_change','label'=>'与上轮估值比','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'help'=>'本轮“企业每股单价“除以”企业上一轮每股单价“；1X指平价未增资。','field'=>function($model)use(&$deals, &$stockPrice) {
+                ['name'=>'value_change','label'=>'与上轮估值比','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'placeholder'=>'自动计算字段，如不填写则预览、列表可见','help'=>'本轮“企业每股单价“除以”企业上一轮每股单价“；1X指平价未增资。','field'=>function($model)use(&$deals, &$stockPrice) {
                     if ($model->getData('value_change')) {
                         return $model->getData('value_change');
                     }

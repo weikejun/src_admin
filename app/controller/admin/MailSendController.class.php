@@ -36,25 +36,25 @@ class MailSendController extends Page_Admin_Base {
         $model->addWhere('id', $_REQUEST['id']);
         $template = '
             <p>Team,</p>
-            <p>Team, 本次交易情况摘要如下，法务部无意见了。请team及【老曹/云刚】确定可定稿及批注签署。本次交易计划于【手填入时间】完成签署，预计于【手填入时间】完成交割。</p>
+            <p>Team, 本次交易情况摘要如下，法务部无意见了。请team及【老曹/云刚】确定可定稿及批注签署。本次交易计划于【手填入时间】完成签署，预计于【手填入时间】完成交割。本次交易【已完成/待完成/已豁免/无须】交割前例会update。</p>
             <p>1.交易ID：$id$</p>
             <p>2.$_company_short$,公司处于$turn_sub$轮</p>
             <p>3.本轮交易类型：$deal_type$；源码$enter_exit_type$；其他投资人$other_enter_exit_type$</p>
             <p>4.老股转让情况：$raw_stock_memo$</p>
-            <p>5.企业估值：投前$pre_money$；本轮新股融资总额$financing_amount$，投后$post_money$，为上轮估值的$value_change$。本轮稀释$dilution_rate$。</p>
+            <p>5.企业估值：投前$pre_money$；本轮新股融资总额$financing_amount$，投后$post_money$，为上轮估值的$value_change$倍。本轮稀释$dilution_rate$。</p>
             <p>6.源码投资方案：</p>
             <!--invest plan-->
             <p>（1）源码本轮：$entity_id$，投资金额为$our_amount$，其中$our_amount$买$invest_turn$轮$new_old_stock$（post$_stock_ratio$）</p>
             <p>（2）源码投资款支付时间：</p>
             <!--invest plan-->
-            <p>7.其他主要投资人金额与Post比例：$other_investor_summary$</p>
-            <p>8.源码退出方案：</p>
+            <p>7.本轮交割后源码各主体合计持股：$_shareholding_ratio_sum$</p>
+            <p>8.本轮其他主要投资人金额与Post比例：$other_investor_summary$</p>
+            <p>9.源码退出方案：</p>
             <!--exit plan-->
             <p>（1）$exit_entity_id$，退出金额为$exit_amount$，出售Post$_exit_stock_ratio$的$exit_turn$轮股权。本次退出回报倍数为$_exit_return_rate$。</p>
             <p>（2）源码退出款收取时间：</p>
             <p>（3）源码合计：本次交易交割后，源码各主体合计持股$_shareholding_ratio_turn_sum$。</p>
             <!--exit plan-->
-            <p>9.本轮交割后源码各主体合计持股：$_shareholding_ratio_sum$</p>
             <p>10.公司治理</p>
             <p>（1）公司董事会席位$board_number$席，源码$our_board$董事会席位</p>
             <p>（2）源码董事会veto：$board_veto$</p>

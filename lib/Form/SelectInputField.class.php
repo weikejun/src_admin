@@ -16,7 +16,7 @@ class Form_SelectInputField extends Form_Field{
         if ($this->config['input'] == 'textarea') {
             $inputStr = "<textarea class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." name='{$this->name}'>$value</textarea>";
         } else {
-            $inputStr = "<input class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' autocomplete=off  value='".$value."'>";
+            $inputStr = "<input class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' autocomplete=off  value='".$value."' placeholder='".(isset($this->config['placeholder'])?$this->config['placeholder']:'')."'>";
         }
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>$inputStr<div class='select-choices'>$optionStr</div>";

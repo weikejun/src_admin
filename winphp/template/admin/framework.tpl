@@ -20,7 +20,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<meta content="" name="author" />
     {%block name="head"%}
 	<!-- BEGIN GLOBAL MANDATORY STYLES -->
-	<link href="/winphp/metronic/media/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+	<link href="/winphp/metronic/media/css/bootstrap.min.css?v=201809261026" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/bootstrap-responsive.min.css?v=1" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 	<link href="/winphp/metronic/media/css/style-metro.css" rel="stylesheet" type="text/css"/>
