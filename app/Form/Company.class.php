@@ -13,6 +13,12 @@ class Form_Company extends Form {
                     $project->addWhere('company_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
                     $project = $project->find();
+                    foreach($project as $i => $dataItem) {
+                        if (!$dataItem->getData('close_date') 
+                            && $dataItem->getData('count_captable') == 'Y') {
+                            $project[$i]->mCloseDate = 9999999999;
+                        }
+                    }
                     return $model->getData('id');
                 }],
                 ['name'=>'name','label'=>'目标企业','type'=>'text','default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称','validator'=>new Form_UniqueValidator(new Model_Company, 'name')],
@@ -77,7 +83,11 @@ class Form_Company extends Form {
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
-                        return date('Ymd', $dataItem->getData('close_date'));
+                        if ($dataItem->getData('close_date') == 9999999999) {
+                            return '暂未交割';
+                        } else {
+                            return date('Ymd', $dataItem->getData('close_date'));
+                        }
                     }
                 }],
                 ['name'=>'_first_post_moeny','label'=>'首次投时估值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -107,7 +117,7 @@ class Form_Company extends Form {
                         return $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
                     }
                 }],
-                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'help'=>'倍数<1 downround；=1 持平；>1 上涨','field'=>function($model)use(&$project) {
                     // TODO:以源码首次融资为分母 
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -125,7 +135,7 @@ class Form_Company extends Form {
                     $dataList = array_values($dataList);
                     $num = count($dataList);
                     if ($num && $dataList[$num - 1]->getData('post_money') && $firstDeal) {
-                        return sprintf('%.2f', ($dataList[0]->getData('post_money') / $firstDeal->getData('post_money') - 0));
+                        return sprintf('%.2f', ($dataList[0]->getData('post_money') / $dataList[0]->getData('stocknum_all') / ($firstDeal->getData('post_money') / $firstDeal->getData('stocknum_all')) - 0));
                     }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -194,7 +204,7 @@ class Form_Company extends Form {
                 ['name'=>'_financing_amount_all','label'=>'企业融资总金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') || $dataItem->getData('count_captable') == 'Y') {
+                        if ($dataItem->getData('close_date')) {
                             if (strpos($dataItem->getData('deal_type'), '企业融资') !== false
                                 && $dataItem->getData('financing_amount')) { 
                                 $turn = $dataItem->getData('turn_sub');

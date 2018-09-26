@@ -209,8 +209,8 @@ class Form_Project extends Form {
                 }],
                  */
                 ['name'=>'_exit_company_stock_price','label'=>'源码退出时企业每股单价','type'=>'rawText','required'=>false,'field'=>function($model){
-                    if ($model->getData('stocknum_all'));
-                    return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
+                    if ($model->getData('stocknum_all'))
+                        return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
                 }],
                 ['name'=>'exit_stock_number','label'=>'源码退出的股数','type'=>'number','required'=>false,'field'=>function($model){
                     return number_format($model->getData('exit_stock_number'));
@@ -380,7 +380,8 @@ class Form_Project extends Form {
                     }
                     krsort($dataList);
                     foreach($dataList as $i => $deal) {
-                        return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
+                        if ($deal->getData('stocknum_all'))
+                            return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
                     }
                 }],
                 ['name'=>'field-index-term-investorlimit','label'=>'核心条款：对本轮投资人限制','type'=>'seperator'],

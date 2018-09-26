@@ -46,6 +46,7 @@ class ProjectController extends Page_Admin_Base {
         $this->multi_actions=array(
             ['label'=>'回收站', 'required'=>false, 'action'=>'/admin/project/recovery'],
             ['label'=>'导出csv','required'=>false,'action'=>'/admin/project/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
+            //['label'=>'导入csv','required'=>false,'action'=>'/admin/project/csvImport'],
         );
     }
 
@@ -689,6 +690,73 @@ class ProjectController extends Page_Admin_Base {
         $this->_initSelect();
         $this->_index();
         $this->display("admin/base/select.html");
+    }
+
+    public function csvImportAction() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' 
+            && isset($_FILES['content'])
+            && $_FILES['content']['error'] == 0) {
+            $csv = fopen($_FILES['content']['tmp_name'], 'r');
+            $csvHeader = fgets($csv);
+            $utfEnc = mb_detect_encoding($csvHeader, 'UTF-8', true);
+            if (!$utfEnc) { // 只支持GB编码导入
+                $csvHeader = mb_convert_encoding($csvHeader, 'UTF-8', 'gbk');
+            }
+            $csvHeader = str_getcsv($csvHeader);
+
+            // 生成字段映射
+            $fieldMap = Form_Project::getFieldsMap();
+            $dbMap = [];
+            foreach($fieldMap as $i => $field) {
+                $dbMap[$field['label']] = $field['name'];
+            }
+
+            // 生成数据库属性映射
+            foreach($csvHeader as $i => $fieldText) {
+                $csvHeader[$i] = $dbMap[$fieldText];
+            }
+
+            while(!feof($csv)) {
+                $csvLine = fgets($csv);
+                if (!$utfEnc) {
+                    $csvLine = mb_convert_encoding($csvLine, 'UTF-8', 'gbk');
+                }
+                $csvLine = str_getcsv($csvLine);
+                if (count($csvLine) == count($csvHeader)) { // 表头对应正常
+                    $saveData = [];
+                    foreach($csvHeader as $i => $fieldName) {
+                        // 计算字段不入库
+                        if (strpos($fieldName, '_') === 0) {
+                            continue;
+                        }
+                        if (strpos($fieldName, 'company_id') !== false) {
+                            $company = new Model_Company;
+                            $company->addWhere('name', $csvLine[$i]);
+                            $company->select();
+                            $csvLine[$i] = $company->mId;
+                        } elseif ((strpos($fieldName, '_date') !== false
+                            && $csvLine[$i] != 0 
+                            && is_numeric($csvLine[$i])) 
+                            || $fieldName == 'update_time') {
+                            $csvLine[$i] = strtotime($csvLine[$i]);
+                        } elseif (strpos($fieldName, 'entity_id') !== false) {
+                            $entity = new Model_Entity;
+                            $entity->addWhere('name', $csvLine[$i]);
+                            $entity->select();
+                            $csvLine[$i] = $entity->mId;
+                        }
+                        $saveData[$fieldName] = $csvLine[$i];
+                    }
+                } else {
+                }
+            }
+
+            fclose($csv);
+        }
+        $this->form=new Form([
+            ['name'=>'id','label'=>'交易记录csv','type'=>'file'],
+        ]);
+        return ["admin/project/csvimport.html"];
     }
 }
 
