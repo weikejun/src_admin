@@ -1,0 +1,102 @@
+{%extends file="admin/framework.tpl"%}
+
+{%block name="head" append%}
+{%$allForms=[]%}
+{%$allForms[]=$form%}
+{%foreach $inlines as $inline%}
+{%$allForms[]=$inline.admin->form%}
+{%/foreach%}
+
+{%$css_code=Form::getHeadCSS($allForms)%}
+{%eval var=$css_code%}
+<style>
+.portlet-body .form-horizontal{margin-top: 20px;}
+.mail-content span {color:red; padding: 0 2px;}
+</style>
+{%/block%}
+{%block name="content"%}
+<div class="container-fluid">
+    <!-- BEGIN PAGE HEADER-->   
+    <div class="row-fluid">
+        <div class="span12">
+            <h3 class="page-title"></h3>
+            <ul class="breadcrumb" style="margin-bottom:0px;">
+                <li>
+                    <a href="{%$__controller->getUrlPrefix()%}/{%$executeInfo.controllerName|escape%}"><b>{%$controllerText%}</b></a>
+                <span class="icon-angle-right"></span>
+                </li>
+                        
+                <li><a href="javascript:;">导入CSV</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- END PAGE HEADER-->
+    <!-- BEGIN PAGE CONTENT-->
+    <div class="row-fluid">
+        <div class="span12">
+            <!-- BEGIN SAMPLE FORM PORTLET-->   
+            <div class="portlet box" style="border:1px solid #e5e5e5">
+                <div class="portlet-body">
+                    <!-- BEGIN FORM-->
+                    <form id="main_form" name="main" action="csvimport" method="POST" class="form-horizontal" enctype="multipart/form-data">
+                        <div class='control-group'><label class='control-label'>交易记录csv</label><div class='controls'><input class=' span6' type='file' name='content'  value=''></div></div>
+
+                        <div id="btn_submit" class="form-actions"><button type="submit" class="btn blue"><i class="icon-ok"></i>上传</button></div>
+                    </form>
+                    <!-- END FORM-->  
+                </div>
+            </div>
+            <!-- END SAMPLE FORM PORTLET-->
+        </div>
+    </div>
+    <!-- END PAGE CONTENT-->         
+</div>
+
+<div id="popup" style="display:none">
+    <span class="button b-close clearfix"><span>X</span></span>
+    <div class="content"></div>
+</div>
+
+{%/block%}
+{%block name="footjs" append%}
+<script>
+(function(){
+    var __libs={
+        ckeditor:"/winphp/ckeditor/ckeditor.js",
+        "ckeditor.jquery":"/winphp/ckeditor/adapters/jquery.js",
+        jquery_form:"/winphp/js/jquery.form.js",
+        suggest:"/winphp/js/jquery.smartbox.js",
+        popup:"/winphp/js/jquery.bpopup-0.9.4.min.js",
+        ckfinder:"/winphp/ckfinder/ckfinder.js"
+    };
+    var defers={};
+    window.use=function(lib,callback){
+        if(__libs.hasOwnProperty(lib)){
+            var defer;
+            if(defers.hasOwnProperty(lib)){
+                defer=defers[lib];
+            }else{
+                defer=defers[lib]=$.ajax({
+                    type:'get',
+                    crossDomain:true,
+                    url:__libs[lib],
+                    cache:true,
+                    dataType:'script'
+                });
+            }
+            if(callback){
+                defer.done(function(){
+                    callback();
+                });
+            }
+            return defer;
+        }
+    };
+})();
+window.choose_callback = function() {
+    $('#main_form').submit();
+}
+</script>
+{%$js_code=Form::getFootJS($allForms)%}
+{%eval var=$js_code%}
+{%/block%}
