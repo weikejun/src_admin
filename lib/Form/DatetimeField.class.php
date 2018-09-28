@@ -2,6 +2,7 @@
 
 class Form_DatetimeField extends Form_Field{
     public function __construct($config){
+        $config[$fname = 'auto_update'] = isset($config[$fname]) ? $config[$fname] : '';
         parent::__construct($config);
     }
 

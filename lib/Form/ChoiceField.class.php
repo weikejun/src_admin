@@ -3,6 +3,9 @@
 class Form_ChoiceField extends Form_Field{
     protected $choices;
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['checked']);
         parent::__construct($config);
         if(!isset($config['choices'])){
             throw new Exception("field {$this->name} need set choices");

@@ -47,7 +47,7 @@ class Form_Project extends Form {
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
-                ['name'=>'company_id','label'=>'目标企业','type'=>'choosemodel','model'=>'Model_Company','default'=>$_GET['company_id'],'required'=>true,'field'=>function($model) {
+                ['name'=>'company_id','label'=>'目标企业','type'=>'choosemodel','model'=>'Model_Company','default'=>isset($_GET['company_id'])?$_GET['company_id']:'','required'=>true,'field'=>function($model) {
                     $company = Page_Admin_Base::getResource($model->mCompanyId, 'Model_Company', new Model_Company);
                     return $company->mName;
                 }],
@@ -81,6 +81,17 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'N','required'=>false],
+                ['name'=>'field-index-status','label'=>'本轮交易进度','type'=>'seperator'],
+                ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
+                ['name'=>'trade_file_schedule','label'=>'交易文件进度','type'=>'selectInput','choices'=>Model_Project::getTradeFileScheduleChoices(),'required'=>false],
+                ['name'=>'expect_sign_date','label'=>'预计签约日期','type'=>'date','default'=>null,'help'=>'须填写，与提醒邮件关联','field'=>function($model){
+                    if ($model->getData('expect_sign_date')) {
+                        return date('Ymd', $model->getData('expect_sign_date'));
+                    }
+                }],
+                ['name'=>'expect_pay_schedule','label'=>'预计交割付款安排','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'trade_schedule_memo','label'=>'交易进度其他说明','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'trade_schedule_todo','label'=>'交易进度ToDo','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
@@ -120,8 +131,10 @@ class Form_Project extends Form {
                     if ($model->getData('post_money')) {
                         $postMoney = $model->getData('post_money');
                     }
-                    $stockPrice = $postMoney/$model->getData('stocknum_all');
-                    return $model->getData('stocknum_all') ? $model->getData('value_currency') . ' ' . number_format($stockPrice, 2) : false;
+                    if ($model->getData('stocknum_all')) {
+                        $stockPrice = $postMoney/$model->getData('stocknum_all');
+                        return $model->getData('stocknum_all') ? $model->getData('value_currency') . ' ' . number_format($stockPrice, 2) : false;
+                    }
                 }],
                 ['name'=>'value_change','label'=>'与上轮估值比','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'placeholder'=>'自动计算字段，如不填写则预览、列表可见','help'=>'本轮“企业每股单价“除以”企业上一轮每股单价“；1X指平价未增资。','field'=>function($model)use(&$deals, &$stockPrice) {
                     if ($model->getData('value_change')) {
@@ -147,7 +160,7 @@ class Form_Project extends Form {
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
                 ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
-                ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
+                ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>isset($_GET['entity_id'])&&$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
                     $entity = Page_Admin_Base::getResource($model->getData('entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
@@ -157,6 +170,7 @@ class Form_Project extends Form {
                 ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
+                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);
@@ -513,6 +527,7 @@ class Form_Project extends Form {
                 ['name'=>'legal_person','label'=>'本轮法务负责人','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'deal_manager','label'=>'本轮交易负责人','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
                 ['name'=>'law_firm','label'=>'源码委托律所','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
+                ['name'=>'lawyer_fee','label'=>'律师费','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'field-index-archive','label'=>'Filling及Post','type'=>'seperator'],
                 ['name'=>'final_captable','label'=>'FinalCaptalbe','type'=>'choice','choices'=>Model_Project::getStandardArchiveChoices(),'required'=>false],
                 ['name'=>'final_word','label'=>'FinalWord','type'=>'choice','choices'=>Model_Project::getStandardArchiveChoices(),'required'=>false],

@@ -26,7 +26,14 @@ class AdminController extends Page_Admin_Base {
             array('name'=>'name','label'=>'用户名','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'real_name','label'=>'真实姓名','type'=>"text",'default'=>null,'required'=>true,'placeholder'=>'请填写全名'),
             array('name'=>'email','label'=>'公司邮箱','type'=>"text",'default'=>null,'required'=>true),
-            array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>true,),
+            array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>false,'validator'=>function($values) {
+                if (!isset($values['id']) || !$values['id']) { // 新增检查，更新不检查
+                    if (!$values['password']) {
+                        return '请输入密码';
+                    }
+                }
+                return true;
+            }),
             array('name'=>'valid','label'=>'有效状态',"choices"=>array(array('valid',"有效"),array('invalid',"无效"),), 'type'=>"choice",'default'=>'valid','null'=>false,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
         ));

@@ -2,13 +2,13 @@
 
 class Form_TextField extends Form_Field{
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['readonly','help','default','placeholder','class']);
         parent::__construct($config);
     }
 
     public function to_html($is_new){
-        if ($this->name == 'value_change') {
-            var_dump($this->config);
-        }
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $value=htmlspecialchars($this->value, ENT_QUOTES);

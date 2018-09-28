@@ -8,8 +8,13 @@ abstract class Form_Field{
     protected $error;
     protected $config;
     protected $is_set=false;
+    protected $validator=null;
 
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['readonly', 'class', 'help', 'default', 'placeholder']);
+
         $this->config=$config;
 
         if(!isset($config['name'])){

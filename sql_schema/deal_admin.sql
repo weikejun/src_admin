@@ -301,6 +301,14 @@ CREATE TABLE `project` (
     `finance_check_time` varchar(11) DEFAULT NULL COMMENT '财务审核时间', 
     `legal_check_sign` varchar(8) DEFAULT NULL COMMENT '法务审核签名',
     `legal_check_time` varchar(11) DEFAULT NULL COMMENT '法务审核时间', 
+    `loan_schedule` varchar(8) DEFAULT NULL COMMENT '借款进度',
+    `trade_schedule_todo` varchar(8) DEFAULT NULL COMMENT '交易文件进度',
+    `expect_sign_date` varchar(11) DEFAULT NULL COMMENT '预计签约日期', 
+    `expect_pay_schedule` text DEFAULT NULL COMMENT '预计交割付款安排', 
+    `trade_schedule_memo` text DEFAULT NULL COMMENT '交易进度其他说明', 
+    `trade_schedule_todo` text DEFAULT NULL COMMENT '交易进度ToDo', 
+    `ts_ratio` varchar(8) DEFAULT NULL COMMENT 'TS/决策口径占比',
+    `lawyer_fee` varchar(8) DEFAULT NULL COMMENT '律师费',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;

@@ -98,7 +98,7 @@ class Form{
             return $this->values[$name];
         }
     }
-    public function to_html($is_new, $output){
+    public function to_html($is_new, $output=''){
         $html='';
         foreach($this->fields as $field){
             if ($output == 'text') {

@@ -1,5 +1,24 @@
 <?php
 class Model_Project extends Base_Project{
+    public static function getTradeFileScheduleChoices() {
+        return [
+            ['待律师发出','待律师发出'],
+            ['协商中','协商中'],
+            ['基本达成一致','基本达成一致'],
+            ['已定稿','已定稿'],
+            ['我方已签署','我方已签署'],
+            ['各方已签署','各方已签署'],
+        ];
+    }
+
+    public static function getLoanScheduleChoices() {
+        return [
+            ['借款合同进展中','借款合同进展中'],
+            ['借款合同已签署','借款合同已签署'],
+            ['借款已支付','借款已支付'],
+        ];
+    }
+
     public static function getPendingChoices() {
         return [
             ['有','有'],

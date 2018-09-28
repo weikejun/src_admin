@@ -1,6 +1,7 @@
 <?php
 
 Trait Form_FieldTraits {
+    public $tempValue;
     public function format_value() {
         $value = $this->value();
         $model = WinRequest::getModel('modelData');

@@ -9,7 +9,7 @@ class Form_DealMemo extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'备忘ID','type'=>'hidden','default'=>null,'required'=>false,],
-                ['name'=>'project_id','label'=>'交易ID','type'=>'choosemodel','model'=>'Model_Project','default'=>$_GET['project_id'],'required'=>true, 'show'=>'id'],
+                ['name'=>'project_id','label'=>'交易ID','type'=>'choosemodel','model'=>'Model_Project','default'=>isset($_GET['project_id'])?$_GET['project_id']:'','required'=>true, 'show'=>'id'],
                 ['name'=>'title','label'=>'备忘事项','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'content','label'=>'备忘内容','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'operator','label'=>'创建人','type'=>'text','default'=>Model_Admin::getCurrentAdmin()->mName,'required'=>true,'readonly'=>true],

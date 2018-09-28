@@ -3,6 +3,7 @@ abstract class Page_Admin_Base extends BaseController{
     protected static $PAGE_SIZE=10;
     protected $_assigned=array();
     protected static $_objCache = [];
+    public $inline_admin;
 
     public static function getResource($id, $key, $finder, $selCol = 'id') {
         return self::_getResource($id, $key, $finder, $selCol);
@@ -253,10 +254,12 @@ abstract class Page_Admin_Base extends BaseController{
             $this->assign("msg",$_COOKIE['msg']);
         }
 
-        $fieldsDefault=explode('&', $this->_GET('fields'));
-        foreach($fieldsDefault as $field) {
-            list($fKey, $fValue) = explode('=', $field);
-            $this->fieldsDefault[$fKey] = $fValue;
+        if ($this->_GET('fields')) {
+            $fieldsDefault=explode('&', $this->_GET('fields'));
+            foreach($fieldsDefault as $field) {
+                list($fKey, $fValue) = explode('=', $field);
+                $this->fieldsDefault[$fKey] = $fValue;
+            }
         }
         //$this->register_function('__list_item', array($this, '__list_item'));
         //$this->register_function('__list_item_label', array($this, '__list_item_label'));

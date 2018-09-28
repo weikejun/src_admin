@@ -2,6 +2,9 @@
 
 class Form_SelectInputField extends Form_Field{
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['input']);
         parent::__construct($config);
     }
 
