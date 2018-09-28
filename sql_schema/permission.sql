@@ -143,6 +143,7 @@ CREATE TABLE `admin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL,
   `real_name` varchar(32) DEFAULT NULL,
+  `email` varchar(32) DEFAULT NULL,
   `password` varchar(32) DEFAULT NULL,
   `gender` varchar(3) DEFAULT NULL,
   `department` varchar(32) DEFAULT NULL,

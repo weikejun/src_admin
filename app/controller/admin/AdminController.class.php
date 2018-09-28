@@ -24,16 +24,9 @@ class AdminController extends Page_Admin_Base {
              */
 
             array('name'=>'name','label'=>'用户名','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'real_name','label'=>'真实姓名','type'=>"text",'default'=>null,'required'=>true,),
-            array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>false,),
-            array('name'=>'password_again','label'=>'密码确认','type'=>"password",'default'=>null,'required'=>false,'validator'=>function($values){
-                if(!$values['password']||
-                    ($values['password']&&md5($values['password_again'])==$values['password'])){
-                    return true;
-                }else{
-                    return "请输入相同密码";
-                }
-            }),
+            array('name'=>'real_name','label'=>'真实姓名','type'=>"text",'default'=>null,'required'=>true,'placeholder'=>'请填写全名'),
+            array('name'=>'email','label'=>'公司邮箱','type'=>"text",'default'=>null,'required'=>true),
+            array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>true,),
             array('name'=>'valid','label'=>'有效状态',"choices"=>array(array('valid',"有效"),array('invalid',"无效"),), 'type'=>"choice",'default'=>'valid','null'=>false,),
             array('name'=>'create_time','label'=>'创建时间','type'=>"datetime",'default'=>time(),'readonly'=>true,),
         ));
@@ -46,6 +39,9 @@ class AdminController extends Page_Admin_Base {
             }],
             ['label'=>'真实姓名','field'=>function($model){
                 return $model->mRealName;
+            }],
+            ['label'=>'公司邮箱','field'=>function($model){
+                return $model->mEmail;
             }],
             ['label'=>'状态','field'=>function($model){
                 return $model->mValid;
