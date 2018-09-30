@@ -17,6 +17,7 @@ class AdminLoginInterceptor extends Interceptor{
         $notAuthActions=[
             ['Index','loginAction'],
             ['Index','captchaAction'],
+            ['Index','decisionAction'],
         ];
         foreach($notAuthActions as $notAuthAction){
             if($executeInfo['controllerName']==$notAuthAction[0]

@@ -127,6 +127,26 @@ CREATE TABLE `payment` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `deal_decision`
+--
+
+DROP TABLE IF EXISTS `deal_decision`; /*投决意见*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deal_decision` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `project_id` int(11) DEFAULT NULL COMMENT '交易ID',
+    `partner` varchar(16) DEFAULT NULL COMMENT '合伙人',
+    `decision` varchar(8) DEFAULT NULL COMMENT '投资意见',
+    `ip` varchar(32) DEFAULT NULL COMMENT '来源IP',
+    `expiration` varchar(11) DEFAULT NULL COMMENT '有效期',
+    `memo` text DEFAULT NULL COMMENT '备注',
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3366;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `project`
 --
 
@@ -309,6 +329,8 @@ CREATE TABLE `project` (
     `trade_schedule_todo` text DEFAULT NULL COMMENT '交易进度ToDo', 
     `ts_ratio` varchar(8) DEFAULT NULL COMMENT 'TS/决策口径占比',
     `lawyer_fee` varchar(8) DEFAULT NULL COMMENT '律师费',
+    `active_deal` varchar(8) DEFAULT NULL COMMENT '活动交易',
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;

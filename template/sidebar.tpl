@@ -31,6 +31,24 @@
                     </a>
                 </li>
                 {%/if%}
+                {%if $c=='ActiveDeal'%}
+                <li class="start {%if $executeInfo.controllerName=='ActiveDeal'%} active {%/if%}">
+                    <a href="/admin/ActiveDeal">
+                        <i class="icon-home"></i>
+                        <span class="title">Active项目进度表</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='DealDecision'%}
+                <li class="start {%if $executeInfo.controllerName=='DealDecision'%} active {%/if%}">
+                    <a href="/admin/DealDecision">
+                        <i class="icon-home"></i>
+                        <span class="title">投决意见</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
                 {%if $c=='MailSend'%}
                 <li class="start {%if $executeInfo.controllerName=='MailSend'%} active {%/if%}">
                     <a href="/admin/MailSend">

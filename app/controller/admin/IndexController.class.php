@@ -97,4 +97,18 @@ class IndexController extends Page_Admin_Base{
         //return ['json:',AppUtils::returnValue($paths,0)];
     }
 
+    public function decisionAction() {
+        $model = new Model_DealDecision();
+        if (!empty($_GET['id'])) {
+            $model->mId = $_GET['id'];
+            $model->select();
+            if ($model->signData() == $_GET['sign'] && !$model->mDecision) {
+                $model->mDecision = $_GET['decision'];
+                $model->mExpiration = time();
+                $model->mIp = Utils::getClientIP();
+                $model->save();
+            }
+        }
+        return ['text: 操作完成，谢谢'];
+    }
 }

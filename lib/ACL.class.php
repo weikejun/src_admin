@@ -7,6 +7,8 @@ class ACL{
         "Project",
         "Entity",
         "EntityRel",
+        "ActiveDeal",
+        "DealDecision",
         "Payment",
         "CompanyMemo",
         "DealMemo",

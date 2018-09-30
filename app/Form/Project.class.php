@@ -82,6 +82,7 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'N','required'=>false],
                 ['name'=>'field-index-status','label'=>'本轮交易进度','type'=>'seperator'],
+                ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'否'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
                 ['name'=>'trade_file_schedule','label'=>'交易文件进度','type'=>'selectInput','choices'=>Model_Project::getTradeFileScheduleChoices(),'required'=>false],
                 ['name'=>'expect_sign_date','label'=>'预计签约日期','type'=>'date','default'=>null,'help'=>'须填写，与提醒邮件关联','field'=>function($model){
@@ -91,7 +92,7 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'expect_pay_schedule','label'=>'预计交割付款安排','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'trade_schedule_memo','label'=>'交易进度其他说明','type'=>'textarea','default'=>null,'required'=>false,],
-                ['name'=>'trade_schedule_todo','label'=>'交易进度ToDo','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
@@ -124,7 +125,8 @@ class Form_Project extends Form {
                     }
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('pre_money') + $model->getData('financing_amount'), 2);
                      */
-                    return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
+                    if ($model->getData('post_money'))
+                        return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
                 }],
                 ['name'=>'_stock_price','label'=>'企业每股单价','type'=>'rawText','required'=>false,'help'=>'本轮“企业投后估值“除以本轮“企业投后总股数”','field'=>function($model)use(&$stockPrice){
                     $postMoney = $model->getData('pre_money') + $model->getData('financing_amount');
@@ -551,6 +553,9 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
+                }],
+                ['name'=>'create_time','label'=>'创建时间','type'=>'hidden','readonly'=>'true','default'=>time(),'field'=>function($model){
+                    return date('Ymd H:i:s', $model->getData('create_time'));
                 }],
                 ['name'=>'field-index-recheck','label'=>'记录校对情况','type'=>'seperator'],
                 ['name'=>'finance_check_sign','label'=>'财务签名','type'=>'text','required'=>false],

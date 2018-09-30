@@ -2,7 +2,7 @@
 trait ExportActions{
     public static function printCsvRow($row){
 		$csv_terminated = "\n";
-		$csv_separator = ",";
+		$csv_separator = "\t";
 		$csv_enclosed = '"';
 		$csv_escaped = "\\";
 
@@ -28,8 +28,8 @@ trait ExportActions{
         $exeInfo = WinRequest::getModel('executeInfo');
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 		//header("Content-Length: " . strlen($out));
-		header("Content-type: text/x-csv");
-		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".csv");
+		header("Content-type: application/vnd.ms-excel");
+		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".xls");
 
 		$insert = '';
         $this->initData();
