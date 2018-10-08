@@ -1,5 +1,6 @@
 <?php
 class Model_Project extends Base_Project{
+    const DEFAULT_CLOSE_DATE=9999999999;
     public static function getPendingChoices() {
         return [
             ['有','有'],

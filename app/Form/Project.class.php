@@ -41,9 +41,18 @@ class Form_Project extends Form {
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
-                    $deal->addWhere('close_date', '0', '>');
                     $deal->orderBy('close_date', 'DESC');
-                    $deals = $deal->find();
+                    $tmpDeals = $deal->find();
+                    $deals = [];
+                    foreach($tmpDeals as $i => $d) {
+                        if (!$d->getData('close_date')) {
+                            if ($d->getData('count_captable') != '计入') {
+                                continue;
+                            }
+                            $d->mCloseDate = Model_Project::DEFAULT_CLOSE_DATE;
+                        }
+                        $deals[] = $d;
+                    }
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],

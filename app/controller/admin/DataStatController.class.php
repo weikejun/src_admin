@@ -26,17 +26,17 @@ class DataStatController extends Page_Admin_Base {
         $deals = $deal->find();
         $this->model = [];
         $project = new Model_Project;
-        $project->mWorkMemo = '交割';
+        $project->setDataMerge(['pending_detail' => '交割']);
         $this->model[] = $project;
         $project = new Model_Project;
-        $project->mWorkMemo = '决策';
+        $project->setDataMerge(['pending_detail' => '决策']);
         $this->model[] = $project;
         $modelDataList=$this->model;
         $this->assign("modelDataList",$modelDataList);
         $this->list_display=array(
             ['label'=>'统计口径','field'=>function($model)use(&$timeField,&$selectDate){
                 $timeField = 'close_date';
-                if ($model->getData('work_memo') == '决策') {
+                if ($model->getData('pending_detail') == '决策') {
                     $timeField = 'decision_date';
                 }
                 list($selectDate['start'], $selectDate['end']) = explode('&', $_GET['__filter']);
@@ -48,7 +48,7 @@ class DataStatController extends Page_Admin_Base {
                 if (!$selectDate['start']) {
                     $selectDate['start'] = date('Ymd', strtotime('20100101'));
                 }
-                return $model->getData('work_memo'); 
+                return $model->getData('pending_detail'); 
             }],
             ['label'=>'统计日期','field'=>function($model)use(&$timeField,&$selectDate){
                 return '<a target=__blank href="/admin/Project?__filter=' . urlencode($timeField."__start=".$selectDate['start'].'&'.$timeField.'__end='.$selectDate['end']) . '">' . $selectDate['start'] . ' - ' . $selectDate['end'] . '</a>';

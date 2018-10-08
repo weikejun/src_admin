@@ -302,9 +302,9 @@ class ProjectController extends Page_Admin_Base {
             if ($dataItem->getData('loan_entity_id')) {
                 $captableIds[$dataItem->getData('loan_entity_id')] = 1;
             }
-            if ($dataItem->getData('count_captable') == 'Y'
+            if ($dataItem->getData('count_captable') == '计入'
                 && !$dataItem->getData('close_date')) {
-                $dataList[$i]->setDataMerge(['close_date'=>1]);
+                $dataList[$i]->setDataMerge(['close_date'=>Model_Project::DEFAULT_CLOSE_DATE]);
             }
         }
         $captable = new Model_Entity;
@@ -329,7 +329,7 @@ class ProjectController extends Page_Admin_Base {
                 return $model->getData('new_old_stock');
             }],
             ['label' => '交割日期', 'field' => function($model) {
-                if ($model->getData('close_date') == 1) {
+                if ($model->getData('close_date') == Model_Project::DEFAULT_CLOSE_DATE) {
                     return '暂未交割';
                 }
                 return date('Ymd', $model->getData('close_date'));
