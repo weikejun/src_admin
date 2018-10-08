@@ -27,4 +27,15 @@ Trait Form_Traits {
         }
         return $nameMap[$fieldName]?$nameMap[$fieldName]:$fieldName;
     }
+
+    public static function getFieldNameByView($fieldView) {
+        static $viewMap;
+        if (!$viewMap) {
+            $viewMap = [];
+            foreach(self::getFieldsMap() as $field) {
+                $viewMap[$field['label']] = $field['name'];
+            }
+        }
+        return $viewMap[$fieldView]?$viewMap[$fieldView]:null;
+    }
 }

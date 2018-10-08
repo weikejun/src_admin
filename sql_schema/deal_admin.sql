@@ -334,3 +334,84 @@ CREATE TABLE `project` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mail_strategy`
+--
+
+DROP TABLE IF EXISTS `mail_strategy`; /*邮件策略*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mail_strategy` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '策略ID',
+    `name` varchar(16) DEFAULT NULL COMMENT '策略名称', 
+    `mail_to` text DEFAULT NULL COMMENT '收件人', 
+    `mail_cc` text DEFAULT NULL COMMENT '抄送', 
+    `title` text DEFAULT NULL COMMENT '邮件标题', 
+    `content` text DEFAULT NULL COMMENT '邮件内容', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mail_trigger`
+--
+
+DROP TABLE IF EXISTS `mail_trigger`; /*邮件触发条件*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mail_trigger` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '条件ID',
+    `strategy_id` int(11) DEFAULT NULL COMMENT '邮件策略ID',
+    `field` varchar(32) DEFAULT NULL COMMENT '引用字段', 
+    `value` text DEFAULT NULL COMMENT '字段匹配值', 
+    `field_opr` text DEFAULT NULL COMMENT '字段匹配运算符，> < == != >= <=', 
+    `logic_opr` text DEFAULT NULL COMMENT '触发条件运算符，&& ||', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mail_cycle`
+--
+
+DROP TABLE IF EXISTS `mail_cycle`; /*邮件触发条件*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mail_cycle` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '条件ID',
+    `strategy_id` int(11) DEFAULT NULL COMMENT '邮件策略ID',
+    `field` varchar(32) DEFAULT NULL COMMENT '时间起点字段', 
+    `duration` varchar(8) DEFAULT NULL COMMENT '间隔时长', 
+    `unit` varchar(8) DEFAULT NULL COMMENT '时长单位，天、小时', 
+    `repeat` varchar(8) DEFAULT NULL COMMENT '重复次数', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mail_list`
+--
+
+DROP TABLE IF EXISTS `mail_list`; /*邮件触发条件*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mail_list` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '提醒ID',
+    `strategy_id` int(11) DEFAULT NULL COMMENT '邮件策略ID',
+    `project_id` int(11) DEFAULT NULL COMMENT '交易ID',
+    `mail_to` text DEFAULT NULL COMMENT '收件人', 
+    `mail_cc` text DEFAULT NULL COMMENT '抄送', 
+    `title` text DEFAULT NULL COMMENT '邮件标题', 
+    `content` text DEFAULT NULL COMMENT '邮件内容', 
+    `status` varchar(8) DEFAULT NULL COMMENT '邮件状态，待发送、已发送、发送中',
+    `create_type` varchar(8) DEFAULT NULL COMMENT '创建方式，自动、手动',
+    `expect_time` varchar(11) DEFAULT NULL COMMENT '预计发送时间', 
+    `send_time` varchar(11) DEFAULT NULL COMMENT '实际发送时间', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;

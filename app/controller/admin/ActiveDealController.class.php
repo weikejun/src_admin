@@ -54,7 +54,7 @@ class ActiveDealController extends Page_Admin_Base {
         }
 
         WinRequest::mergeModel(array(
-            'controllerText' => 'Active项目进度表',
+            'controllerText' => 'Active进度表',
         ));
 
         $this->hide_action_new = true;

@@ -28,9 +28,12 @@ class DealDecisionController extends Page_Admin_Base {
             'delete' => false,
         ];
 
+        $this->hide_action_new = true;
+
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>Form_DealDecision::getFieldViewName('project_id'),'paramName'=>'project_id','fusion'=>true]),
-            new Page_Admin_TimeRangeFilter(['name'=>Form_DealDecision::getFieldViewName('expiration'),'paramName'=>'expiration','dateClass'=>'datetimepicker']),
+            new Page_Admin_TextFilter(['name'=>Form_DealDecision::getFieldViewName('project_id'),'paramName'=>'project_id','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_DealDecision::getFieldViewName('expiration'),'paramName'=>'expiration','dateClass'=>'datetimepicker','class'=>'keep-all']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_DealDecision::getFieldViewName('create_time'),'paramName'=>'create_time','dateClass'=>'datetimepicker','class'=>'keep-all']),
 
         );
         //$this->search_fields = ['name','description','tp'];

@@ -35,7 +35,7 @@
                 <li class="start {%if $executeInfo.controllerName=='ActiveDeal'%} active {%/if%}">
                     <a href="/admin/ActiveDeal">
                         <i class="icon-home"></i>
-                        <span class="title">Active项目进度表</span>
+                        <span class="title">Active进度表</span>
                         <span class="selected"></span>
                     </a>
                 </li>
@@ -45,6 +45,24 @@
                     <a href="/admin/DealDecision">
                         <i class="icon-home"></i>
                         <span class="title">投决意见</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='MailStrategy'%}
+                <li class="start {%if $executeInfo.controllerName=='MailStrategy' || $executeInfo.controllerName=='MailTrigger' || $executeInfo.controllerName == 'MailCycle'%} active {%/if%}">
+                    <a href="/admin/MailStrategy">
+                        <i class="icon-home"></i>
+                        <span class="title">交易提醒策略</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='MailList'%}
+                <li class="start {%if $executeInfo.controllerName=='MailList'%} active {%/if%}">
+                    <a href="/admin/MailList">
+                        <i class="icon-home"></i>
+                        <span class="title">交易提醒列表</span>
                         <span class="selected"></span>
                     </a>
                 </li>
