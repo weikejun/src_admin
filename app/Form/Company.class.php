@@ -15,8 +15,8 @@ class Form_Company extends Form {
                     $project = $project->find();
                     foreach($project as $i => $dataItem) {
                         if (!$dataItem->getData('close_date') 
-                            && $dataItem->getData('count_captable') == 'Y') {
-                            $project[$i]->mCloseDate = 9999999999;
+                            && $dataItem->getData('count_captable') == '计入') {
+                            $project[$i]->mCloseDate = Model_Project::DEFAULT_CLOSE_DATE;
                         }
                     }
                     return $model->getData('id');

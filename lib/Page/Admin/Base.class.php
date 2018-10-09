@@ -9,6 +9,11 @@ abstract class Page_Admin_Base extends BaseController{
         return self::_getResource($id, $key, $finder, $selCol);
     }
 
+    public function getBackUrl() {
+        return str_replace('Controller', '', get_class($this));
+        return Utils::get_default_back_url();
+    }
+
     protected static function _getResource($id, $key, $finder, $selCol = 'id') {
         $resource = null;
         if(isset(self::$_objCache[$key][$selCol][$id])) {
@@ -147,7 +152,7 @@ abstract class Page_Admin_Base extends BaseController{
         return false;
     }
     public function create(){
-        $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());
+        $__success_url=$this->_REQUEST('__success_url',$this->getBackUrl());
         $this->assign("__success_url",$__success_url);
         $result=$this->_create();
         if($result){
@@ -185,7 +190,7 @@ abstract class Page_Admin_Base extends BaseController{
         $this->assign("form",$this->form);
     }
     public function read(){
-        $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());
+        $__success_url=$this->_REQUEST('__success_url',$this->getBackUrl());
         $this->assign("__success_url",$__success_url);
         $this->_read();
         $this->display("admin/base/read.html");
@@ -213,7 +218,7 @@ abstract class Page_Admin_Base extends BaseController{
         return false;
     }
     public function update(){
-        $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());
+        $__success_url=$this->_REQUEST('__success_url',$this->getBackUrl());
         $this->assign("__success_url",$__success_url);
         $result=$this->_update();
         if($result){
@@ -231,7 +236,7 @@ abstract class Page_Admin_Base extends BaseController{
         }
     }
     public function delete(){
-        $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());
+        $__success_url=$this->_REQUEST('__success_url',$this->getBackUrl());
         $this->assign("__success_url",$__success_url);
         
         $this->_delete();
@@ -289,7 +294,7 @@ abstract class Page_Admin_Base extends BaseController{
             $this->_setMsg($msg);
         }
         if(!$ref_url){
-            $ref_url=Utils::get_default_back_url();
+            $ref_url = $this->getBackUrl();
         }
         $this->display("redirect:".$ref_url);
         //Utils::redirect($ref_url);
