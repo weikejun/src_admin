@@ -16,7 +16,7 @@ class Form_MailList extends Form {
                     $st->select();
                     return $st->getData('name');
                 }],
-                ['name'=>'project_id','label'=>'项目ID','type'=>'choosemodel','model'=>'Model_Project','default'=>isset($_GET['project_id'])?$_GET['project_id']:'','required'=>true,'show'=>'id'],
+                ['name'=>'project_id','label'=>'交易ID','type'=>'choosemodel','model'=>'Model_Project','default'=>isset($_GET['project_id'])?$_GET['project_id']:'','required'=>true,'show'=>'id'],
                 ['name'=>'mail_to','label'=>'收件人','type'=>'textarea','default'=>null,'required'=>true],
                 ['name'=>'mail_cc','label'=>'抄送','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>true],

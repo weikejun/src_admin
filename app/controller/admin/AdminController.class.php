@@ -25,7 +25,6 @@ class AdminController extends Page_Admin_Base {
 
             array('name'=>'name','label'=>'用户名','type'=>"text",'default'=>null,'required'=>true,),
             array('name'=>'real_name','label'=>'真实姓名','type'=>"text",'default'=>null,'required'=>true,'placeholder'=>'请填写全名'),
-            array('name'=>'email','label'=>'公司邮箱','type'=>"text",'default'=>null,'required'=>true),
             array('name'=>'password','label'=>'密码','type'=>"password",'default'=>null,'required'=>false,'validator'=>function($values) {
                 if (!isset($values['id']) || !$values['id']) { // 新增检查，更新不检查
                     if (!$values['password']) {
@@ -46,9 +45,6 @@ class AdminController extends Page_Admin_Base {
             }],
             ['label'=>'真实姓名','field'=>function($model){
                 return $model->mRealName;
-            }],
-            ['label'=>'公司邮箱','field'=>function($model){
-                return $model->mEmail;
             }],
             ['label'=>'状态','field'=>function($model){
                 return $model->mValid;

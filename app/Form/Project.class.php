@@ -37,22 +37,23 @@ class Form_Project extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
+                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals,&$company){
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
                     $deal->addWhere('close_date', '0', '>');
                     $deal->orderBy('close_date', 'DESC');
                     $deals = $deal->find();
+                    $company = new Model_Company;
+                    $company->addWhere('id', $model->getData('company_id'));
+                    $company->select();
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
-                ['name'=>'company_id','label'=>'目标企业','type'=>'choosemodel','model'=>'Model_Company','default'=>isset($_GET['company_id'])?$_GET['company_id']:'','required'=>true,'field'=>function($model) {
-                    $company = Page_Admin_Base::getResource($model->mCompanyId, 'Model_Company', new Model_Company);
+                ['name'=>'company_id','label'=>'目标企业','type'=>'choosemodel','model'=>'Model_Company','default'=>isset($_GET['company_id'])?$_GET['company_id']:'','required'=>true,'field'=>function($model)use(&$company) {
                     return $company->mName;
                 }],
-                ['name'=>'_company_short','label'=>'项目简称','type'=>'rawText','required'=>false,'field'=>function($model) {
-                    $company = Page_Admin_Base::getResource($model->mCompanyId, 'Model_Company', new Model_Company);
+                ['name'=>'_company_short','label'=>'项目简称','type'=>'rawText','required'=>false,'field'=>function($model)use(&$company) {
                     return $company->mShort;
                 }],
                 ['name'=>'_company_id','label'=>'企业ID','type'=>'rawText','required'=>false,'field'=>'company_id','field'=>function($model){
@@ -274,12 +275,9 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
-                ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model){
+                ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model)use(&$company){
                     if ($model->getData('company_id')) {
-                        $co = new Model_Company;
-                        $co->addWhere('id', $model->getData('company_id'));
-                        $co->select();
-                        return $co->getData('main_founders');
+                        return $company->getData('main_founders');
                     }
                 }],
                 ['name'=>'shareholding_founder','label'=>'最主要创始人股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
@@ -507,21 +505,29 @@ class Form_Project extends Form {
                 ['name'=>'entrustment','label'=>'是否存在代持情况','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false],
                 ['name'=>'entrustment_entity_id','label'=>'代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入代持主体全称，如有'],
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
-                ['name'=>'_current_partner','label'=>'最新主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company ? $company->getData('partner') : '';
+                ['name'=>'_current_partner','label'=>'最新主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
+                    $members = Model_Member::listAll();
+                    if ($company->mPartner) {
+                        return $members[$company->mPartner]->mName;
+                    }
                 }],
-                ['name'=>'_current_manager','label'=>'最新项目负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company ? $company->getData('manager') : '';
+                ['name'=>'_current_manager','label'=>'最新项目负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
+                    $members = Model_Member::listAll();
+                    if ($company->mManager) {
+                        return $members[$company->mManager]->mName;
+                    }
                 }],
-                ['name'=>'_current_finance_person','label'=>'最新财务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company ? $company->getData('finance_person') : '';
+                ['name'=>'_current_finance_person','label'=>'最新财务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
+                    $members = Model_Member::listAll();
+                    if ($company->mFinancePerson) {
+                        return $members[$company->mFinancePerson]->mName;
+                    }
                 }],
-                ['name'=>'_current_legal_person','label'=>'最新法务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
-                    return $company ? $company->getData('legal_person') : '';
+                ['name'=>'_current_legal_person','label'=>'最新法务负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
+                    $members = Model_Member::listAll();
+                    if ($company->mLegalPerson) {
+                        return $members[$company->mLegalPerson]->mName;
+                    }
                 }],
                 ['name'=>'partner','label'=>'本轮主管合伙人','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'manager','label'=>'本轮项目负责人','type'=>'text','default'=>null,'required'=>false,],

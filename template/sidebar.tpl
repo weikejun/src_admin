@@ -62,7 +62,7 @@
                 <li class="start {%if $executeInfo.controllerName=='MailList'%} active {%/if%}">
                     <a href="/admin/MailList">
                         <i class="icon-home"></i>
-                        <span class="title">交易提醒列表</span>
+                        <span class="title">提醒邮件列表</span>
                         <span class="selected"></span>
                     </a>
                 </li>
@@ -95,10 +95,19 @@
                 </li>
                 {%/if%}
                 {%if $c=='Entity'%}
-                <li class="start {%if $executeInfo.controllerName=='Entity'%} active {%/if%}">
+                <li class="start {%if $executeInfo.controllerName=='Entity'||$executeInfo.controllerName=='EntityRel'%} active {%/if%}">
                     <a href="/admin/entity">
                         <i class="icon-home"></i>
                         <span class="title">投资主体</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
+                {%if $c=='Member'%}
+                <li class="start {%if $executeInfo.controllerName=='Member'%} active {%/if%}">
+                    <a href="/admin/member">
+                        <i class="icon-home"></i>
+                        <span class="title">项目成员</span>
                         <span class="selected"></span>
                     </a>
                 </li>

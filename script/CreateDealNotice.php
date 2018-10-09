@@ -1,6 +1,7 @@
 <?php
 
 $strategys = new Model_MailStrategy;
+$strategys->addWhere('program', 'common');
 $strategys = $strategys->find();
 $deals = new Model_Project;
 $deals->addWhere('update_time', strtotime('-1 days'), '>=');
@@ -67,10 +68,14 @@ foreach($strategys as $strategy) {
             // 插入新邮件 TODO: 生成收件人、标题、内容
             foreach($cycs as $cyc) {
                 $field = Form_Project::getFieldNameByView($cyc->mField);
-                if (!$field) break;
-                $value = $deal->getData($field);
+                if (empty($field)) break;
+                $value = trim($deal->getData($field));
+                if (empty($value)) continue; // 计时起点未填写
                 for($i = 0; $i < $cyc->mRepeat; $i++) {
-                    $sendTm = strtotime(sprintf('+%s %s', $cyc->mDuration, $cyc->mUnit), $value);
+                    $sendTm = strtotime(sprintf('%s %s', $cyc->mDuration, $cyc->mUnit), $value);
+                    if ($sendTm < time()) { // 发送时间已过，不再添加
+                        continue;
+                    }
                     $mail = new Model_MailList;
                     $mail->setData([
                         'status' => '待发送',

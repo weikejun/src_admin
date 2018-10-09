@@ -224,7 +224,11 @@ abstract class Page_Admin_Base extends BaseController{
     }
     public function _delete(){
         //$this->model->reset();
-        $this->model->addWhere("id",$_REQUEST['id'])->select()->delete();
+        $ids = explode(',', $_REQUEST['id']);
+        foreach($ids as $i => $id) {
+            $this->model->addWhere("id",$id)->select()->delete();
+            $this->model->clear();
+        }
     }
     public function delete(){
         $__success_url=$this->_REQUEST('__success_url',Utils::get_default_back_url());

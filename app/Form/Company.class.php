@@ -593,10 +593,34 @@ class Form_Company extends Form {
                     return $output;
                 }],
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
-                ['name'=>'partner','label'=>'主管合伙人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'manager','label'=>'项目负责人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'legal_person','label'=>'法务负责人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'finance_person','label'=>'财务负责人','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'partner','label'=>'主管合伙人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if (isset($members[$model->getData('partner')])) {
+                        return $members[$model->getData('partner')]->getData('name');
+                    }
+                    return '<i>'.$model->getData('partner').'</i>';
+                }],
+                ['name'=>'manager','label'=>'项目负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if (isset($members[$model->getData('manager')])) {
+                        return $members[$model->getData('manager')]->getData('name');
+                    }
+                    return '<i>'.$model->getData('manager').'</i>';
+                }],
+                ['name'=>'legal_person','label'=>'法务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if (isset($members[$model->getData('legal_person')])) {
+                        return $members[$model->getData('legal_person')]->getData('name');
+                    }
+                    return '<i>'.$model->getData('legal_person').'</i>';
+                }],
+                ['name'=>'finance_person','label'=>'财务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if (isset($members[$model->getData('finance_person')])) {
+                        return $members[$model->getData('finance_person')]->getData('name');
+                    }
+                    return '<i>'.$model->getData('finance_person').'</i>';
+                }],
                 ['name'=>'_first_manager','label'=>'初始项目负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -641,7 +665,13 @@ class Form_Company extends Form {
                     }
                     return '存档完整';
                 }],
-                ['name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'filling_keeper','label'=>'文件Filing保管人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if (isset($members[$model->getData('filling_keeper')])) {
+                        return $members[$model->getData('filling_keeper')]->getData('name');
+                    }
+                    return '<i>'.$model->getData('filling_keeper').'</i>';
+                }],
                 ['name'=>'field-index-memo','label'=>'备注及未决事项','type'=>'seperator'],
                 ['name'=>'_pending_detail','label'=>'未决事项说明','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];

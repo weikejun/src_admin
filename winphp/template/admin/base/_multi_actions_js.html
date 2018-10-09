@@ -1,6 +1,6 @@
 <script>
     (function(){
-        $("#multi_actions").delegate("a","mousedown",function(){
+        $("#multi_actions").delegate("a","click",function(){
             var checkboxes=$(".checker .checked input[name=\"__item\"]");
             var ids=checkboxes.map(function(){
                 return $(this).val();
@@ -12,6 +12,11 @@
             ids=Array.prototype.slice.call(ids,0);
             var action=$(this).attr("action");
             $(this).attr("href",action.replace("__ids_json__",JSON.stringify(ids)).replace("__ids__",ids.join(",")));
+            ret = eval($(this).attr("pre"));
+            if (!ret) {
+                return false;
+            }
+            return true;
         });
         $("#selectAll").click(function(){
             var checkboxes=$(".checker input[name=\"__item\"]");

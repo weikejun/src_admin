@@ -96,12 +96,11 @@ DROP TABLE IF EXISTS `entity_rel`; /*主体关系*/
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `entity_rel` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `subject_id` int(11) DEFAULT NULL COMMENT '目标主体ID',
-    `holder_id` int(11) DEFAULT NULL COMMENT '持有主体ID',
-    `ratio` varchar(16) DEFAULT NULL COMMENT '持有比例',
-    `update_time` int(11) DEFAULT NULL COMMENT '创建时间',
+    `parent_id` int(11) DEFAULT NULL COMMENT '目标主体ID',
+    `sub_id` int(11) DEFAULT NULL COMMENT '持有主体ID',
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `subject_id_holder_id_index` (`subject_id`,`holder_id`)
+    UNIQUE KEY `uniq_index` (`parent_id`,`sub_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -345,6 +344,7 @@ DROP TABLE IF EXISTS `mail_strategy`; /*邮件策略*/
 CREATE TABLE `mail_strategy` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '策略ID',
     `name` varchar(16) DEFAULT NULL COMMENT '策略名称', 
+    `program` varchar(16) DEFAULT NULL COMMENT '处理程序',
     `mail_to` text DEFAULT NULL COMMENT '收件人', 
     `mail_cc` text DEFAULT NULL COMMENT '抄送', 
     `title` text DEFAULT NULL COMMENT '邮件标题', 
@@ -411,6 +411,22 @@ CREATE TABLE `mail_list` (
     `create_type` varchar(8) DEFAULT NULL COMMENT '创建方式，自动、手动',
     `expect_time` varchar(11) DEFAULT NULL COMMENT '预计发送时间', 
     `send_time` varchar(11) DEFAULT NULL COMMENT '实际发送时间', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `member`
+--
+
+DROP TABLE IF EXISTS `member`; /*项目成员*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `member` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `name` varchar(16) DEFAULT NULL COMMENT '全名', 
+    `mail` varchar(32) DEFAULT NULL COMMENT '邮箱', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

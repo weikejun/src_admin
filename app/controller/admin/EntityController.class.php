@@ -12,7 +12,7 @@ class EntityController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",
             '_preview' => true,
-            'tableWrap' => "1536px",
+            'tableWrap' => "2048px",
         ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
@@ -47,6 +47,8 @@ class EntityController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices()]),
+            new Page_Admin_TextForeignFilter(['name'=>'子主体','paramName'=>'sub_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'parent_id']),
+            new Page_Admin_TextForeignFilter(['name'=>'父主体','paramName'=>'parent_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'sub_id']),
 
         );
         $this->multi_actions=array(

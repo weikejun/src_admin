@@ -23,6 +23,20 @@ class Form_Entity extends Form {
                     }
                     return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
                 }],
+                ['name'=>'_indrect_hold_company','label'=>'间接持股企业','type'=>'rawText','field'=>function($model) {
+                    $subIds = Model_EntityRel::getAllSubs($model->getData('id'), 0);
+                    $project = new Model_Project;
+                    $project->addWhere('entity_id', $subIds, 'IN');
+                    $project->addWhere('status', 'valid');
+                    $project->setCols('company_id');
+                    $project->groupBy('company_id');
+                    $deals = $project->find();
+                    $companyIds = [];
+                    foreach($deals as $i => $deal) {
+                        $companyIds[] = $deal->getData('company_id');
+                    }
+                    return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
+                }],
                 ['name'=>'_invest_num','label'=>'投资记录','type'=>'rawText','field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('entity_id', $model->getData('id'));
@@ -34,6 +48,26 @@ class Form_Entity extends Form {
                     $project->addWhere('exit_entity_id', $model->getData('id'));
                     $project->addWhere('status', 'valid');
                     return '<a href="/admin/project?__filter='.urlencode('exit_entity_id='.$model->getData('id')).'">'.$project->count().'</a>';
+                }],
+                ['name'=>'_parent_entity','label'=>'父主体','type'=>'rawText','field'=>function($model) {
+                    $rels = Model_EntityRel::listAll();
+                    $count = 0;
+                    foreach($rels as $id => $rel) {
+                        if ($rel->getData('sub_id') == $model->getData('id')) {
+                            $count++;
+                        }
+                    }
+                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('sub_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&sub_id='.$model->mId.'"> +新增 </a></span>';
+                }],
+                ['name'=>'_sub_entity','label'=>'子主体','type'=>'rawText','field'=>function($model) {
+                    $rels = Model_EntityRel::listAll();
+                    $count = 0;
+                    foreach($rels as $id => $rel) {
+                        if ($rel->getData('parent_id') == $model->getData('id')) {
+                            $count++;
+                        }
+                    }
+                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('parent_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&parent_id='.$model->mId.'"> +新增 </a></span>';
                 }],
                 ['name'=>'register_country','label'=>'注册国/省','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'description','label'=>'描述','type'=>'text','default'=>null,'required'=>false,'help'=>'示例“人民币早期一期主基金”，“美元专项基金SPV”'],

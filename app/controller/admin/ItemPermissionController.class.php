@@ -69,6 +69,7 @@ class ItemPermissionController extends Page_Admin_Base {
         );
 
         $this->single_actions_default = ['delete'=>true,'edit'=>false];
+        $this->multi_actions[] = ['label'=>'批量删除','required'=>true,'action'=>trim('/admin/itemPermission?action=delete&id=__ids__'),'pre'=>'return confirm("操作后不可恢复，确认删除选中记录?");'];
     }
 
     public function _create(){

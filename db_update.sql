@@ -1,5 +1,3 @@
-alter table `admin` add `email` varchar(32) DEFAULT NULL after `real_name`;
-
 alter table `project` modify `deal_manager` text DEFAULT NULL COMMENT '本轮交易负责人';
 alter table `project` modify `law_firm` text DEFAULT NULL COMMENT '源码委托律所';
 alter table `project` add `loan_schedule` varchar(8) DEFAULT NULL COMMENT '借款进度';
@@ -29,3 +27,15 @@ CREATE TABLE `deal_decision` (
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3366;
+
+insert into member (name,create_time) select partner,unix_timestamp() from company where partner != '' group by partner;
+insert into member (name,create_time) select manager,unix_timestamp() from company where manager != '' group by manager;
+insert into member (name,create_time) select legal_person,unix_timestamp() from company where legal_person != '' group by legal_person;
+insert into member (name,create_time) select finance_person,unix_timestamp() from company where finance_person != '' group by finance_person;
+insert into member (name,create_time) select filling_keeper,unix_timestamp() from company where filling_keeper != '' group by filling_keeper;
+
+update company c, (select c.id as id, m.id as partner from company c left join member m on (c.partner=m.name)) t set c.partner=t.partner where c.id=t.id and t.partner is not null;
+update company c, (select c.id as id, m.id as manager from company c left join member m on (c.manager=m.name)) t set c.manager=t.manager where c.id=t.id and t.manager is not null;
+update company c, (select c.id as id, m.id as legal_person from company c left join member m on (c.legal_person=m.name)) t set c.legal_person=t.legal_person where c.id=t.id and t.legal_person is not null;
+update company c, (select c.id as id, m.id as finance_person from company c left join member m on (c.finance_person=m.name)) t set c.finance_person=t.finance_person where c.id=t.id and t.finance_person is not null;
+update company c, (select c.id as id, m.id as filling_keeper from company c left join member m on (c.filling_keeper=m.name)) t set c.filling_keeper=t.filling_keeper where c.id=t.id and t.filling_keeper is not null;

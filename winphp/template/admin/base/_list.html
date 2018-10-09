@@ -12,7 +12,7 @@
         &nbsp;<a id="fold_filter" href="javascript:void 0">收起筛选∧</a>
         <span id="multi_actions">
         {%foreach from=$pageAdmin->multi_actions item=action%}
-        &nbsp;<a href="javascript:;" {%if $action.required===false%}require='false'{%/if%} action="{%$action.action%}" target="{%$action.target%}">{%$action.label%}</a>
+        &nbsp;<a href="javascript:;" {%if $action.required===false%}require='false'{%/if%} action="{%$action.action%}" target="{%$action.target%}" pre="(function(){{%if $action.pre%}{%$action.pre|escape:'html'%}{%else%}return true;{%/if%}})();">{%$action.label%}</a>
         {%/foreach%}
         </span>
     </form>
@@ -64,7 +64,7 @@
 
         <thead>
             <tr role="row">
-                <!--th><input type="checkbox" id="selectAll"/></th-->
+                <th><input type="checkbox" id="selectAll"/></th>
                 {%if ($pageAdmin->hide_item_op)%}
                 {%else%}
                 <th>操作</th>
@@ -89,6 +89,7 @@
             <tr class="gradeX {%cycle values="odd,even"%}">
                 {%if ($pageAdmin->hide_item_op)%}
                 {%else%}
+                <td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td>
                 <td>
 		    {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.edit %}<a id="read_{%$modelData->mId%}" href="?action=read&id={%$modelData->mId%}">编辑</a>{%/if%}
                     {%if !$pageAdmin->single_actions_default||$pageAdmin->single_actions_default.delete %}<a confirm="你确定要删除么？" href="?action=delete&id={%$modelData->mId%}">删除</a>{%/if%}
@@ -105,7 +106,7 @@
                         {%/strip%}">{%$action.label%}</a>
                     {%/if%}
                     {%/foreach%}
-                </td><!--td><input type="checkbox" name="__item" value="{%$modelData->mId%}" /></td-->
+                </td>
                 {%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
                 <td>

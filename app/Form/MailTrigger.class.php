@@ -16,7 +16,7 @@ class Form_MailTrigger extends Form {
                     return $st->getData('name');
                 }],
                 ['name'=>'field','label'=>'引用字段','type'=>'text','default'=>null,'required'=>true],
-                ['name'=>'value','label'=>'字段匹配值','type'=>'text','default'=>null,'required'=>true],
+                ['name'=>'value','label'=>'字段匹配值','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'field_opr','label'=>'匹配运算','type'=>'choice','choices'=>Model_MailTrigger::getFieldOprChoices(),'required'=>true,],
                 ['name'=>'logic_opr','label'=>'条件逻辑','type'=>'choice','choices'=>Model_MailTrigger::getLogicOprChoices(),'required'=>true,],
                 ['name'=>'create_time','label'=>'创建时间','type'=>'datetime','readonly'=>'true','default'=>time(),'null'=>false,'field'=>function($model){

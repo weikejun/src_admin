@@ -6,7 +6,6 @@ class Base_Admin extends DBModel{
             ['name'=>'id','type'=>"int",'key'=>true,'defalut'=>NULL,'null'=>false,],
             ['name'=>'name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'real_name','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
-            ['name'=>'email','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'password','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'gender','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
             ['name'=>'department','type'=>"string",'key'=>false,'defalut'=>NULL,'null'=>true,],
