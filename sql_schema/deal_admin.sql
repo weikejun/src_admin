@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS `company`; /*企业信息*/
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `company` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(32) DEFAULT NULL COMMENT '目标企业', 
+    `name` varchar(64) DEFAULT NULL COMMENT '目标企业', 
     `short` varchar(32) DEFAULT NULL COMMENT '项目简称', 
     `hold_status` varchar(32) DEFAULT '正常' COMMENT '持有状态', 
     `project_type` varchar(32) DEFAULT NULL COMMENT '项目类别', 
@@ -73,9 +73,9 @@ DROP TABLE IF EXISTS `entity`; /*投资主体信息*/
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `entity` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(32) DEFAULT NULL COMMENT '名称', 
+    `name` varchar(64) DEFAULT NULL COMMENT '名称', 
     `register_country` varchar(32) DEFAULT NULL COMMENT '注册国', 
-    `description` varchar(32) DEFAULT NULL COMMENT '描述', 
+    `description` varchar(64) DEFAULT NULL COMMENT '描述', 
     `cate` text DEFAULT NULL COMMENT '类型', 
     `tp` text DEFAULT NULL COMMENT '类别', 
     `org_type` varchar(16) DEFAULT NULL COMMENT '组织形式', 
