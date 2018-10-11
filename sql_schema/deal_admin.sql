@@ -140,6 +140,8 @@ CREATE TABLE `deal_decision` (
     `ip` varchar(32) DEFAULT NULL COMMENT '来源IP',
     `expiration` varchar(11) DEFAULT NULL COMMENT '有效期',
     `memo` text DEFAULT NULL COMMENT '备注',
+    `sign_key` int(11) DEFAULT NULL COMMENT '认证签名',
+    `update_time` varchar(11) DEFAULT NULL COMMENT '更新时间',
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3366;
@@ -329,6 +331,7 @@ CREATE TABLE `project` (
     `ts_ratio` varchar(8) DEFAULT NULL COMMENT 'TS/决策口径占比',
     `lawyer_fee` varchar(8) DEFAULT NULL COMMENT '律师费',
     `active_deal` varchar(8) DEFAULT NULL COMMENT '活动交易',
+    `close_notice` varchar(8) DEFAULT NULL COMMENT '进度异常提醒',
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -344,6 +347,7 @@ DROP TABLE IF EXISTS `mail_strategy`; /*邮件策略*/
 CREATE TABLE `mail_strategy` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '策略ID',
     `name` varchar(16) DEFAULT NULL COMMENT '策略名称', 
+    `ref` varchar(16) DEFAULT NULL COMMENT '触发资源',
     `program` varchar(16) DEFAULT NULL COMMENT '处理程序',
     `mail_to` text DEFAULT NULL COMMENT '收件人', 
     `mail_cc` text DEFAULT NULL COMMENT '抄送', 
@@ -383,6 +387,7 @@ DROP TABLE IF EXISTS `mail_cycle`; /*邮件触发条件*/
 CREATE TABLE `mail_cycle` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '条件ID',
     `strategy_id` int(11) DEFAULT NULL COMMENT '邮件策略ID',
+    `ref` varchar(16) DEFAULT NULL COMMENT '引用资源', 
     `field` varchar(32) DEFAULT NULL COMMENT '时间起点字段', 
     `duration` varchar(8) DEFAULT NULL COMMENT '间隔时长', 
     `unit` varchar(8) DEFAULT NULL COMMENT '时长单位，天、小时', 
@@ -402,7 +407,8 @@ DROP TABLE IF EXISTS `mail_list`; /*邮件触发条件*/
 CREATE TABLE `mail_list` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '提醒ID',
     `strategy_id` int(11) DEFAULT NULL COMMENT '邮件策略ID',
-    `project_id` int(11) DEFAULT NULL COMMENT '交易ID',
+    `ref` varchar(16) DEFAULT NULL COMMENT '触发资源',
+    `ref_id` int(11) DEFAULT NULL COMMENT '资源ID',
     `mail_to` text DEFAULT NULL COMMENT '收件人', 
     `mail_cc` text DEFAULT NULL COMMENT '抄送', 
     `title` text DEFAULT NULL COMMENT '邮件标题', 

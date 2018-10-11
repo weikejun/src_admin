@@ -9,4 +9,14 @@ class Model_Member extends Base_Member{
         }
         return self::$_model;
     }
+
+    public static function getEmailById($id) {
+        $list = self::listAll();
+        return isset($list[$id]) ? $list[$id]->mMail : $id;
+    }
+
+    public static function getNameById($id) {
+        $list = self::listAll();
+        return isset($list[$id]) ? $list[$id]->mName : $id;
+    }
 }

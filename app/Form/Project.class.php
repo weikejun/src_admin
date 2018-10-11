@@ -41,7 +41,7 @@ class Form_Project extends Form {
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
-                    $deal->orderBy('close_date', 'DESC');
+                    $deal->orderBy('id', 'DESC');
                     $tmpDeals = $deal->find();
                     $deals = [];
                     foreach($tmpDeals as $i => $d) {
@@ -91,7 +91,7 @@ class Form_Project extends Form {
                         return date('Ymd', $model->getData('close_date'));
                     }
                 }],
-                ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'N','required'=>false],
+                ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'计入','required'=>false],
                 ['name'=>'field-index-status','label'=>'本轮交易进度','type'=>'seperator'],
                 ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'否'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
@@ -104,6 +104,7 @@ class Form_Project extends Form {
                 ['name'=>'expect_pay_schedule','label'=>'预计交割付款安排','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'trade_schedule_memo','label'=>'交易进度其他说明','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'关闭',],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
@@ -569,6 +570,9 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
+                }],
+                ['name'=>'create_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'field'=>function($model){
+                    return date('Ymd H:i:s', $model->getData('create_time'));
                 }],
                 ['name'=>'create_time','label'=>'创建时间','type'=>'hidden','readonly'=>'true','default'=>time(),'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('create_time'));

@@ -9,6 +9,7 @@ alter table `project` add `trade_schedule_todo` text DEFAULT NULL COMMENT '交�
 alter table `project` add `ts_ratio` varchar(8) DEFAULT NULL COMMENT 'TS/决策口径占比';
 alter table `project` add `lawyer_fee` varchar(8) DEFAULT NULL COMMENT '律师费';
 alter table `project` add `active_deal` varchar(8) DEFAULT NULL COMMENT 'active项目进度';
+alter table `project` add `close_notice` varchar(8) DEFAULT NULL COMMENT '进度异常提醒';
 
 alter table `project` add `create_time` int(11) DEFAULT NULL COMMENT '创建时间';
 update `project` p,(select res_id,create_time from system_log where resource='Project' and action='create' and res_id > 0) t set p.create_time=t.create_time where p.id=t.res_id;

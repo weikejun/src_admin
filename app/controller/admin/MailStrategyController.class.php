@@ -26,7 +26,19 @@ class MailStrategyController extends Page_Admin_Base {
 
         $this->list_filter = [
         ];
+
+        $this->single_actions=[
+            ['label'=>'预览','action'=>function($model){
+                return '/admin/MailStrategy/check?id='.$model->mId;
+            }],
+        ];
         //$this->search_fields = ['name','description','tp'];
+    }
+
+    public function checkAction() {
+        $_REQUEST['action'] = 'read';
+        $this->indexAction();
+        return ['admin/check.html', $this->_assigned];
     }
 }
 

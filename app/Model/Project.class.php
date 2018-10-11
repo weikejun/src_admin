@@ -3,6 +3,13 @@ class Model_Project extends Base_Project{
 
     const DEFAULT_CLOSE_DATE=9999999999;
     
+    public static function getCloseNoticeChoices() {
+        return [
+            ['开启','开启'],
+            ['关闭','关闭'],
+        ];
+    }
+
     public static function getTradeFileScheduleChoices() {
         return [
             ['待律师发出','待律师发出'],

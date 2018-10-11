@@ -103,7 +103,7 @@
         $('td').each(function(){
             var txt = $(this).text().replace(/\s*/g, '');
             if (txt.length > 60) {
-                $(this).html('<span style="cursor:pointer" title='+txt+'>'+txt.substring(0, 60)+'...</span>');
+                $(this).html('<span style="cursor:pointer" title='+txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'>'+txt.substring(0, 60)+'...</span>');
             }
         });
 	});

@@ -10,8 +10,11 @@ abstract class Page_Admin_Base extends BaseController{
     }
 
     public function getBackUrl() {
-        return str_replace('Controller', '', get_class($this));
-        return Utils::get_default_back_url();
+        $backUrl = Utils::get_default_back_url();
+        if ($backUrl == '/') {
+            return str_replace('Controller', '', get_class($this));
+        }
+        return $backUrl;
     }
 
     protected static function _getResource($id, $key, $finder, $selCol = 'id') {

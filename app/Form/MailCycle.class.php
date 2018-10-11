@@ -15,7 +15,8 @@ class Form_MailCycle extends Form {
                     $st->select();
                     return $st->getData('name');
                 }],
-                ['name'=>'field','label'=>'起点字段','type'=>'text','default'=>null,'required'=>true],
+                ['name'=>'ref','label'=>'引用资源','type'=>'choice','choices'=>Model_MailStrategy::getRefChoices(),'required'=>true,],
+                ['name'=>'field','label'=>'起始时间字段','type'=>'text','default'=>null,'required'=>true],
                 ['name'=>'duration','label'=>'间隔时长','type'=>'text','default'=>null,'required'=>true],
                 ['name'=>'unit','label'=>'时长单位','type'=>'choice','choices'=>Model_MailCycle::getDurationChoices(),'required'=>true,'default'=>'days'],
                 ['name'=>'repeat','label'=>'重复次数','type'=>'text','default'=>1,'required'=>true],

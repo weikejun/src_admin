@@ -23,13 +23,19 @@ class Form_DealDecision extends Form {
                 ['name'=>'_project_turn_sub','label'=>Form_Project::getFieldViewName('turn_sub'),'type'=>'rawText','field'=>function($model)use(&$project,&$company) {
                     return $project->mId ? $project->getData('turn_sub') : '';
                 }],
-                ['name'=>'partner','label'=>'审批人','type'=>'text','default'=>null,'required'=>true],
+                ['name'=>'partner','label'=>'审批人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>true,'field'=>function($model) {
+                    return Model_Member::getNameById($model->getData('partner')).':'.Model_Member::getEmailById($model->getData('partner'));
+                }],
                 ['name'=>'decision','label'=>'投决意见','type'=>'choice','choices'=>Model_DealDecision::getDecisionChoices(),'default'=>null,'required'=>false,],
                 ['name'=>'memo','label'=>'备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'ip','label'=>'来源IP','type'=>'text','default'=>Utils::getClientIP(),'readonly'=>true,'required'=>false],
+                ['name'=>'sign_key','label'=>'校验码','type'=>'text','readonly'=>true,'default'=>rand(100000000,999999999),'required'=>true],
                 ['name'=>'expiration','label'=>'审批时间','type'=>'datetime','default'=>null,'field'=>function($model){
                     if ($model->getData('expiration'))
                         return date('Ymd H:i:s', $model->getData('expiration'));
+                }],
+                ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>null,'auto_update'=>true,'field'=>function($model){
+                    return date('Ymd H:i:s', $model->getData('update_time'));
                 }],
                 ['name'=>'create_time','label'=>'创建时间','type'=>'datetime','readonly'=>'true','default'=>time(),'null'=>false,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('create_time'));

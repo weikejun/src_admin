@@ -227,7 +227,7 @@ class CompanyController extends Page_Admin_Base {
     public function checkAction() {
         $_REQUEST['action'] = 'read';
         $this->indexAction();
-        return ['admin/company/check.html', $this->_assigned];
+        return ['admin/check.html', $this->_assigned];
     }
 }
 
