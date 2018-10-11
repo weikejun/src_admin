@@ -429,6 +429,7 @@ class ProjectController extends Page_Admin_Base {
             Form_Company::getFieldViewName('manager') => [],
             Form_Company::getFieldViewName('legal_person') => [],
             Form_Company::getFieldViewName('finance_person') => [],
+            Form_Company::getFieldViewName('_latest_invest_turn') => [],
             Form_Company::getFieldViewName('_stocknum_all') => [],
             Form_Company::getFieldViewName('_latest_post_moeny') => [],
             ['label' => '最新企业每股单价', 'field' => function($model)use($dataList) {

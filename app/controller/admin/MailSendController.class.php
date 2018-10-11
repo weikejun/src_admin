@@ -35,8 +35,9 @@ class MailSendController extends Page_Admin_Base {
         }
         $model->addWhere('id', $_REQUEST['id']);
         $template = '
-            <p>Team,</p>
-            <p>Team, 本次交易情况摘要如下，法务部无意见了。请team及【老曹/云刚】确定可定稿及批注签署。本次交易计划于【手填入时间】完成签署，预计于【手填入时间】完成交割。本次交易【已完成/待完成/已豁免/无须】交割前例会update。</p>
+            <p>邮件标题：【交易文件签署申请】-【$_company_short$】-【$turn_sub$轮】</p>
+            <p>Dear Team,</p>
+            <p>Team, 本次交易情况摘要如下，法务部无意见了。请team及【老曹/云刚】确定可定稿及批准签署。本次交易计划于【手填入时间】完成签署，预计于【手填入时间】完成交割。本次交易【已完成/待完成/已豁免/无须】交割前例会update。</p>
             <p>1.交易ID：$id$</p>
             <p>2.$_company_short$,公司处于$turn_sub$轮</p>
             <p>3.本轮交易类型：$deal_type$；源码$enter_exit_type$；其他投资人$other_enter_exit_type$</p>

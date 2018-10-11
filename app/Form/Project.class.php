@@ -89,7 +89,7 @@ class Form_Project extends Form {
                         return date('Ymd', $model->getData('close_date'));
                     }
                 }],
-                ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'N','required'=>false],
+                ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'计入','required'=>false],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
@@ -304,11 +304,8 @@ class Form_Project extends Form {
                 ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体本轮统计','type'=>'seperator2'],
                 ['name'=>'_shareholding_turn_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $stockNum = 0;
-                    if (!$model->getData('close_date')) {
-                        return '未交割';
-                    }
                     foreach($deals as $i => $deal) {
-                        if ($deal->getData('close_date') > $model->getData('close_date')) {
+                        if ($deal->getData('id') > $model->getData('id')) {
                             continue;
                         }
                         if ($deal->getData('deal_type') == '源码退出') {
@@ -322,11 +319,8 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'_shareholding_ratio_turn_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $dataList = [];
-                    if (!$model->getData('close_date')) {
-                        return '未交割';
-                    }
                     foreach($deals as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') > $model->getData('close_date')) {
+                        if ($dataItem->getData('id') > $model->getData('id')) {
                             continue;
                         }
                         if ($dataItem->getData('close_date')) {
