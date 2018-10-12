@@ -28,6 +28,21 @@ class MailListController extends Page_Admin_Base {
         ];
         //$this->search_fields = ['name','description','tp'];
     }
+
+    public function sendAction() {
+        $id = $_GET['id'];
+        if ($id) {
+            $mail = new Model_MailList;
+            $mail->addWhere('id', $id);
+            $mail->addWhere('status', '待发送');
+            $mail->select();
+            if ($mail->mId) {
+                $mail->mStatus = '发送中';
+                $mail->save();
+            }
+        }
+        return ['redirect:'.$this->getBackUrl()];
+    }
 }
 
 

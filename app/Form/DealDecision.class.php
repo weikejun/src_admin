@@ -29,7 +29,7 @@ class Form_DealDecision extends Form {
                 ['name'=>'decision','label'=>'投决意见','type'=>'choice','choices'=>Model_DealDecision::getDecisionChoices(),'default'=>null,'required'=>false,],
                 ['name'=>'memo','label'=>'备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'ip','label'=>'来源IP','type'=>'text','default'=>null,'readonly'=>true,'required'=>false],
-                ['name'=>'sign_key','label'=>'校验码','type'=>'text','readonly'=>true,'default'=>rand(100000000,999999999),'required'=>true],
+                ['name'=>'sign_key','label'=>'校验码','type'=>'text','readonly'=>true,'default'=>Model_DealDecision::signData(),'required'=>true],
                 ['name'=>'expiration','label'=>'审批时间','type'=>'datetime','default'=>null,'field'=>function($model){
                     if ($model->getData('expiration'))
                         return date('Ymd H:i:s', $model->getData('expiration'));

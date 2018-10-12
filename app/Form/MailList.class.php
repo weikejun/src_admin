@@ -9,7 +9,12 @@ class Form_MailList extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'邮件ID','type'=>'hidden','default'=>null,'required'=>false,],
-                ['name'=>'status','label'=>'发送状态','type'=>'choice','choices'=>Model_MailList::getStatusChoices(),'required'=>true,'default'=>'待发送'],
+                ['name'=>'status','label'=>'发送状态','type'=>'choice','choices'=>Model_MailList::getStatusChoices(),'required'=>true,'default'=>'待发送','readonly'=>true,'field'=>function($model){
+                    if ($model->getData('status') == '待发送') {
+                        return $model->getData('status').' <a href="/admin/mailList/send?id='.$model->getData('id').'">发送</a>';
+                    }
+                    return $model->getData('status');
+                }],
                 ['name'=>'strategy_id','label'=>'策略ID','type'=>'choosemodel','model'=>'Model_MailStrategy','default'=>isset($_GET['strategy_id'])?$_GET['strategy_id']:'','required'=>true,'field'=>function($model){
                     $st = new Model_MailStrategy;
                     $st->addWhere('id', $model->getData('strategy_id'));

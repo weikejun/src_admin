@@ -37,3 +37,9 @@ define("VERSION", 1);
 define("ALIYUN_ACCESS_KEY", "LTAI8xlavAUSjQPA");
 define("ALIYUN_SECRECT", "7cf79hg7wgR8h794nyGIli2hgC9hLJ");
 define("ALIYUN_CAPTCHA_APPKEY", "FFFF0N000000000064AF");
+
+# mail config
+define("SMTP_HOST","smtp.qq.com");
+define("SMTP_USERNAME", '78250611@qq.com');                 // SMTP username
+define("SMTP_PASSWORD", 'syfcvyszvfbpbied');                 // SMTP username
+define("SMTP_PORT", 587);

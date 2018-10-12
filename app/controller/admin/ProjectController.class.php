@@ -106,6 +106,29 @@ class ProjectController extends Page_Admin_Base {
             ]);
             $itemPer->save();
         });
+        $this->model->on('after_update', function($model) {
+            $mails = json_decode($model->getData('committee_view'));
+            foreach($mails as $i => $mail) {
+                $id = Model_Member::getIdByEmail($mail);
+                if ($id) {
+                    $decision = new Model_DealDecision;
+                    $decision->addWhere('project_id', $model->getData('id'));
+                    $decision->addWhere('partner', $id);
+                    $decision->select();
+                    if (!$decision->mId) {
+                        $decision = new Model_DealDecision;
+                        $decision->setData([
+                            'project_id' => $model->getData('id'),
+                            'partner' => $id,
+                            'sign_key' => Model_DealDecision::signData(),
+                            'update_time' => time(),
+                            'create_time' => time(),
+                        ]);
+                        $decision->save();
+                    }
+                }
+            }
+        });
         $this->model->orderBy('id', 'DESC');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();

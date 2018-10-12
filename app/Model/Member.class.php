@@ -19,4 +19,14 @@ class Model_Member extends Base_Member{
         $list = self::listAll();
         return isset($list[$id]) ? $list[$id]->mName : $id;
     }
+
+    public static function getIdByEmail($mail) {
+        $list = self::listAll();
+        foreach($list as $id => $member) {
+            if ($member->mMail == $mail) {
+                return $id;
+            }
+        }
+        return null;
+    }
 }

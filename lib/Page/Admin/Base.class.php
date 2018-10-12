@@ -299,7 +299,7 @@ abstract class Page_Admin_Base extends BaseController{
         if(!$ref_url){
             $ref_url = $this->getBackUrl();
         }
-        $this->display("redirect:".$ref_url);
+        return $this->display("redirect:".$ref_url);
         //Utils::redirect($ref_url);
     }
 }

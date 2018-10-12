@@ -171,7 +171,22 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'field-index-plan','label'=>'源码投资方案','type'=>'seperator'],
-                ['name'=>'committee_view','label'=>'投决意见','type'=>'checkbox','choices'=>[['bb','bb'],['aa','aa']],'required'=>false,'default'=>['没有','其他']],
+                ['name'=>'committee_view','label'=>'投决意见','type'=>'checkbox','choices'=>[['cy@sourcecodecap.com','曹毅'],['yg@sourcecodecap.com','黄云刚']],'required'=>false,'default'=>['没有','其他'],'help'=>'【早期项目：Pre<5千万美元（3.5亿人民币）且投资额<5百万美元（3500万人民币）】','field'=>function($model) {
+                    $mails = json_decode($model->getData('committee_view'));
+                    $members = Model_Member::listAll();
+                    $output = '';
+                    foreach($mails as $mail) {
+                        $mid = Model_Member::getIdByEmail($mail);
+                        if ($mid) {
+                            $decision = new Model_DealDecision;
+                            $decision->addWhere('project_id', $model->getData('id'));
+                            $decision->addWhere('partner', $mid);
+                            $decision->select();
+                            $output .= $members[$mid]->mName . "(".(empty($decision->mDecision)?'未审批':$decision->mDecision).")";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
                 ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],

@@ -81,12 +81,9 @@ foreach($strategys as $strategy) {
         }
         if ($bool) { // 满足发送条件
             // 清理之前邮件
-            if ($strategy->mId == 6) {
-                var_dump($item->mId);
-            }
             $cleaner = new Model_MailList;
             $cleaner->addWhere('strategy_id', $strategy->mId);
-            $cleaner->addWhere('ref', strtolower($strategy->mRef));
+            $cleaner->addWhere('ref', ucfirst(strtolower($strategy->mRef)));
             $cleaner->addWhere('ref_id', $item->mId);
             $cleaner->addWhere('status', '待发送');
             $cleaner->delete();
@@ -142,7 +139,7 @@ foreach($strategys as $strategy) {
                     $mail->setData([
                         'status' => '待发送',
                         'strategy_id' => $strategy->mId,
-                        'ref' => strtolower($strategy->mRef),
+                        'ref' => ucfirst(strtolower($strategy->mRef)),
                         'ref_id' => $item->mId,
                         'mail_to' => $template->fetch('string:'.$strategy->mMailTo),
                         'mail_cc' => '',

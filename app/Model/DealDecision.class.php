@@ -1,6 +1,9 @@
 <?php
 class Model_DealDecision extends Base_DealDecision{
     public function signData() {
+        return rand(1000000000,9999999999);
+
+        /*
         $data = [
             'id='.$this->mId,
             'project_id='.$this->mProjectId,
@@ -10,7 +13,7 @@ class Model_DealDecision extends Base_DealDecision{
         ];
         sort($data);
         $dataStr = implode('&', $data);
-        return md5($dataStr);
+        return md5($dataStr);*/
     }
 
     public static function checkSign($id, $sign) {

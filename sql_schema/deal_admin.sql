@@ -140,9 +140,10 @@ CREATE TABLE `deal_decision` (
     `ip` varchar(32) DEFAULT NULL COMMENT '来源IP',
     `expiration` varchar(11) DEFAULT NULL COMMENT '有效期',
     `memo` text DEFAULT NULL COMMENT '备注',
-    `sign_key` int(11) DEFAULT NULL COMMENT '认证签名',
+    `sign_key` varchar(16) DEFAULT NULL COMMENT '认证签名',
     `update_time` varchar(11) DEFAULT NULL COMMENT '更新时间',
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+    UNIQUE KEY `uniq_index` (`project_id`, `partner`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3366;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -434,6 +435,7 @@ CREATE TABLE `member` (
     `name` varchar(16) DEFAULT NULL COMMENT '全名', 
     `mail` varchar(32) DEFAULT NULL COMMENT '邮箱', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    UNIQUE KEY `mail_uniq` (`mail`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

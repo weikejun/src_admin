@@ -13,9 +13,10 @@ class EMail{
         $mailer->CharSet = 'UTF-8';                               // Enable SMTP authentication
         $mailer->Username = SMTP_USERNAME;                 // SMTP username
         $mailer->Password = SMTP_PASSWORD;                           // SMTP password
-
-        $mailer->From = 'service@aimeizhuyi.com';
-        $mailer->FromName = '爱美系统回复';
+        $mailer->Port = SMTP_PORT;
+        $mailer->From = $mail['from'];
+        $mailer->FromName = $mail['fromName'];
+        $mailer->SMTPSecure = 'ssl';
         
         if(isset($mail['to'])){
             if(is_string($mail['to'])){
@@ -25,10 +26,7 @@ class EMail{
                 $mailer->addAddress($toAddr);
             }
         }
-        //$mailer->addAddress($mail['to']);               // Name is optional
-        $mailer->addBCC('info@aimeizhuyi.com');
-        //$mailer->addAddress('wwwppp0801@qq.com','wang peng');               // Name is optional
-
+        //$mailer->addBCC('info@example.com');
         #$mailer->addReplyTo('info@example.com', 'Information');
         if(isset($mail['cc'])){
             if(is_string($mail['cc'])){
