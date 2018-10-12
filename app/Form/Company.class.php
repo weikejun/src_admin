@@ -163,6 +163,18 @@ class Form_Company extends Form {
                         return $dataItem->getData('turn');
                     }
                 }],
+                ['name'=>'_latest_turn_sub','label'=>'最新所处轮次','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                    $dataList = [];
+                    foreach($project as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    krsort($dataList);
+                    foreach($dataList as $date => $dataItem) {
+                        return $dataItem->getData('turn_sub');
+                    }
+                }],
                 ['name'=>'_financing_no','label'=>'源码投后融资轮次','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     // TODO: 轮次要去重
                     $dataList = [];

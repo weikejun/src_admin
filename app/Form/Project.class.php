@@ -171,6 +171,7 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'field-index-plan','label'=>'源码投资方案','type'=>'seperator'],
+                ['name'=>'committee_view','label'=>'投决意见','type'=>'checkbox','choices'=>[['bb','bb'],['aa','aa']],'required'=>false,'default'=>['没有','其他']],
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
                 ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
@@ -203,7 +204,6 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'amount_memo','label'=>'金额备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
-                ['name'=>'committee_view','label'=>'投决意见','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-loan','label'=>'源码借款或源码CB','type'=>'seperator'],
                 ['name'=>'loan_cb','label'=>'源码借款或CB','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'loan_currency','label'=>'借款计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],

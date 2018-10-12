@@ -28,7 +28,7 @@ class DealDecisionController extends Page_Admin_Base {
             'delete' => false,
         ];
 
-        $this->hide_action_new = true;
+        //$this->hide_action_new = true;
 
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_DealDecision::getFieldViewName('project_id'),'paramName'=>'project_id','fusion'=>true,'class'=>'keep-all']),
