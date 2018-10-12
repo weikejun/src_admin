@@ -256,7 +256,7 @@ class Form_Company extends Form {
                         if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
                             if ($dataItem->getData('deal_type') == '源码退出') {
-                                $stockNums[$dataItem->getData('entity_id')] -= $dataItem->getData('exit_stock_number');
+                                $stockNums[$dataItem->getData('exit_entity_id')] -= $dataItem->getData('exit_stock_number');
                             } else {
                                 $stockNums[$dataItem->getData('entity_id')] += $dataItem->getData('stocknum_get');
                             }
@@ -269,9 +269,11 @@ class Form_Company extends Form {
                         $entitys = $entity->findMap('id');
                         $output = '';
                         foreach($stockNums as $id => $num) {
-                            $output .= $entitys[$id]->mName."\n";
-                            if ($num <= 0) {
-                                $output .= '[已退出]';
+                            if (isset($entitys[$id])) {
+                                $output .= $entitys[$id]->mName."\n";
+                                if ($num <= 0) {
+                                    $output .= '[已退出]';
+                                }
                             }
                         }
                         return $output;

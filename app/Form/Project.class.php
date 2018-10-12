@@ -218,7 +218,7 @@ class Form_Project extends Form {
                 }],
                  */
                 ['name'=>'_exit_company_stock_price','label'=>'源码退出时企业每股单价','type'=>'rawText','required'=>false,'field'=>function($model){
-                    if ($model->getData('stocknum_all'))
+                    if (strpos($model->getData('deal_type'), '源码退') !== false&&$model->getData('stocknum_all'))
                         return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
                 }],
                 ['name'=>'exit_stock_number','label'=>'源码退出的股数','type'=>'number','required'=>false,'field'=>function($model){

@@ -46,6 +46,7 @@ class CompanyController extends Page_Admin_Base {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('short'),'paramName'=>'short','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('main_founders'),'paramName'=>'main_founders','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('hold_status'),'paramName'=>'hold_status','choices'=>Model_Company::getHoldStatusChoices()]),
