@@ -1,6 +1,6 @@
 <?php
 
-class Form_JsonArrayField extends Form_Field{
+class Form_MessageField extends Form_Field{
     public function __construct($config){
         parent::__construct($config);
     }
@@ -18,7 +18,7 @@ class Form_JsonArrayField extends Form_Field{
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".
             $links.
-            '<input type="text" /><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
+            '<textarea class="array_input '.$class.'"/></textarea><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
             "<input type='hidden' name='{$this->name}'  value='".$this->value."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
@@ -49,12 +49,23 @@ EOF;
     window.__init_json_array_field=true;
 
     var upload_btn;
+    var input_date = function() {
+        var dt = new Date();
+        var month = dt.getMonth() + 1;
+        month = month < 10 ? (0+''+month) : month;
+        var day = dt.getDate();
+        day = day < 10 ? (0+''+day) : day;
+        return dt.getFullYear() + '.' + month + '.' + day + ' ';
+    }
+    var htmlEscape = function(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
     $(document).delegate(".json_array_add",'click',function(){
         upload_btn=$(this);
-        var input=upload_btn.prev("input");
+        var input=upload_btn.prev("textarea");
         var link_list;
         link_list=$(upload_btn).prevAll("ul");
-        link_list.append("<li><a target='_blank' href='javascript:;'>"+input.val()+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button></li>");
+        link_list.prepend("<li><a target='_blank' href='javascript:;'>"+(input.hasClass('with_date')?input_date():'')+htmlEscape(input.val())+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button></li>");
         update_input_value();
         input.val("");
         return false;
@@ -64,12 +75,25 @@ EOF;
         $(this).parent('li').remove();
         update_input_value();
     });
+    $(".json_array").delegate('ul li a', 'click', function() {
+        var message = $(this).text().split(' ', 2);
+        var par = $(this).parent();
+        par.html('<span>'+message[0]+'</span><input type=text value="'+message[1]+'" />');
+        par.find('input').focus();
+        par.find('input').blur(function() {
+            var msgDate = par.find('span').text();
+            var msgCont = par.find('input').val();
+            par.html("<a target='_blank' href='javascript:;'>"+msgDate+' '+htmlEscape(msgCont)+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button>");
+            upload_btn = par.parents(".json_array").find('.json_array_add');
+            update_input_value();
+        });
+    });
     function update_input_value(){
         var link_list=$(upload_btn).prevAll("ul").find("li a");
         var input=$(upload_btn).next("input");
         var links=$.map(link_list,
             function(link){
-                return $(link).html();
+                return $(link).text();
             }
         );
         input.val(JSON.stringify(links));

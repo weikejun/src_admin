@@ -92,7 +92,7 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'计入','required'=>false],
-                ['name'=>'field-index-status','label'=>'本轮交易进度','type'=>'seperator'],
+                ['name'=>'field-index-progress','label'=>'本轮交易进度','type'=>'seperator'],
                 ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'否'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
                 ['name'=>'trade_file_schedule','label'=>'交易文件进度','type'=>'selectInput','choices'=>Model_Project::getTradeFileScheduleChoices(),'required'=>false],
@@ -105,6 +105,16 @@ class Form_Project extends Form {
                 ['name'=>'trade_schedule_memo','label'=>'交易进度其他说明','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'关闭',],
+                ['name'=>'deal_progress','label'=>'交易进展','type'=>'message','class'=>'with_date','field'=>function($model) {
+                    $progs = json_decode($model->getData('deal_progress'));
+                    $progs = $progs ? $progs : [];
+                    $output = '';
+                    foreach($progs as $i => $prog) {
+                        if ($i > 1) continue;
+                        $output .= $prog . "<br />";
+                    }
+                    return $output;
+                }],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
                 ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
@@ -228,7 +238,8 @@ class Form_Project extends Form {
                     return $entity ? $entity->getData('name') : false;
                 }],
                 ['name'=>'loan_amount','label'=>'源码借款合同金额','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
-                    return $model->getData('loan_currency') . ' ' . number_format($model->getData('loan_amount'), 2);
+                    if ($model->getData('loan_amount'))
+                        return $model->getData('loan_currency') . ' ' . number_format($model->getData('loan_amount'), 2);
                 }],
                 ['name'=>'loan_sign_date','label'=>'借款合同签署日期','type'=>'date','default'=>null,'required'=>false,],
                 ['name'=>'loan_end_date','label'=>'借款到期日','type'=>'date','default'=>null,'required'=>false,],
@@ -252,7 +263,7 @@ class Form_Project extends Form {
                 }],
                  */
                 ['name'=>'_exit_company_stock_price','label'=>'源码退出时企业每股单价','type'=>'rawText','required'=>false,'field'=>function($model){
-                    if ($model->getData('stocknum_all'))
+                    if (strpos($model->getData('deal_type'), '源码退') !== false&&$model->getData('stocknum_all'))
                         return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
                 }],
                 ['name'=>'exit_stock_number','label'=>'源码退出的股数','type'=>'number','required'=>false,'field'=>function($model){
@@ -335,11 +346,8 @@ class Form_Project extends Form {
                 ['name'=>'field-seperator-shareholding-entity','label'=>'源码各主体本轮统计','type'=>'seperator2'],
                 ['name'=>'_shareholding_turn_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $stockNum = 0;
-                    if (!$model->getData('close_date')) {
-                        return '未交割';
-                    }
                     foreach($deals as $i => $deal) {
-                        if ($deal->getData('close_date') > $model->getData('close_date')) {
+                        if ($deal->getData('id') > $model->getData('id')) {
                             continue;
                         }
                         if ($deal->getData('deal_type') == '源码退出') {
@@ -353,11 +361,8 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'_shareholding_ratio_turn_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $dataList = [];
-                    if (!$model->getData('close_date')) {
-                        return '未交割';
-                    }
                     foreach($deals as $i => $dataItem) {
-                        if ($dataItem->getData('close_date') > $model->getData('close_date')) {
+                        if ($dataItem->getData('id') > $model->getData('id')) {
                             continue;
                         }
                         if ($dataItem->getData('close_date')) {

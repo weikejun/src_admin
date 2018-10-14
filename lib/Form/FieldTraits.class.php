@@ -11,7 +11,7 @@ Trait Form_FieldTraits {
                 $value = '无记录';
             }
         }
-        return htmlspecialchars($value, ENT_QUOTES);
+        return htmlspecialchars($value);
     }
 
     public function to_text(){

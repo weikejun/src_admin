@@ -12,6 +12,7 @@ class Model_MailStrategy extends Base_MailStrategy{
             ['Project', '交易记录'],
             ['Company', '目标企业'],
             ['DealDecision', '投决意见'],
+            ['_SysDate', '*系统时间'],
         ];
     }
 }

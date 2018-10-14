@@ -8,7 +8,7 @@ class MailStrategyController extends Page_Admin_Base {
         $this->model=new Model_MailStrategy();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
-            'controllerText' => "交易提醒策略",
+            'controllerText' => "提醒邮件策略",
             'tableWrap' => '3096px',
         ));
 

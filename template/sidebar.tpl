@@ -53,7 +53,7 @@
                 <li class="start {%if $executeInfo.controllerName=='MailStrategy' || $executeInfo.controllerName=='MailTrigger' || $executeInfo.controllerName == 'MailCycle'%} active {%/if%}">
                     <a href="/admin/MailStrategy">
                         <i class="icon-home"></i>
-                        <span class="title">交易提醒策略</span>
+                        <span class="title">提醒邮件策略</span>
                         <span class="selected"></span>
                     </a>
                 </li>

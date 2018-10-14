@@ -42,4 +42,4 @@ define("ALIYUN_CAPTCHA_APPKEY", "FFFF0N000000000064AF");
 define("SMTP_HOST","smtp.qq.com");
 define("SMTP_USERNAME", '78250611@qq.com');                 // SMTP username
 define("SMTP_PASSWORD", 'syfcvyszvfbpbied');                 // SMTP username
-define("SMTP_PORT", 587);
+define("SMTP_PORT", 465);

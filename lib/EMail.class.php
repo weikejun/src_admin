@@ -23,7 +23,8 @@ class EMail{
                 $mail['to']=[$mail['to']];
             }
             foreach($mail['to'] as $toAddr){
-                $mailer->addAddress($toAddr);
+                if (!empty($toAddr))
+                    $mailer->addAddress($toAddr);
             }
         }
         //$mailer->addBCC('info@example.com');
@@ -33,7 +34,8 @@ class EMail{
                 $mail['cc']=[$mail['cc']];
             }
             foreach($mail['cc'] as $ccAddr){
-                $mailer->addCC($ccAddr);
+                if (!empty($ccAddr))
+                    $mailer->addCC($ccAddr);
             }
         }
         #$mailer->addCC('cc@example.com');
@@ -52,5 +54,6 @@ class EMail{
             Logger::debug('Message has been sent');
         }
 
+        return $mailer->ErrorInfo;
     }
 }

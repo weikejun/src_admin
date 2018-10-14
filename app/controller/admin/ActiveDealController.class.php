@@ -26,7 +26,7 @@ class ActiveDealController extends Page_Admin_Base {
     private function _initSingleActions() {
         $this->single_actions=[];
 
-        $this->single_actions_default = ['delete'=>false,'edit'=>false];
+        $this->single_actions_default = ['delete'=>false,'edit'=>true];
     }
 
     private function _initMultiActions() {
@@ -76,6 +76,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('deal_progress') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('proj_status') => [],
             Form_Project::getFieldViewName('manager') => [],
@@ -133,6 +134,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('deal_progress') => [],
             Form_Project::getFieldViewName('manager') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('pre_money') => [],
@@ -166,7 +168,7 @@ class ActiveDealController extends Page_Admin_Base {
     }
 
     public function read() {
-        $this->index();
+        return $this->display('redirect:/admin/project?action=read&id='.$_GET['id'].'#field-index-progress');
     }
 
     public function create() {

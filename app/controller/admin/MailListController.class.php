@@ -8,7 +8,7 @@ class MailListController extends Page_Admin_Base {
         $this->model=new Model_MailList();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
-            'controllerText' => "交易提醒列表",
+            'controllerText' => "提醒邮件列表",
             'tableWrap' => '3096px',
         ));
 
@@ -24,7 +24,15 @@ class MailListController extends Page_Admin_Base {
             }
         }
 
+        $strategys = new Model_MailStrategy;
+        $strategys = $strategys->findMap('name');
+        $choiceSt = [];
+        foreach($strategys as $sKey => $st) {
+            $choiceSt[] = [$st->mId, $sKey];
+        }
         $this->list_filter = [
+            new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('status'),'paramName'=>'status','choices'=>Model_MailList::getStatusChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('strategy_id'),'paramName'=>'strategy_id','choices'=>$choiceSt,'class'=>'keep-all']),
         ];
         //$this->search_fields = ['name','description','tp'];
     }
@@ -38,6 +46,17 @@ class MailListController extends Page_Admin_Base {
             $mail->select();
             if ($mail->mId) {
                 $mail->mStatus = '发送中';
+                $mail->mExpectTime = time();
+                $mail->save();
+                $error = EMail::send([
+                    'to' => explode(';', $mail->mMailTo),
+                    'cc' => explode(';', $mail->mMailCc),
+                    'title' => $mail->mTitle,
+                    'content' => $mail->mContent,
+                    'from' => '78250611@qq.com',
+                    'fromName' => '源码提醒'
+                ]);
+                $mail->mStatus = $error ? '发送失败' : '已发送';
                 $mail->save();
             }
         }
