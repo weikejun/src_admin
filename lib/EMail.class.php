@@ -16,7 +16,7 @@ class EMail{
         $mailer->Port = SMTP_PORT;
         $mailer->From = $mail['from'];
         $mailer->FromName = $mail['fromName'];
-        $mailer->SMTPSecure = 'ssl';
+        $mailer->SMTPSecure = SMTP_SECURE;
         
         if(isset($mail['to'])){
             if(is_string($mail['to'])){

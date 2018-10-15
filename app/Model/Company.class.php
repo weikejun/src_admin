@@ -55,6 +55,7 @@ class Model_Company extends Base_Company{
 
     public static function getRegionChoices() {
         return [
+            ['Cayman','Cayman'],
             ['北京','北京'],
             ['天津','天津'],
             ['广东','广东'],

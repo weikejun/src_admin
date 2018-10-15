@@ -55,6 +55,7 @@ class ActiveDealController extends Page_Admin_Base {
 
         WinRequest::mergeModel(array(
             'controllerText' => 'Active进度表',
+            'no_truncate' => true,
         ));
 
         $this->hide_action_new = true;
@@ -75,14 +76,15 @@ class ActiveDealController extends Page_Admin_Base {
         $briefFields = [
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
-            Form_Project::getFieldViewName('deal_type') => [],
-            Form_Project::getFieldViewName('deal_progress') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
-            Form_Project::getFieldViewName('proj_status') => [],
-            Form_Project::getFieldViewName('manager') => [],
+            Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('decision_date') => [],
+            Form_Project::getFieldViewName('deal_progress') => [],
+            Form_Project::getFieldViewName('trade_schedule_memo') => [],
+            Form_Project::getFieldViewName('proj_status') => [],
             Form_Project::getFieldViewName('pre_money') => [],
             Form_Project::getFieldViewName('post_money') => [],
+            Form_Project::getFieldViewName('our_amount') => [],
             Form_Project::getFieldViewName('financing_amount') => [],
             Form_Project::getFieldViewName('ts_ratio') => [],
             Form_Project::getFieldViewName('_stock_ratio') => [],
@@ -91,8 +93,8 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('trade_file_schedule') => [],
             Form_Project::getFieldViewName('expect_sign_date') => [],
             Form_Project::getFieldViewName('expect_pay_schedule') => [],
-            Form_Project::getFieldViewName('trade_schedule_memo') => [],
             Form_Project::getFieldViewName('trade_schedule_todo') => [],
+            Form_Project::getFieldViewName('manager') => [],
             Form_Project::getFieldViewName('legal_person') => [],
             Form_Project::getFieldViewName('invest_currency') => [],
             Form_Project::getFieldViewName('finance_person') => [],
@@ -133,20 +135,19 @@ class ActiveDealController extends Page_Admin_Base {
         $briefFields = [
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
+            Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
-            Form_Project::getFieldViewName('deal_progress') => [],
-            Form_Project::getFieldViewName('manager') => [],
             Form_Project::getFieldViewName('decision_date') => [],
-            Form_Project::getFieldViewName('pre_money') => [],
+            Form_Project::getFieldViewName('deal_progress') => [],
+            Form_Project::getFieldViewName('trade_schedule_memo') => [],
             Form_Project::getFieldViewName('post_money') => [],
+            Form_Project::getFieldViewName('our_amount') => [],
             Form_Project::getFieldViewName('financing_amount') => [],
-            Form_Project::getFieldViewName('ts_ratio') => [],
             Form_Project::getFieldViewName('_stock_ratio') => [],
             Form_Project::getFieldViewName('loan_amount') => [],
             Form_Project::getFieldViewName('loan_schedule') => [],
-            Form_Project::getFieldViewName('trade_file_schedule') => [],
             Form_Project::getFieldViewName('expect_pay_schedule') => [],
-            Form_Project::getFieldViewName('trade_schedule_memo') => [],
+            Form_Project::getFieldViewName('manager') => [],
         ];
 
         $list_display = $this->list_display;

@@ -56,7 +56,7 @@ class MailListController extends Page_Admin_Base {
                     'from' => SMTP_FROM,
                     'fromName' => SMTP_FROM_NAME
                 ]);
-                $mail->mStatus = $error ? '发送失败' : '已发送';
+                $mail->mStatus = $error ? "发送失败：$error" : '已发送';
                 $mail->save();
             }
         }

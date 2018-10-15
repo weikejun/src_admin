@@ -18,7 +18,7 @@ class Form_MessageField extends Form_Field{
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".
             $links.
-            '<textarea class="array_input '.$class.'"/></textarea><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
+            '<textarea class="span6 array_input '.$class.'"/></textarea><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
             "<input type='hidden' name='{$this->name}'  value='".$this->value."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
@@ -33,6 +33,9 @@ class Form_MessageField extends Form_Field{
     .json_array .close{
         float:none;
         margin:0 0 0 10px;
+    }
+    .json_array ul li {
+        width: 50%;
     }
 </style>
 EOF;
@@ -58,7 +61,7 @@ EOF;
         return dt.getFullYear() + '.' + month + '.' + day + ' ';
     }
     var htmlEscape = function(str) {
-        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return str ? str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : str;
     }
     $(document).delegate(".json_array_add",'click',function(){
         upload_btn=$(this);
@@ -78,11 +81,11 @@ EOF;
     $(".json_array").delegate('ul li a', 'click', function() {
         var message = $(this).text().split(' ', 2);
         var par = $(this).parent();
-        par.html('<span>'+message[0]+'</span><input type=text value="'+message[1]+'" />');
-        par.find('input').focus();
-        par.find('input').blur(function() {
+        par.html('<span>'+message[0]+'</span><textarea>'+message[1]+'</textarea>');
+        par.find('textarea').focus();
+        par.find('textarea').blur(function() {
             var msgDate = par.find('span').text();
-            var msgCont = par.find('input').val();
+            var msgCont = par.find('textarea').val();
             par.html("<a target='_blank' href='javascript:;'>"+msgDate+' '+htmlEscape(msgCont)+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button>");
             upload_btn = par.parents(".json_array").find('.json_array_add');
             update_input_value();

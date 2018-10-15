@@ -24,13 +24,15 @@ class Form_CheckboxField extends Form_Field{
         $html.="<div class='controls'>";
         if (!empty($this->value)) {
             $this->value = json_decode($this->value, true);
+        } else {
+            $this->value = [];
         }
         foreach($this->choices as $choice){
             $value=$choice[0];
             $display=isset($choice[1])?$choice[1]:$value;
             if($this->config['checked']){
                 $this->value = $this->config['checked'];
-            }else if($is_new && trim($this->value) === '') {
+            }else if($is_new && $this->value === []) {
                 $this->value = $this->config['default'];
             }
             $checked=in_array($value,$this->value)?"checked='checked'":"";

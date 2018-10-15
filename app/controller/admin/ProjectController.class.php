@@ -63,6 +63,7 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('item_status'),'paramName'=>'item_status','choices'=>Model_Project::getItemStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('proj_status'),'paramName'=>'proj_status','choices'=>Model_Project::getProjStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('active_deal'),'paramName'=>'active_deal','choices'=>Model_Project::getStandardYesNoChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('invest_currency'),'paramName'=>'invest_currency','choices'=>Model_Project::getInvestCurrencyChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('new_follow'),'paramName'=>'new_follow','choices'=>Model_Project::getNewFollowChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('enter_exit_type'),'paramName'=>'enter_exit_type','choices'=>Model_Project::getEnterExitTypeChoices()]),

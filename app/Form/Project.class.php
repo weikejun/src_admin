@@ -37,7 +37,7 @@ class Form_Project extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals,&$company){
+                ['name'=>'id','label'=>'交易ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals,&$company,&$mailSt){
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
@@ -57,6 +57,8 @@ class Form_Project extends Form {
                     $company = new Model_Company;
                     $company->addWhere('id', $model->getData('company_id'));
                     $company->select();
+                    $mailSt = new Model_MailStrategy;
+                    $mailSt = $mailSt->findMap('name');
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
@@ -95,6 +97,17 @@ class Form_Project extends Form {
                 ['name'=>'field-index-progress','label'=>'本轮交易进度','type'=>'seperator'],
                 ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'否'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
+                ['name'=>'_loan_update','label'=>'借款update','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
+                    $stId = $mailSt['借款update']->mId;
+                    $mail = new Model_MailList;
+                    $mail->addWhere('strategy_id', $stId);
+                    $mail->addWhere('ref', 'Project');
+                    $mail->addWhere('ref_id', $model->getData('id'));
+                    $mail->select();
+                    if ($mail->mId) {
+                        return "提醒邮件".$mail->getData('status');
+                    }
+                }],
                 ['name'=>'trade_file_schedule','label'=>'交易文件进度','type'=>'selectInput','choices'=>Model_Project::getTradeFileScheduleChoices(),'required'=>false],
                 ['name'=>'expect_sign_date','label'=>'预计签约日期','type'=>'date','default'=>null,'help'=>'须填写，与提醒邮件关联','field'=>function($model){
                     if ($model->getData('expect_sign_date')) {
@@ -102,11 +115,42 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'expect_pay_schedule','label'=>'预计交割付款安排','type'=>'textarea','default'=>null,'required'=>false,],
-                ['name'=>'trade_schedule_memo','label'=>'交易进度其他说明','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'_close_update','label'=>'交割update','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
+                    $stId = $mailSt['交割update']->mId;
+                    $mail = new Model_MailList;
+                    $mail->addWhere('strategy_id', $stId);
+                    $mail->addWhere('ref', 'Project');
+                    $mail->addWhere('ref_id', $model->getData('id'));
+                    $mail->select();
+                    if ($mail->mId) {
+                        return "提醒邮件".$mail->getData('status');
+                    }
+                }],
+                ['name'=>'_compliance_review','label'=>'合规性审查','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
+                    $stId = $mailSt['合规性审查']->mId;
+                    $mail = new Model_MailList;
+                    $mail->addWhere('strategy_id', $stId);
+                    $mail->addWhere('ref', 'Project');
+                    $mail->addWhere('ref_id', $model->getData('id'));
+                    $mail->select();
+                    if ($mail->mId) {
+                        return "提醒邮件".$mail->getData('status');
+                    }
+                }],
                 ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
-                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'关闭',],
                 ['name'=>'deal_progress','label'=>'交易进展','type'=>'message','class'=>'with_date','field'=>function($model) {
                     $progs = json_decode($model->getData('deal_progress'));
+                    $progs = $progs ? $progs : [];
+                    $output = '';
+                    foreach($progs as $i => $prog) {
+                        if ($i > 1) continue;
+                        $output .= $prog . "<br />";
+                    }
+                    return $output;
+                }],
+                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'关闭',],
+                ['name'=>'trade_schedule_memo','label'=>'进展异常情况','type'=>'message','class'=>'with_date','field'=>function($model) {
+                    $progs = json_decode($model->getData('trade_schedule_memo'));
                     $progs = $progs ? $progs : [];
                     $output = '';
                     foreach($progs as $i => $prog) {
@@ -181,7 +225,8 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'field-index-plan','label'=>'源码投资方案','type'=>'seperator'],
-                ['name'=>'committee_view','label'=>'投决意见','type'=>'checkbox','choices'=>[['cy@sourcecodecap.com','曹毅'],['yg@sourcecodecap.com','黄云刚']],'required'=>false,'default'=>['没有','其他'],'help'=>'【早期项目：Pre<5千万美元（3.5亿人民币）且投资额<5百万美元（3500万人民币）】','field'=>function($model) {
+                ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
+                ['name'=>'committee_view','label'=>'投决意见','type'=>'checkbox','choices'=>[['cy@sourcecodecap.com','曹毅'],['yg@sourcecodecap.com','黄云刚']],'required'=>false,'default'=>[],'help'=>'【早期项目：Pre<5千万美元（3.5亿人民币）且投资额<5百万美元（3500万人民币）】','field'=>function($model) {
                     $mails = json_decode($model->getData('committee_view'));
                     $members = Model_Member::listAll();
                     $output = '';
@@ -198,14 +243,15 @@ class Form_Project extends Form {
                     return $output;
                 }],
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
-                ['name'=>'new_old_stock','label'=>'源码购新股老股','type'=>'choice','choices'=>Model_Project::getNewOldStockChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
                 ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>isset($_GET['entity_id'])&&$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
                     $entity = Page_Admin_Base::getResource($model->getData('entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
                 ['name'=>'our_amount','label'=>'源码合同投资金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
-                    return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
+                    if ($model->getData('our_amount')) {
+                        return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
+                    }
                 }],
                 ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return number_format($model->getData('stocknum_get'));
@@ -371,7 +417,10 @@ class Form_Project extends Form {
                     }
                     krsort($dataList);
                     foreach($dataList as $i => $deal) {
-                        return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
+                        if ($deal->getData('stocknum_all')) {
+                            return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
+                        }
+                        return '';
                     }
                 }],
                 ['name'=>'field-index-shareholding-latest','label'=>'源码最新持股情况','type'=>'seperator'],

@@ -1,6 +1,6 @@
 <?php
 class Model_DealDecision extends Base_DealDecision{
-    public function signData() {
+    public static function signData() {
         return rand(1000000000,9999999999);
 
         /*
