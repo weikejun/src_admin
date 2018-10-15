@@ -21,7 +21,6 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
-            Form_Project::getFieldViewName('trade_schedule_memo') => [],
             Form_Project::getFieldViewName('post_money') => [],
             Form_Project::getFieldViewName('our_amount') => [],
             Form_Project::getFieldViewName('financing_amount') => [],
@@ -30,6 +29,7 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
             Form_Project::getFieldViewName('loan_schedule') => [],
             Form_Project::getFieldViewName('expect_pay_schedule') => [],
             Form_Project::getFieldViewName('manager') => [],
+            Form_Project::getFieldViewName('trade_schedule_memo') => [],
         ];
 
         $vars['list_display'] = [];
@@ -49,6 +49,15 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
             $tmpDeals[$deal->mDealType][] = $deal;
         }
         $deals = [];
+        // 固定排序
+        foreach(['企业融资（源码投）','源码退出'] as $i => $dt) {
+            if (isset($tmpDeals[$dt])) {
+                $model = new Model_Project;
+                $model->mDealType = $dt;
+                $deals = array_merge($deals, [$model], $tmpDeals[$dt]);
+                unset($tmpDeals[$dt]);
+            }
+        }
         foreach($tmpDeals as $dt => $tmpDeal) {
             $model = new Model_Project;
             $model->mDealType = $dt;

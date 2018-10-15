@@ -35,7 +35,14 @@ class ActiveDealController extends Page_Admin_Base {
 
     private function _initListFilter() {
         $this->list_filter=array(
-            new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('expect_sign_date'),'paramName'=>'expect_sign_date','class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('decision_date'),'paramName'=>'decision_date']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('expect_sign_date'),'paramName'=>'expect_sign_date']),
         );
     }
 

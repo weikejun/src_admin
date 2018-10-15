@@ -381,6 +381,7 @@ CREATE TABLE `mail_list` (
     `expect_time` varchar(11) DEFAULT NULL COMMENT '预计发送时间', 
     `send_time` varchar(11) DEFAULT NULL COMMENT '实际发送时间', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    INDEX `strategy_ref_mail` (`strategy_id`,`ref`,`ref_id`),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

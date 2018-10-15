@@ -29,7 +29,7 @@ class ProjectController extends Page_Admin_Base {
                 return '/admin/project/check?id='.$model->mId;
             }],
             ['label'=>'复制','action'=>function($model){
-                return '/admin/project?action=clone&ex=deal_type,decision_date,proj_status,longstop_date,kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo&id='.$model->mId;
+                return '/admin/project?action=clone&ex=deal_type,decision_date,proj_status,longstop_date,kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo,new_old_stock,active_deal,loan_schedule,trade_file_schedule,expect_sign_date,expect_pay_schedule,trade_schedule_todo,deal_progress,close_notice,trade_schedule_memo,create_time,update_time&id='.$model->mId;
             }],
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=project&res_id='.$model->mId;

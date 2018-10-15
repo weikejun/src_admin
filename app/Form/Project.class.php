@@ -54,11 +54,8 @@ class Form_Project extends Form {
                         $deals[] = $d;
                     }
 
-                    $company = new Model_Company;
-                    $company->addWhere('id', $model->getData('company_id'));
-                    $company->select();
-                    $mailSt = new Model_MailStrategy;
-                    $mailSt = $mailSt->findMap('name');
+                    $company = Page_Admin_Base::getResource($model->getData('company_id'), 'Model_Company', new Model_Company);
+                    $mailSt = Model_MailStrategy::listAll();
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
@@ -95,7 +92,7 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'计入','required'=>false],
                 ['name'=>'field-index-progress','label'=>'本轮交易进度','type'=>'seperator'],
-                ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'否'],
+                ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'是'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
                 ['name'=>'_loan_update','label'=>'借款update','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
                     $stId = $mailSt['借款update']->mId;
@@ -148,7 +145,7 @@ class Form_Project extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'关闭',],
+                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'开启',],
                 ['name'=>'trade_schedule_memo','label'=>'进展异常情况','type'=>'message','class'=>'with_date','field'=>function($model) {
                     $progs = json_decode($model->getData('trade_schedule_memo'));
                     $progs = $progs ? $progs : [];
@@ -182,7 +179,9 @@ class Form_Project extends Form {
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('pre_money'), 2);
                 }],
                 ['name'=>'financing_amount','label'=>'本轮新股融资总额','type'=>'number','default'=>null,'required'=>false,'help'=>'仅为新股融资金额，不包括老股金额','field'=>function($model){
-                    return $model->getData('value_currency') . ' ' . number_format($model->getData('financing_amount'), 2);
+                    if ($model->getData('financing_amount')) {
+                        return $model->getData('value_currency') . ' ' . number_format($model->getData('financing_amount'), 2);
+                    }
                 }],
                 ['name'=>'post_money','label'=>'企业投后估值','type'=>'number','required'=>false,'help'=>'（1）值为“企业投前估值“+“本轮新股融资总金额“；若有打折等情况影响估值计算，与财务确认；<br />（2）企业若本轮未发生融资则写上轮估值。','field'=>function($model) {
                     /*
@@ -420,7 +419,7 @@ class Form_Project extends Form {
                         if ($deal->getData('stocknum_all')) {
                             return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
                         }
-                        return '';
+                        break;
                     }
                 }],
                 ['name'=>'field-index-shareholding-latest','label'=>'源码最新持股情况','type'=>'seperator'],
@@ -640,10 +639,7 @@ class Form_Project extends Form {
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
                 }],
-                ['name'=>'create_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'field'=>function($model){
-                    return date('Ymd H:i:s', $model->getData('create_time'));
-                }],
-                ['name'=>'create_time','label'=>'创建时间','type'=>'hidden','readonly'=>'true','default'=>time(),'field'=>function($model){
+                ['name'=>'create_time','label'=>'创建时间','type'=>'datetime','readonly'=>'true','default'=>time(),'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('create_time'));
                 }],
                 ['name'=>'field-index-recheck','label'=>'记录校对情况','type'=>'seperator'],

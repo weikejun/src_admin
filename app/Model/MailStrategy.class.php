@@ -1,5 +1,15 @@
 <?php
 class Model_MailStrategy extends Base_MailStrategy{
+    protected static $_model=null;
+
+    public static function listAll() {
+        if (empty(self::$_model)) {
+            self::$_model = new self();
+            self::$_model = self::$_model->findMap('name');
+        }
+        return self::$_model;
+    }
+
     public static function getProgramChoices() {
         return [
             ['common', '收件人同时发送'],
