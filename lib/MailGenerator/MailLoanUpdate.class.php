@@ -1,6 +1,6 @@
 <?php
 
-class MailLoanUpdate extends MailGenerator {
+class MailGenerator_MailLoanUpdate extends MailGenerator {
     protected function _getTrigger() {
         $deals = new Model_Project;
         $deals->addWhere('status', 'valid');
@@ -16,4 +16,3 @@ class MailLoanUpdate extends MailGenerator {
     }
 }
 
-(new MailLoanUpdate('借款update'))->generate();

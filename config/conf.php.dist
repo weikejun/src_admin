@@ -43,3 +43,5 @@ define("SMTP_HOST","smtp.qq.com");
 define("SMTP_USERNAME", '78250611@qq.com');                 // SMTP username
 define("SMTP_PASSWORD", 'syfcvyszvfbpbied');                 // SMTP username
 define("SMTP_PORT", 465);
+define("SMTP_FROM", '78250611@qq.com');
+define("SMTP_FROM_NAME", '源码法务系统');

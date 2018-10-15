@@ -1,6 +1,6 @@
 <?php
 
-class MailActiveDealWeekly extends MailGenerator {
+class MailGenerator_MailActiveDealWeekly extends MailGenerator {
     protected function _setTplVars($trigger) {
         $vars['date'] = date('Ymd');
         $briefFields = [
@@ -57,4 +57,3 @@ class MailActiveDealWeekly extends MailGenerator {
     }
 }
 
-(new MailActiveDealWeekly('active项目进度简报', '_SysDate'))->generate();

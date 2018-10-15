@@ -1,6 +1,6 @@
 <?php
 
-class MailSignUpdate extends MailGenerator {
+class MailGenerator_MailComplianceReview extends MailGenerator {
     protected function _getTrigger() {
         $deals = new Model_Project;
         $deals->addWhere('status', 'valid');
@@ -15,4 +15,3 @@ class MailSignUpdate extends MailGenerator {
     }
 }
 
-(new MailSignUpdate('交割update'))->generate();

@@ -1,6 +1,6 @@
 <?php
 
-class MailDealDecision extends MailGenerator {
+class MailGenerator_MailDealDecision extends MailGenerator {
     protected $_deals;
 
     protected function _setTplVars($trigger) {
@@ -54,7 +54,7 @@ class MailDealDecision extends MailGenerator {
     }
 }
 
-class MailDealDecisionExpire extends MailDealDecision {
+class MailGenerator_MailDealDecisionExpire extends MailGenerator_MailDealDecision {
     protected function _genCycle($trigger) {
         $deal = $this->_deals[$trigger->mProjectId];
         return [
@@ -63,5 +63,3 @@ class MailDealDecisionExpire extends MailDealDecision {
     }
 }
 
-(new MailDealDecision('投决意见', 'DealDecision'))->generate();
-(new MailDealDecisionExpire('投决意见超期', 'DealDecision'))->generate();

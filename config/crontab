@@ -1,18 +1,7 @@
-#*/1 * * * * cd /var/www/html/aimei_backend/script; /bin/bash waitPrepayOrder.sh > /dev/null
-*/1 * * * * cd /var/www/html/aimei_backend/script; /bin/bash waitPayOrder.sh > /dev/null
-*/1 * * * * cd /var/www/html/aimei_backend/script; /bin/bash waitOrderCanceled.sh > /dev/null
-
-17 1 * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/mail_order_wait_refund.php >/dev/null
-20 1 * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/mail_order_wait_pay.php >/dev/null
-18 1 * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/mail_order_prepayed.php >/dev/null
-19 1 * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/mail_order_payed.php >/dev/null
-22 1 * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/mail_order_to_demostic.php >/dev/null
-
-* * * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/sms_queue_send.php >/dev/null
-
+# --源码后台系统定时任务集
+# 自动发邮件
+* * * * * cd /usr/local/apps/src_admin/;/usr/bin/php webroot/route.php script/CrontabGenerateMail.php >/dev/null
+* * * * * cd /usr/local/apps/src_admin/;/usr/bin/php webroot/route.php script/CrontabSendMail.php >/dev/null
 # 线上日志清理
-1 1 1 * * cd /var/www/html/aimei_backend/log/;./log_bak.sh > /dev/null
-# banner过期自动下线
-* * * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/banner_auto_off.php >/dev/null
-# 定期推送消息
-* * * * * cd /var/www/html/aimei_backend/;/usr/local/bin/php webroot/route.php script/CrontabForTaskPush.php >/dev/null &
+1 1 1 * * cd /usr/local/apps/src_admin/log/;./log_bak.sh > /dev/null
+# --源码后台系统定时任务集

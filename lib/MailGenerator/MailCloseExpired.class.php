@@ -1,6 +1,6 @@
 <?php
 
-class MailCloseExpired extends MailGenerator {
+class MailGenerator_MailCloseExpired extends MailGenerator {
     protected function _getTrigger() {
         $deals = new Model_Project;
         $deals->addWhere('status', 'valid');
@@ -23,4 +23,3 @@ class MailCloseExpired extends MailGenerator {
     }
 }
 
-(new MailCloseExpired('进度异常提醒'))->generate();
