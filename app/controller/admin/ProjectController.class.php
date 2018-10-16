@@ -398,7 +398,8 @@ class ProjectController extends Page_Admin_Base {
                 $turn = $model->getData('invest_turn');
                 $amounts = [];
                 foreach($exitDataList as $i => $turnData) {
-                    if ($turnData->getData('exit_turn') == $turn) {
+                    if ($turnData->getData('exit_turn') == $turn
+                        && $turnData->getData('exit_entity_id') == $model->getData('entity_id')) {
                         $amounts[$turnData->getData('exit_currency')] += $turnData->getData('exit_amount');
                     }
                 }
@@ -407,13 +408,14 @@ class ProjectController extends Page_Admin_Base {
                 foreach($amounts as $currency => $amount) {
                     $output .= "$currency " . number_format($amount, 2) . '<br />';
                 }
-                return $output;
+                return $output ? $output : 0;
             }],
             ['label' => '退出股数', 'field' => function($model)use(&$exitDataList, &$exitStocks) {
                 $turn = $model->getData('invest_turn');
                 $amount = 0;
                 foreach($exitDataList as $i => $turnData) {
-                    if ($turnData->getData('exit_turn') == $turn) {
+                    if ($turnData->getData('exit_turn') == $turn
+                        && $turnData->getData('exit_entity_id') == $model->getData('entity_id')) {
                         $amount += $turnData->getData('exit_stock_number');
                     }
                 }
@@ -427,6 +429,7 @@ class ProjectController extends Page_Admin_Base {
                 foreach($exitAmounts as $currency => $amount) {
                     return "$currency " . number_format($amount/$exitStocks, 2);
                 }
+                return '0';
             }],
             ['label' => '投时股比', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
                 if ($model->getData('stocknum_all')) {
@@ -437,7 +440,8 @@ class ProjectController extends Page_Admin_Base {
                 $turn = $model->getData('invest_turn');
                 $exitStockNum = 0;
                 foreach($exitDataList as $i => $turnData) {
-                    if ($turnData->getData('exit_turn') == $turn) {
+                    if ($turnData->getData('exit_turn') == $turn
+                        && $turnData->getData('exit_entity_id') == $model->getData('entity_id')) {
                         $exitStockNum += $turnData->getData('exit_stock_number');
                     }
                 }
