@@ -79,9 +79,9 @@ EOF;
         update_input_value();
     });
     $(".json_array").delegate('ul li a', 'click', function() {
-        var message = $(this).text().split(' ', 2);
+        var message = $(this).text().split(' ');
         var par = $(this).parent();
-        par.html('<span>'+message[0]+'</span><textarea>'+message[1]+'</textarea>');
+        par.html('<span>'+message.shift()+'</span><textarea>'+message.join(' ')+'</textarea>');
         par.find('textarea').focus();
         par.find('textarea').blur(function() {
             var msgDate = par.find('span').text();

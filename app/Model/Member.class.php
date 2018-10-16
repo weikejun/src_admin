@@ -29,4 +29,15 @@ class Model_Member extends Base_Member{
         }
         return null;
     }
+
+    public static function getIdsByName($name) {
+        $list = self::listAll();
+        $ids = [];
+        foreach($list as $id => $member) {
+            if ($member->mName == $name) {
+                $ids[] = $id;
+            }
+        }
+        return $ids;
+    }
 }

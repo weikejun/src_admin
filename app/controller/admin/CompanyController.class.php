@@ -51,10 +51,10 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('project_type'),'paramName'=>'project_type','choices'=>Model_Company::getProjectTypeChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('hold_status'),'paramName'=>'hold_status','choices'=>Model_Company::getHoldStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Company::getFieldViewName('management'),'paramName'=>'management','choices'=>Model_Company::getManagementChoices()]),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('partner'),'paramName'=>'partner','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('partner'),'paramName'=>'name|partner','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('manager'),'paramName'=>'name|manager','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('legal_person'),'paramName'=>'name|legal_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
         );
     }

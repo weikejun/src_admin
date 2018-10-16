@@ -44,73 +44,17 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 <body class="page-header-fixed">
 {%block name="body"%}
 	<!-- BEGIN HEADER -->
-	<div class="header navbar navbar-inverse navbar-fixed-top">
-		<!-- BEGIN TOP NAVIGATION BAR -->
-		<div class="navbar-inner">
-			<div class="container-fluid">
-				<!-- BEGIN LOGO -->
-				<a class="brand" href="index">
-				<!--img src="http://cdn.sourcecodecap.com/wp-content/uploads/2018/08/logo.png" width="24" alt="logo"/-->
-				</a>
-				<!-- END LOGO -->
-				<!-- BEGIN RESPONSIVE MENU TOGGLER -->
-				<a href="javascript:;" class="btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
-				<img src="/winphp/metronic/media/image/menu-toggler.png" alt="" />
-				</a>          
-				<!-- END RESPONSIVE MENU TOGGLER -->            
-				<!-- BEGIN TOP NAVIGATION MENU -->              
-				<ul class="nav pull-right">
-					<!-- BEGIN USER LOGIN DROPDOWN -->
-					<li class="dropdown user">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <span class="username">{%$user->mName|escape%}</span>
-						<i class="icon-angle-down"></i>
-						</a>
-						<ul class="dropdown-menu">
-                            <!--
-							<li><a href="extra_profile.html"><i class="icon-user"></i> My Profile</a></li>
-							<li><a href="page_calendar.html"><i class="icon-calendar"></i> My Calendar</a></li>
-							<li><a href="inbox.html"><i class="icon-envelope"></i> My Inbox(3)</a></li>
-							<li><a href="#"><i class="icon-tasks"></i> My Tasks</a></li>
-							<li class="divider"></li>
-							<li><a href="extra_lock.html"><i class="icon-lock"></i> Lock Screen</a></li>
-                            -->
-                            {%block name='right_top_nav'%}
-                            <li><a href="{%$__controller->getUrlPrefix()%}/index/logout"><i class="icon-key"></i>退出登录</a></li>
-                            {%/block%}
-						</ul>
-					</li>
-					<!-- END USER LOGIN DROPDOWN -->
-				</ul>
-				<!-- END TOP NAVIGATION MENU --> 
-			</div>
-		</div>
-		<!-- END TOP NAVIGATION BAR -->
-	</div>
 	<!-- END HEADER -->
 	<!-- BEGIN CONTAINER -->
 	<div class="page-container">
-		<!-- BEGIN SIDEBAR -->
-{%include file="sidebar.tpl"%}
-
-		<!-- END SIDEBAR -->
-		<!-- BEGIN PAGE -->
-		<div class="page-content">
             {%block name="content"%}
             {%/block%}
-		</div>
-		<!-- END PAGE -->
 	</div>
 	<!-- END CONTAINER -->
 	<!-- BEGIN FOOTER -->
 	<div class="footer">
 		<div class="footer-inner">
 			&copy; <script>document.write(new Date().getFullYear());</script> &nbsp; 源码资本 
-		</div>
-		<div class="footer-tools">
-			<span class="go-top">
-			<i class="icon-angle-up"></i>
-			</span>
 		</div>
 	</div>
 {%/block%}

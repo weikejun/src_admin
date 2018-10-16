@@ -388,7 +388,7 @@ class Model_Project extends Base_Project{
 
     public static function getDealTypeChoices() {
         return [
-            ['企业融资（源码投）','企业融资（源码投）'],
+            ['企业融资（源码投）','企业融资（源码投, 包含买老股）'],
             ['企业融资（源码不投）','企业融资（源码不投）'],
             ['源码退出','源码退出'],
             ['源码独立CB','源码独立CB'],

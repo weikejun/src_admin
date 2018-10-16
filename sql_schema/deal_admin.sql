@@ -324,7 +324,7 @@ CREATE TABLE `project` (
     `legal_check_sign` varchar(8) DEFAULT NULL COMMENT '法务审核签名',
     `legal_check_time` varchar(11) DEFAULT NULL COMMENT '法务审核时间', 
     `loan_schedule` varchar(8) DEFAULT NULL COMMENT '借款进度',
-    `trade_schedule_todo` varchar(8) DEFAULT NULL COMMENT '交易文件进度',
+    `trade_file_schedule` text DEFAULT NULL COMMENT '交易文件进度',
     `expect_sign_date` varchar(11) DEFAULT NULL COMMENT '预计签约日期', 
     `expect_pay_schedule` text DEFAULT NULL COMMENT '预计交割付款安排', 
     `trade_schedule_memo` text DEFAULT NULL COMMENT '交易进度其他说明', 

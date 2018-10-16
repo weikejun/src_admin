@@ -636,6 +636,20 @@ class Form_Company extends Form {
                     }
                     return '<i>'.$model->getData('finance_person').'</i>';
                 }],
+                ['name'=>'_first_partner','label'=>'初始主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
+                    $dataList = [];
+                    foreach($project as $i => $dataItem) {
+                        if ($dataItem->getData('close_date')) {
+                            $dataList[$dataItem->getData('close_date')] = $dataItem;
+                        }
+                    }
+                    ksort($dataList);
+                    foreach($dataList as $i => $dataItem) {
+                        if ($dataItem->getData('partner')) {
+                            return $dataItem->getData('partner');
+                        }
+                    }
+                }],
                 ['name'=>'_first_manager','label'=>'初始项目负责人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {

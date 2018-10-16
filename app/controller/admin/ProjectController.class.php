@@ -69,13 +69,14 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('enter_exit_type'),'paramName'=>'enter_exit_type','choices'=>Model_Project::getEnterExitTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('loan_type'),'paramName'=>'loan_type','choices'=>Model_Project::getLoanTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('has_exit'),'paramName'=>'has_exit','choices'=>Model_Project::getStandardOptionChoices()]),
-            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_partner'),'paramName'=>'partner|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
-            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_legal_person'),'paramName'=>'legal_person|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
-            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_finance_person'),'paramName'=>'finance_person|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_partner'),'paramName'=>'partner|company_id','foreignTable'=>'Model_Company','fusion'=>false,'preSearch'=>function($val) {return Model_Member::getIdsByName($val);}]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_legal_person'),'paramName'=>'legal_person|company_id','foreignTable'=>'Model_Company','fusion'=>false,'preSearch'=>function($val) {return Model_Member::getIdsByName($val);}]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_current_finance_person'),'paramName'=>'finance_person|company_id','foreignTable'=>'Model_Company','fusion'=>false,'preSearch'=>function($val) {return Model_Member::getIdsByName($val);}]),
             new Page_Admin_ChoiceFilter(['name'=>'财务校对','paramName'=>'finance_check_sign','choices'=>[['未校对','未校对', 'and (`finance_check_sign` = "" or `finance_check_sign` is NULL)'],['已校对','已校对','and `finance_check_sign` is not null and `finance_check_sign` != ""']]]),
             new Page_Admin_ChoiceFilter(['name'=>'法务校对','paramName'=>'legal_check_sign','choices'=>[['未校对','未校对', 'and (`legal_check_sign` = "" or `legal_check_sign` is NULL)'],['已校对','已校对','and `legal_check_sign` is not null and `legal_check_sign` != ""']]]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('pending'),'paramName'=>'pending','choices'=>Model_Project::getPendingChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>'交割情况','paramName'=>'_close_status','choices'=>[['未交割','未交割', 'and (`close_date` = 0 or `close_date` is NULL)']]]),
+            new Page_Admin_ChoiceFilter(['name'=>'合同/支付金额','paramName'=>'_contract_pay_diff','choices'=>[['投资不一致','投资不一致', 'and `our_amount` != `pay_amount`'],['退出不一致','退出不一致', 'and `exit_amount` != `exit_receive_amount`']]]),
         );
     }
 
@@ -300,7 +301,7 @@ class ProjectController extends Page_Admin_Base {
 
     public function captableAction() {
         $reqModel = WinRequest::getModel();
-        $reqModel['controllerText'] = '企业投退Captable';
+        $reqModel['controllerText'] = '目标企业 > 投退Captable';
         WinRequest::setModel($reqModel);
 
         $object = New Model_Company;

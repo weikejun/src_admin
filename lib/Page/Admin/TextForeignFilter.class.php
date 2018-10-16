@@ -8,9 +8,22 @@ class Page_Admin_TextForeignFilter extends Page_Admin_IFilter{
         $forSelField = $this->forSelField ? $this->forSelField : 'id';
         if(isset($params[$paramName])&&strlen($params[$paramName])!=0){
             $val = $params[$paramName];
+            if (is_callable($this->preSearch)) {
+                $val = call_user_func($this->preSearch, $val);
+            }
             list($paramName, $foreignKey) = explode('|', $paramName);
             $fFinder = new $this->foreignTable;
-            $objs = $fFinder->addWhere($paramName, ($this->fusion ? "%$val%" : $val), ($this->fusion ? 'like' : '='))->setCols([$forSelField])->findMap($forSelField);
+            if (is_array($val)) {
+                $objs = [];
+                $fFinder->addWhere($paramName, $paramName);
+                foreach($val as $v) {
+                    $fFinder->addWhere($paramName, ($this->fusion ? "%$v%" : $v), ($this->fusion ? 'like' : '='), 'OR');
+                }
+                $objs = $fFinder->setCols([$forSelField])->findMap($forSelField);
+            } else {
+                $objs = $fFinder->addWhere($paramName, ($this->fusion ? "%$val%" : $val), ($this->fusion ? 'like' : '='))->setCols([$forSelField])->findMap($forSelField);
+            }
+
             $model->addWhere($foreignKey, array_keys($objs), 'IN');
         }
     }

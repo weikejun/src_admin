@@ -608,11 +608,36 @@ class Form_Project extends Form {
                         return $members[$company->mLegalPerson]->mName;
                     }
                 }],
-                ['name'=>'partner','label'=>'本轮主管合伙人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'manager','label'=>'本轮项目负责人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'finance_person','label'=>'本轮财务负责人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'legal_person','label'=>'本轮法务负责人','type'=>'text','default'=>null,'required'=>false,],
-                ['name'=>'deal_manager','label'=>'本轮交易负责人','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
+                ['name'=>'partner','label'=>'本轮主管合伙人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('partner')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'manager','label'=>'本轮项目负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('manager')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'finance_person','label'=>'本轮财务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('finance_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'legal_person','label'=>'本轮法务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('legal_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'deal_manager','label'=>'本轮交易负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('deal_manager')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
                 ['name'=>'law_firm','label'=>'源码委托律所','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false],
                 ['name'=>'lawyer_fee','label'=>'律师费','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'field-index-archive','label'=>'Filling及Post','type'=>'seperator'],
