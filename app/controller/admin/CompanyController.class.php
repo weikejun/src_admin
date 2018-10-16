@@ -44,7 +44,7 @@ class CompanyController extends Page_Admin_Base {
 
     private function _initListFilter() {
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'hidden'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('short'),'paramName'=>'short','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('main_founders'),'paramName'=>'main_founders','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Company::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),

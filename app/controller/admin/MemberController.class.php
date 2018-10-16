@@ -23,6 +23,8 @@ class MemberController extends Page_Admin_Base {
         }
 
         $this->search_fields = ['name','mail'];
+
+        $this->single_actions_default = ['delete'=>false,'edit'=>true];
     }
 }
 

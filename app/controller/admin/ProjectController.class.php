@@ -654,9 +654,9 @@ class ProjectController extends Page_Admin_Base {
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
             }],
-            ['label' => '退出股数', 'field' => function($model)use($dataList, &$exitStocks){
+            ['label' => '退出股数', 'field' => function($model)use($dataList, &$totalExitStocks){
                 if (!$model->getData('id')) {
-                    return number_format($exitStocks);
+                    return number_format($totalExitStocks);
                 }
                 $stockNum = 0;
                 foreach($dataList as $i => $dataItem) {
@@ -665,7 +665,7 @@ class ProjectController extends Page_Admin_Base {
                         $stockNum += $dataItem->getData('exit_stock_number');
                     }
                 }
-                $exitStocks += $stockNum;
+                $totalExitStocks += $stockNum;
                 return number_format($stockNum);
             }],
         ];
