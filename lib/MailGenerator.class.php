@@ -59,12 +59,12 @@ abstract class MailGenerator {
         $company = new Model_Company;
         $company->addWhere('id', $trigger->mCompanyId);
         $company->select();
-        $tplVars['mail']['partner'] = Model_Member::getEmailById($company->mPartner);
-        $tplVars['mail']['manager'] = Model_Member::getEmailById($company->mManager);
-        $tplVars['mail']['legal_person'] = Model_Member::getEmailById($company->mLegalPerson);
-        $tplVars['mail']['finance_person'] = Model_Member::getEmailById($company->mFinancePerson);
+        $tplVars['mail']['partner'] = Model_Member::getEmailById($trigger->mPartner);
+        $tplVars['mail']['manager'] = Model_Member::getEmailById($trigger->mManager);
+        $tplVars['mail']['legal_person'] = Model_Member::getEmailById($trigger->mLegalPerson);
+        $tplVars['mail']['finance_person'] = Model_Member::getEmailById($trigger->mFinancePerson);
         $tplVars['mail']['filling_keeper'] = Model_Member::getEmailById($company->mFillingKeeper);
-        $tplVars['mail']['deal_manager'] = Model_Member::getEmailById($trigger->mDealManager)
+        $tplVars['mail']['deal_manager'] = Model_Member::getEmailById($trigger->mDealManager);
         $tplVars['company'] = $company->getData();
         $tplVars['project'] = $trigger->getData();
         return $tplVars;

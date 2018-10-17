@@ -57,7 +57,7 @@ class ActiveDealController extends Page_Admin_Base {
         $this->model->addWhere('active_deal', '是');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();
-            $this->model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+            $this->model->addWhereRaw('AND (company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
         }
 
         WinRequest::mergeModel(array(

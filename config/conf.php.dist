@@ -32,6 +32,7 @@ define("PUBLIC_IMAGE_URI", "/public_upload/");
 define("PRIVATE_IMAGE_BASE", ROOT_PATH."/private_upload/");
 define("IS_DEBUG", $IS_DEBUG);
 define("VERSION", 1);
+define("BASE_URL", 'https://__base_url__');
 
 # Aliyun config
 define("ALIYUN_ACCESS_KEY", "LTAI8xlavAUSjQPA");
