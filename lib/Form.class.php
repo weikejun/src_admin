@@ -73,7 +73,7 @@ class Form{
             if($field->validate($this->raw_values)===false){
                 $this->errors[$field->name()]=$field->error();
             }else if($field->is_set()){
-                $this->values[$field->name()]=$field->value();
+                $this->values[$field->name()]=strip_tags($field->value());
             }
         }
         if(!$this->errors){
