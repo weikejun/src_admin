@@ -53,7 +53,7 @@ abstract class Form_Field{
             $this->error="字段不能为空.";
             return false;
         }
-        if(isset($values[$this->name])){
+        if(array_key_exists($this->name, $values)){
             $this->is_set=true;
             $this->value=$values[$this->name];
         }
