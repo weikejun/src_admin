@@ -7,7 +7,7 @@ class MailSendController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_Project();
         WinRequest::mergeModel(array(
-            'controllerText'=>"邮件模板",
+            'controllerText'=>"模板邮件",
         ));
 
         $this->form=new Form([

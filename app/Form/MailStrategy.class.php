@@ -28,4 +28,7 @@ class Form_MailStrategy extends Form {
         parent::__construct(self::getFieldsMap());
     }
 
+    protected function _filter($value) {
+        return $value;
+    }
 }

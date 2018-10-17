@@ -43,6 +43,7 @@ class Form{
             }
         }
     }
+
     public function clear(){
         $this->is_bind=false;
         $this->is_validate=false;
@@ -73,7 +74,7 @@ class Form{
             if($field->validate($this->raw_values)===false){
                 $this->errors[$field->name()]=$field->error();
             }else if($field->is_set()){
-                $this->values[$field->name()]=strip_tags($field->value());
+                $this->values[$field->name()]=$this->_filter($field->value());
             }
         }
         if(!$this->errors){
@@ -111,5 +112,9 @@ class Form{
     }
     public function errors(){
         return $this->errors;
+    }
+
+    protected function _filter($value) {
+        return strip_tags($value);
     }
 }

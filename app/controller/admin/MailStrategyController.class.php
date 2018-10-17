@@ -19,7 +19,9 @@ class MailStrategyController extends Page_Admin_Base {
                 $this->list_display[] = [
                     'name' => $field['name'],
                     'label' => $field['label'],
-                    'field' => (isset($field['field']) ? $field['field'] : $field['name']),
+                    'field' => (isset($field['field']) ? $field['field'] : function($model)use($field){
+                        return htmlspecialchars($model->getData($field['name']));
+                    }),
                 ];
             }
         }

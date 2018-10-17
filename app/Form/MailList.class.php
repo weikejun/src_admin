@@ -50,4 +50,7 @@ class Form_MailList extends Form {
         parent::__construct(self::getFieldsMap());
     }
 
+    protected function _filter($value) {
+        return $value;
+    }
 }
