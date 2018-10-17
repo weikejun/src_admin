@@ -10,7 +10,7 @@ class Form_MailStrategy extends Form {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'策略ID','type'=>'hidden','default'=>null,'required'=>false,],
                 ['name'=>'name','label'=>'策略名称','type'=>'text','default'=>null,'required'=>true,'validator'=>new Form_UniqueValidator(new Model_MailStrategy, 'name'),'readonly'=>true],
-                ['name'=>'mail_to','label'=>'收件人','type'=>'textarea','default'=>'{%$company->partner%};{%$company->manager%};{%$company->finance_person%};{%$company->legal_person%}','required'=>false,'placeholder'=>'收件人之间请用英文“;”分隔','help'=>'默认发送交易项目组成员'],
+                ['name'=>'mail_to','label'=>'收件人','type'=>'textarea','default'=>'{%$vars.mail.partner%};{%$vars.mail.manager%};{%$vars.mail.finance_person%};{%$vars.mail.legal_person%}','required'=>false,'placeholder'=>'收件人之间请用英文“;”分隔','help'=>'默认发送交易项目组成员'],
                 ['name'=>'mail_cc','label'=>'抄送','type'=>'textarea','default'=>null,'required'=>false,'placeholder'=>'收件人之间请用英文“;”分隔'],
                 ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'content','label'=>'邮件内容','type'=>'textarea','default'=>null,'required'=>false],

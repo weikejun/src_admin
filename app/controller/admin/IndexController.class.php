@@ -103,7 +103,7 @@ class IndexController extends Page_Admin_Base{
             $model->mId = $_GET['id'];
             $model->select();
             if ($model->mSignKey == $_GET['sign'] && !$model->mDecision) {
-                $model->mDecision = $_GET['decision'];
+                $model->mDecision = strip_tags($_GET['decision']);
                 $model->mExpiration = time();
                 $model->mIp = Utils::getClientIP();
                 $model->save();
