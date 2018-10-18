@@ -287,6 +287,7 @@ CREATE TABLE `project` (
     `most_favored_memo` text DEFAULT NULL COMMENT '最惠国待遇备注', 
     `rights_memo` text DEFAULT NULL COMMENT '源码权利备注', 
     `delivery_duty` text DEFAULT NULL COMMENT '重要交割后义务', 
+    `before_delivery_duty` text DEFAULT NULL COMMENT '交割前重要义务', 
     `right_changes` varchar(32) DEFAULT NULL COMMENT '源码前轮重要权利变化', 
     `right_update_record` varchar(32) DEFAULT NULL COMMENT '源码前轮权利更新记录', 
     `right_changes_memo` text DEFAULT NULL COMMENT '源码前轮权利变化备注', 

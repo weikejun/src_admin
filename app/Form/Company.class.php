@@ -70,7 +70,12 @@ class Form_Company extends Form {
                     }
                     ksort($dataList);
                     foreach($dataList as $date => $dataItem) {
-                        return date('Ymd', $dataItem->getData('close_date'));
+                        if ($dataItem->getData('close_date')) {
+                            if( $dataItem->getData('close_date') == Model_Project::DEFAULT_CLOSE_DATE) {
+                                return '暂未交割';
+                            }
+                            return date('Ymd', $dataItem->getData('close_date'));
+                        }
                     }
                 }],
                 ['name'=>'_latest_close_date','label'=>'最新一轮融资时间','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -83,7 +88,7 @@ class Form_Company extends Form {
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
-                        if ($dataItem->getData('close_date') == 9999999999) {
+                        if ($dataItem->getData('close_date') == Model_Project::DEFAULT_CLOSE_DATE) {
                             return '暂未交割';
                         } else {
                             return date('Ymd', $dataItem->getData('close_date'));
@@ -646,7 +651,11 @@ class Form_Company extends Form {
                     ksort($dataList);
                     foreach($dataList as $i => $dataItem) {
                         if ($dataItem->getData('partner')) {
-                            return $dataItem->getData('partner');
+                            $members = Model_Member::listAll();
+                            if (isset($members[$dataItem->getData('partner')])) {
+                                return $members[$dataItem->getData('partner')]->getData('name');
+                            }
+                            return '<i>'.$dataItem->getData('partner').'</i>';
                         }
                     }
                 }],
@@ -660,7 +669,11 @@ class Form_Company extends Form {
                     ksort($dataList);
                     foreach($dataList as $i => $dataItem) {
                         if ($dataItem->getData('manager')) {
-                            return $dataItem->getData('manager');
+                            $members = Model_Member::listAll();
+                            if (isset($members[$dataItem->getData('manager')])) {
+                                return $members[$dataItem->getData('manager')]->getData('name');
+                            }
+                            return '<i>'.$dataItem->getData('manager').'</i>';
                         }
                     }
                 }],

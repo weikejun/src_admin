@@ -170,7 +170,7 @@ class Form_Project extends Form {
                         return number_format($model->getData('financing_amount')/$model->getData('post_money')*100, 2).'%';
                     }
                     return $model->getData('dilution_rate');
-                }],
+                },'placeholder'=>'自动计算字段，如不填写则预览、列表可见'],
                 ['name'=>'raw_stock_memo','label'=>'老股转让情况备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'deal_memo','label'=>'本轮交易方案备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-value','label'=>'企业估值及每股单价','type'=>'seperator'],
@@ -553,7 +553,9 @@ class Form_Project extends Form {
                 ['name'=>'most_favored_memo','label'=>'最惠国待遇备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'rights_memo','label'=>'源码权利备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-other-terms','label'=>'交易文件其他重要条款','type'=>'seperator'],
+                ['name'=>'before_delivery_duty','label'=>'交割前重要义务','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'delivery_duty','label'=>'重要交割后义务','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'each_side_duty','label'=>'各方其他重要权利义务','type'=>'textarea','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'right_changes','label'=>'源码前轮重要权利变化','type'=>'choice','choices'=>Model_Project::getStandard4OptionChoices(),'required'=>false],
                 ['name'=>'right_update_record','label'=>'源码前轮权利更新记录','type'=>'choice','choices'=>Model_Project::getRightUpdateChoices(),'required'=>false],
                 ['name'=>'right_changes_memo','label'=>'源码前轮权利变化备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
