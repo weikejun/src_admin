@@ -6,7 +6,7 @@ class MailListController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_MailList();
-        $this->model->orderBy('id', 'DESC');
+        $this->model->orderBy('expect_time', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText' => "提醒邮件列表",
             'tableWrap' => '3096px',
@@ -35,10 +35,11 @@ class MailListController extends Page_Admin_Base {
         $this->list_filter = [
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('status'),'paramName'=>'status','choices'=>Model_MailList::getStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('strategy_id'),'paramName'=>'strategy_id','choices'=>$choiceSt,'class'=>'keep-all']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_MailList::getFieldViewName('expect_time'),'paramName'=>'expect_time','class'=>'keep-all']),
         ];
 
         $this->single_actions=[
-            ['label'=>'预览','action'=>function($model){
+            ['label'=>'预览','target'=>'_blank','action'=>function($model){
                 return '/admin/mailList/preview?id='.$model->mId;
             }],
         ];

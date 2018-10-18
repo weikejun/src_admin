@@ -6,6 +6,8 @@ class MemberController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_Member();
+        $this->model->orderBy('sort', 'ASC');
+        $this->model->orderBy('id', 'ASC');
         WinRequest::mergeModel(array(
             'controllerText' => "项目成员",
         ));
