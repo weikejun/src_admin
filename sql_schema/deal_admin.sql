@@ -398,6 +398,7 @@ CREATE TABLE `member` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
     `name` varchar(16) DEFAULT NULL COMMENT '全名', 
     `mail` varchar(32) DEFAULT NULL COMMENT '邮箱', 
+    `sort` varchar(8) DEFAULT '99' COMMENT '排序', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     UNIQUE KEY `mail_uniq` (`mail`),
     PRIMARY KEY (`id`)
