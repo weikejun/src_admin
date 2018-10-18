@@ -6,9 +6,7 @@ class MailGenerator_MailCloseExpired extends MailGenerator {
         $deals->addWhere('status', 'valid');
         $deals->addWhere('update_time', strtotime('-1 days'), '>=');
         $deals->addWhere('close_notice', '开启');
-        $deals->addWhere('proj_status', '终止不做', '!=');
-        $deals->addWhere('proj_status', '已交割付款', '!=');
-        $deals->addWhereRaw('and (close_date is null or close_date = 0 or close_date = "")');
+        $deals->addWhereRaw('and ((`proj_status` != "终止不做" and `proj_status` != "已交割付款") or (`close_date` is null or `close_date` = 0 or `close_date` = ""))');
         return $this->_triggers = $deals->find();
     }
 
