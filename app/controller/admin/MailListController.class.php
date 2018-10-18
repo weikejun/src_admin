@@ -36,6 +36,12 @@ class MailListController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('status'),'paramName'=>'status','choices'=>Model_MailList::getStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('strategy_id'),'paramName'=>'strategy_id','choices'=>$choiceSt,'class'=>'keep-all']),
         ];
+
+        $this->single_actions=[
+            ['label'=>'预览','action'=>function($model){
+                return '/admin/mailList/preview?id='.$model->mId;
+            }],
+        ];
         //$this->search_fields = ['name','description','tp'];
     }
 
@@ -63,6 +69,16 @@ class MailListController extends Page_Admin_Base {
             }
         }
         return ['redirect:'.$this->getBackUrl()];
+    }
+
+    public function previewAction() {
+        $id = $_GET['id'];
+        $mail = new Model_MailList;
+        if ($id) {
+            $mail->addWhere('id', $id);
+            $mail->select();
+        }
+        return ['admin/mail_tpl/preview.html',['mail' => $mail->getData()]];
     }
 }
 

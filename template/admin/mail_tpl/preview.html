@@ -1,0 +1,33 @@
+{%extends file="admin/empty_framework.tpl"%}
+{%block name="head" append%}
+<link href="/winphp/metronic/media/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
+{%/block%}
+{%block name="content"%}
+<style>
+.portlet-body p.m-line {border-bottom: 1px dotted #ddd;}
+</style>
+<div class="row-fluid">
+    <div class="span12">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box light-grey">
+            <div class="portlet-title" style="border-top:1px solid #eee;">
+                <div class="caption"><i class="icon-globe"></i>提醒邮件预览</div>
+            </div>
+            <div class="portlet-body">
+                <p class="m-line">邮件ID：{%$mail.id%}</p>
+                <p class="m-line">状态：{%$mail.status%}</p>
+                <p class="m-line">预计发送时间：{%date('Ymd H:i:s',$mail.expect_time)%}</p>
+                <p class="m-line">实际发送时间：{%if $mail.send_time%}{%date('Ymd H:i:s',$mail.send_time)%}{%/if%}</p>
+                <p class="m-line">发件人：{%$smarty.const.SMTP_FROM_NAME%}({%$smarty.const.SMTP_FROM%})</p>
+                <p class="m-line">收件人：{%$mail.mail_to%}</p>
+                <p class="m-line">抄送：{%$mail.mail_cc%}</p>
+                <p class="m-line">标题：{%$mail.title%}</p>
+                <p class="m-line">正文：</p>
+                <div style="">{%$mail.content%}</div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+{%/block%}
+
