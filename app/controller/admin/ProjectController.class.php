@@ -348,26 +348,7 @@ class ProjectController extends Page_Admin_Base {
                 $entity = new Model_Entity;
                 $entity->mId = $entityId;
                 $entity->select();
-                $expr = [
-                    'project' => [
-                        'id' => $model->getData('id'),
-                        'fields' => [
-                            Form_Project::getFieldViewName('deal_type'),
-                            Form_Project::getFieldViewName('entity_id'),
-                            Form_Project::getFieldViewName('exit_entity_id'),
-                        ],
-                    ],
-                    'entity' => [
-                        'id' => $entity->getData('id'),
-                        'fields' => [
-                            Form_Entity::getFieldViewName('name'),
-                        ],
-                    ]
-                ];
-                return [
-                    'output' => $entity->getData('name'), 
-                    'expr'=>$expr
-                ];
+                return $entity->getData('name');
             }],
             ['label' => '股份类型', 'field' => function($model) {
                 return $model->getData('new_old_stock');
@@ -398,18 +379,22 @@ class ProjectController extends Page_Admin_Base {
                 $amount = $model->getData('our_amount');
                 $stockNum = $model->getData('stocknum_get');
                 $amount = $amount ? $amount : 0;
+                $output = '';
                 if ($stockNum) {
-                    return "$currency " . number_format($amount/$stockNum, 2); 
+                    $output = "$currency " . number_format($amount/$stockNum, 2); 
                 }
+                return $output;
             }],
             ['label' => '企业股价', 'field' => function($model) {
                 $currency = $model->getData('value_currency');
                 $amount = $model->getData('post_money');
                 $stockNum = $model->getData('stocknum_all');
                 $amount = $amount ? $amount : 0;
+                $output = '';
                 if ($stockNum) {
-                    return "$currency " . number_format($amount/$stockNum, 2); 
+                    $output = "$currency " . number_format($amount/$stockNum, 2); 
                 }
+                return $output;
             }],
             ['label' => 'Post估值', 'field' => function($model) {
                 return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);

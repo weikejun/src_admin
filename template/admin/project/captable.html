@@ -84,27 +84,15 @@
                                 {%foreach from=$pageAdmin->deal_display item=list_item%}
                                 <td>
                                     {%if is_array($list_item)&&isset($list_item.label)%}
-                                        {%$list_item=$list_item.field%}
+                                    {%$list_item=$list_item.field%}
                                     {%/if%}
 
                                     {%if is_string($list_item) %}
-                                        {%$dealData->getData($list_item)%}
+                                    {%$dealData->getData($list_item)%}
                                     {%elseif is_callable($list_item)%}
-                                        {%$output=call_user_func($list_item,$dealData,$pageAdmin,$dealDataList)%}
-                                        {%if is_array($output) %}
-                                            {%$output.output%}
-                                            <!--span>
-                                                字段
-                                                {%foreach from=$output.expr item=res key=ref%}
-                                                <p>{%$ref%}:{%$res.id%}</p>
-                                                <p>{%foreach from=$res.fields item=fname%}{%$fname%},{%/foreach%}</p>
-                                                {%/foreach%}
-                                            </span-->
-                                        {%else%}
-                                            {%$output%}
-                                        {%/if%}
+                                    {%call_user_func($list_item,$dealData,$pageAdmin,$dealDataList)%}
                                     {%else%}
-                                        {%strval($list_item)%}
+                                    {%strval($list_item)%}
                                     {%/if%}
                                 </td>
                                 {%/foreach%}
