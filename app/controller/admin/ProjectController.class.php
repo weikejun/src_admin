@@ -134,7 +134,9 @@ class ProjectController extends Page_Admin_Base {
         $this->model->orderBy('id', 'DESC');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();
-            $this->model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+            if (!isset($persIds['all'])) {
+                $this->model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+            }
         }
 
         WinRequest::mergeModel(array(

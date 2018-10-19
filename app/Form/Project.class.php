@@ -73,7 +73,7 @@ class Form_Project extends Form {
                 ['name'=>'company_character','label'=>'目标企业性质','type'=>'selectInput','choices'=>Model_Project::getCompanyCharacterChoices(),'required'=>false,],
                 ['name'=>'item_status','label'=>'整理状态','type'=>'choice','choices'=>Model_Project::getItemStatusChoices(),'required'=>true,'default'=>'待完成'],
                 ['name'=>'field-index-status','label'=>'本轮交易状态','type'=>'seperator'],
-                ['name'=>'decision_date','label'=>'决策日期','type'=>'date','default'=>null,'required'=>false,'help'=>'TS日期（优先）、IC决策日期、投资部告知的大致日期，尽量精确到月','field'=>function($model){
+                ['name'=>'decision_date','label'=>'决策日期','labelClass'=>'text-error','type'=>'date','default'=>null,'required'=>false,'help'=>'TS日期（优先）、IC决策日期、投资部告知的大致日期，尽量精确到月','field'=>function($model){
                     if ($model->getData('decision_date')) {
                         return date('Ymd', $model->getData('decision_date'));
                     }
@@ -85,14 +85,14 @@ class Form_Project extends Form {
                         return date('Ymd', $model->getData('kickoff_date'));
                     }
                 }],
-                ['name'=>'close_date','label'=>'交割日期','type'=>'date','default'=>null,'class'=>'fin-check','field'=>function($model){
+                ['name'=>'close_date','label'=>'交割日期','labelClass'=>'text-error','type'=>'date','default'=>null,'class'=>'fin-check','field'=>function($model){
                     if ($model->getData('close_date')) {
                         return date('Ymd', $model->getData('close_date'));
                     }
                 }],
                 ['name'=>'count_captable','label'=>'是否计入Captable','type'=>'choice','choices'=>Model_Project::getCountCaptableChoices(),'default'=>'计入','required'=>false],
                 ['name'=>'field-index-progress','label'=>'本轮交易进度','type'=>'seperator'],
-                ['name'=>'active_deal','label'=>'active项目进度','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'是'],
+                ['name'=>'active_deal','label'=>'active项目进度','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,'default'=>'是'],
                 ['name'=>'loan_schedule','label'=>'借款进度','type'=>'selectInput','choices'=>Model_Project::getLoanScheduleChoices(),'required'=>false],
                 ['name'=>'_loan_update','label'=>'借款update','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
                     $stId = $mailSt['借款update']->mId;
@@ -106,7 +106,7 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'trade_file_schedule','label'=>'交易文件进度','type'=>'selectInput','choices'=>Model_Project::getTradeFileScheduleChoices(),'required'=>false],
-                ['name'=>'expect_sign_date','label'=>'预计签约日期','type'=>'date','default'=>null,'help'=>'须填写，与提醒邮件关联','field'=>function($model){
+                ['name'=>'expect_sign_date','label'=>'预计签约日期','labelClass'=>'text-error','type'=>'date','default'=>null,'help'=>'须填写，与提醒邮件关联','field'=>function($model){
                     if ($model->getData('expect_sign_date')) {
                         return date('Ymd', $model->getData('expect_sign_date'));
                     }
@@ -145,7 +145,7 @@ class Form_Project extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'close_notice','label'=>'进度异常提醒','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'开启',],
+                ['name'=>'close_notice','label'=>'进度异常提醒','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCloseNoticeChoices(),'required'=>false,'default'=>'开启',],
                 ['name'=>'trade_schedule_memo','label'=>'进展异常情况','type'=>'message','class'=>'with_date','field'=>function($model) {
                     $progs = json_decode($model->getData('trade_schedule_memo'));
                     $progs = $progs ? $progs : [];
@@ -157,11 +157,11 @@ class Form_Project extends Form {
                     return $output;
                 }],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
-                ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,],
-                ['name'=>'turn_sub','label'=>'企业所处轮次','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
+                ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,'labelClass'=>'text-error'],
+                ['name'=>'turn_sub','label'=>'企业所处轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
                 ['name'=>'turn','label'=>'企业轮次归类','type'=>'choice','choices'=>Model_Project::getTurnChoices(),'required'=>false,],
                 ['name'=>'new_follow','label'=>'项目新老类型','type'=>'choice','choices'=>Model_Project::getNewFollowChoices(),'required'=>false,],
-                ['name'=>'enter_exit_type','label'=>'源码投退类型','type'=>'choice','choices'=>Model_Project::getEnterExitTypeChoices(),'required'=>false,],
+                ['name'=>'enter_exit_type','label'=>'源码投退类型','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getEnterExitTypeChoices(),'required'=>false,],
                 ['name'=>'other_enter_exit_type','label'=>'其他投资人投退类型','type'=>'choice','choices'=>Model_Project::getOtherEnterExitTypeChoices(),'required'=>false,],
                 ['name'=>'dilution_rate','label'=>'本轮稀释比例','type'=>'text','default'=>null,'required'=>false,'help'=>'“本轮新股融资总额”除以“企业投后估值”', 'field'=>function($model) {
                     if (strpos($model->getData('deal_type'), '企业融资') !== false
@@ -174,7 +174,7 @@ class Form_Project extends Form {
                 ['name'=>'raw_stock_memo','label'=>'老股转让情况备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'deal_memo','label'=>'本轮交易方案备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-value','label'=>'企业估值及每股单价','type'=>'seperator'],
-                ['name'=>'value_currency','label'=>'估值计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
+                ['name'=>'value_currency','label'=>'估值计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'pre_money','label'=>'企业投前估值','type'=>'number','required'=>false,'field'=>function($model){
                     return $model->getData('value_currency') . ' ' . number_format($model->getData('pre_money'), 2);
                 }],
@@ -183,7 +183,7 @@ class Form_Project extends Form {
                         return $model->getData('value_currency') . ' ' . number_format($model->getData('financing_amount'), 2);
                     }
                 }],
-                ['name'=>'post_money','label'=>'企业投后估值','type'=>'number','required'=>false,'help'=>'（1）值为“企业投前估值“+“本轮新股融资总金额“；若有打折等情况影响估值计算，与财务确认；<br />（2）企业若本轮未发生融资则写上轮估值。','field'=>function($model) {
+                ['name'=>'post_money','label'=>'企业投后估值','labelClass'=>'text-error','type'=>'number','required'=>false,'help'=>'（1）值为“企业投前估值“+“本轮新股融资总金额“；若有打折等情况影响估值计算，与财务确认；<br />（2）企业若本轮未发生融资则写上轮估值。','field'=>function($model) {
                     /*
                     if ($model->getData('post_money')) {
                         return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
@@ -242,12 +242,12 @@ class Form_Project extends Form {
                     return $output;
                 }],
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
-                ['name'=>'invest_currency','label'=>'源码投资计价货币','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
+                ['name'=>'invest_currency','label'=>'源码投资计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
                 ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>isset($_GET['entity_id'])&&$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
                     $entity = Page_Admin_Base::getResource($model->getData('entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
-                ['name'=>'ts_decision_amount','label'=>'TS/决策口径投资金额','type'=>'text','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'ts_decision_amount','label'=>'TS/决策口径投资金额','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('ts_decision_amount')) {
                         return $model->getData('invest_currency') . ' ' . $model->getData('ts_decision_amount');
                     }
@@ -258,15 +258,16 @@ class Form_Project extends Form {
                     }
                 }],
                 ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
-                    return number_format($model->getData('stocknum_get'));
+                    if ($model->getData('stocknum_get'))
+                        return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
-                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','type'=>'text','default'=>null,'required'=>false,'help'=>'源码投资须填写，与收集投决相关'],
+                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'源码投资须填写，与收集投决相关'],
                 ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'invest_turn','label'=>'本主体购股轮次','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'invest_turn','label'=>'本主体购股轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'stock_property','label'=>'股权属性','type'=>'choice','choices'=>Model_Project::getStockPropertyChoices(),'required'=>false,],
                 ['name'=>'_invest_stock_price','label'=>'投资时每股单价','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_get')) {
@@ -281,9 +282,9 @@ class Form_Project extends Form {
                 ['name'=>'amount_memo','label'=>'金额备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-loan','label'=>'源码借款或源码CB','type'=>'seperator'],
                 ['name'=>'loan_cb','label'=>'源码借款或CB','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
-                ['name'=>'loan_currency','label'=>'借款计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
-                ['name'=>'loan_type','label'=>'借款类型','type'=>'choice','choices'=>Model_Project::getLoanTypeChoices(),'required'=>false,],
-                ['name'=>'loan_entity_id','label'=>'源码出借主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'field'=>function($model) {
+                ['name'=>'loan_currency','label'=>'借款计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
+                ['name'=>'loan_type','label'=>'借款类型','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getLoanTypeChoices(),'required'=>false,],
+                ['name'=>'loan_entity_id','label'=>'源码出借主体','labelClass'=>'text-error','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'field'=>function($model) {
                     $entity = Page_Admin_Base::getResource($model->getData('loan_entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
@@ -293,17 +294,17 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'loan_sign_date','label'=>'借款合同签署日期','type'=>'date','default'=>null,'required'=>false,],
                 ['name'=>'loan_end_date','label'=>'借款到期日','type'=>'date','default'=>null,'required'=>false,],
-                ['name'=>'loan_process','label'=>'借款处理','type'=>'choice','choices'=>Model_Project::getLoanProcessChoices(),'required'=>false,],
+                ['name'=>'loan_process','label'=>'借款处理','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getLoanProcessChoices(),'required'=>false,],
                 ['name'=>'loan_memo','label'=>'借款备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-otherinvestor','label'=>'非源码投资人投资方案','type'=>'seperator'],
                 ['name'=>'other_investor','label'=>'本轮非源码投资人','type'=>'choice','choices'=>Model_Project::getOtherInvestorChoices(),'required'=>false,],
                 ['name'=>'other_investor_summary','label'=>'其他主要投资人金额与比例','type'=>'textarea','default'=>null,'required'=>false,'help'=>'选一两个填即可。'],
                 ['name'=>'field-index-exit','label'=>'源码退出方案及详情','type'=>'seperator'],
-                ['name'=>'has_exit','label'=>'源码是否有退出','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
-                ['name'=>'exit_currency','label'=>'源码退出计价货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
+                ['name'=>'has_exit','label'=>'源码是否有退出','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
+                ['name'=>'exit_currency','label'=>'源码退出计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'exit_type','label'=>'源码退出方式','type'=>'choice','choices'=>Model_Project::getExitTypeChoices(),'required'=>false,],
                 ['name'=>'exit_profit','label'=>'退出盈亏情况','type'=>'choice','choices'=>Model_Project::getExitProfitChoices(),'required'=>false,],
-                ['name'=>'exit_entity_id','label'=>'源码退出主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'field'=>function($model){
+                ['name'=>'exit_entity_id','label'=>'源码退出主体','labelClass'=>'text-error','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'field'=>function($model){
                     $entity = Page_Admin_Base::getResource($model->getData('exit_entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
@@ -317,10 +318,12 @@ class Form_Project extends Form {
                         return $model->getData('exit_currency') . ' ' . number_format($model->getData('post_money')/$model->getData('stocknum_all'), 2);
                 }],
                 ['name'=>'exit_stock_number','label'=>'源码退出的股数','type'=>'number','required'=>false,'field'=>function($model){
-                    return number_format($model->getData('exit_stock_number'));
+                    if ($model->getData('exit_stock_number'))
+                        return number_format($model->getData('exit_stock_number'));
                 }],
                 ['name'=>'exit_amount','label'=>'源码本次退出合同金额','type'=>'number','required'=>false,'field'=>function($model){
-                    return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_amount'), 2);
+                    if ($model->getData('exit_amount'))
+                        return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_amount'), 2);
                 }],
                 ['name'=>'_exit_stock_price','label'=>'源码退出的每股单价','type'=>'rawText','required'=>false,'field'=>function($model){
                     if ($model->getData('exit_stock_number')) {
@@ -332,10 +335,11 @@ class Form_Project extends Form {
                         return sprintf('%.2f%%', $model->getData('exit_stock_number') / $model->getData('stocknum_all') * 100);
                     }
                 }],
-                ['name'=>'exit_turn','label'=>'源码售股轮次','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'exit_turn','label'=>'源码售股轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'exit_stock_property','label'=>'源码股权出售的属性','type'=>'choice','choices'=>Model_Project::getStockPropertyChoices(),'required'=>false,],
                 ['name'=>'exit_receive_amount','label'=>'源码本次退出实收金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
-                    return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_receive_amount'), 2);
+                    if ($model->getData('exit_receive_amount'))
+                        return $model->getData('exit_currency') . ' ' . number_format($model->getData('exit_receive_amount'), 2);
                 }],
                 ['name'=>'_exit_return_rate','label'=>'源码本次退出回报倍数（gross）','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
                     if (strpos($model->getData('deal_type'), '源码退') === false) {
@@ -357,8 +361,9 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'exit_memo','label'=>'源码退出备注','type'=>'text','default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
-                ['name'=>'stocknum_all','label'=>'本轮企业总股数','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
-                    return number_format($model->getData('stocknum_all'));
+                ['name'=>'stocknum_all','label'=>'本轮企业总股数','labelClass'=>'text-error','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
+                    if ($model->getData('stocknum_all'))
+                        return number_format($model->getData('stocknum_all'));
                 }],
                 ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],

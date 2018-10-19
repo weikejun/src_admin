@@ -27,6 +27,10 @@ class ItemPermissionController extends Page_Admin_Base {
                 }
             }],
             ['label'=>'授权项目','field'=>function($model)use(&$company, &$project){
+                if (empty($model->mCompanyId)
+                    && empty($model->mProjectId)) {
+                    return '所有项目';
+                }
                 $companyId = $model->getData('company_id');
                 if(!empty($model->mProjectId)) {
                     $project = new Model_Project;
@@ -77,7 +81,7 @@ class ItemPermissionController extends Page_Admin_Base {
         $adminIds = $_REQUEST['admin_id'];
         $projIds = $_REQUEST['project_id'];
         $compIds = $_REQUEST['company_id'];
-        if($adminIds && ($projIds || $compIds)) {
+        if($adminIds) {
             for($i = 0; $i < count($adminIds); $i++) {
                 if ($projIds) {
                     for($j = 0; $j < count($projIds); $j++) {
@@ -103,6 +107,16 @@ class ItemPermissionController extends Page_Admin_Base {
                         ]);
                         $model->save();
                     }
+                } else {
+                    $model = new Model_ItemPermission;
+                    $model->setData([
+                        'admin_id' => $adminIds[$i],
+                        'project_id' => '',
+                        'company_id' => '',
+                        'operator_id' => Model_Admin::getCurrentAdmin()->mId,
+                        'create_time' => time()
+                    ]);
+                    $model->save();
                 }
             }
             return true;

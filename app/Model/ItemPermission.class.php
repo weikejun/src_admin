@@ -12,6 +12,9 @@ class Model_ItemPermission extends Base_Item_Permission{
         foreach($pers as $i => $per) {
             $projectId = $per->getData('project_id');
             $companyId = $per->getData('company_id');
+            if (empty($companyId) && empty($projectId)) {
+                return ['all' => true];
+            }
             if (is_numeric($projectId)) {
                 $persIds['project'][] = $projectId;
             } else if (is_numeric($companyId)) {

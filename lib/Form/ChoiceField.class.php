@@ -5,7 +5,7 @@ class Form_ChoiceField extends Form_Field{
     public function __construct($config){
         array_map(function($fname)use(&$config) {
             $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
-        }, ['checked']);
+        }, ['checked','labelClass']);
         parent::__construct($config);
         if(!isset($config['choices'])){
             throw new Exception("field {$this->name} need set choices");
@@ -15,7 +15,7 @@ class Form_ChoiceField extends Form_Field{
 
     public function to_html($is_new){
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>";
+        $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>";
         $html.="<div class='controls'>";
         foreach($this->choices as $choice){
             $value=$choice[0];

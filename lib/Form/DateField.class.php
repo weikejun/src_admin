@@ -2,6 +2,9 @@
 
 class Form_DateField extends Form_Field{
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['labelClass']);
         parent::__construct($config);
     }
 
@@ -13,7 +16,7 @@ class Form_DateField extends Form_Field{
         $class=$this->config['class'];
         $value=$this->value?htmlspecialchars($this->value):$this->config['default'];
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".$this->label."</label>".
+        $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>".
             "<div class='controls'>".
 //                                            '<div class="input-append date date-picker" data-date="12-02-2012" data-date-format="dd-mm-yyyy" data-date-viewmode="years">'.
                                                 '<input size="16" name='.$this->name.'  type="hidden" value="'.$value.'" readonly class="m-wrap m-ctrl-medium datepicker '.$class.'"'.($this->tempValue?" _value=$this->tempValue":'').'>';

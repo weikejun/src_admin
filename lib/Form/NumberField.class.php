@@ -2,6 +2,9 @@
 
 class Form_NumberField extends Form_Field{
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['readonly','help','default','placeholder','class','labelClass']);
         parent::__construct($config);
     }
 
@@ -14,7 +17,7 @@ class Form_NumberField extends Form_Field{
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $value=(!$this->value&&$this->value!==0)?$this->value:htmlspecialchars(number_format(floatval($this->value), 2), ENT_QUOTES);
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
+        $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>".
             "<div class='controls'>".
             "<input class='numeric $class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}'  value='".$value."'>";
         if($this->error){

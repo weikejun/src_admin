@@ -3,6 +3,9 @@
 class Form_ChoosemodelField extends Form_Field{
     private $modelClass;
     public function __construct($config){
+        array_map(function($fname)use(&$config) {
+            $config[$fname] = isset($config[$fname]) ? $config[$fname] : '';
+        }, ['labelClass']);
         parent::__construct($config);
         if(!class_exists($config['model'])){
             throw new ModelAndViewException("text:no this model:{$config['model']}",1,"text:no this model:{$config['model']}");
@@ -20,7 +23,7 @@ class Form_ChoosemodelField extends Form_Field{
             $model->select();
         }
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".$this->label."</label>".
+        $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>".
             "<div class='controls'>".
             '<input _name="'.$this->name.'" type="text" value="'.$model->$show.'" readonly class="span6 choosemodel'.($this->config['readonly']&&!$is_new?" readonly":"").'" model="'.str_replace("Model_", "", $this->modelClass).'" _show="'.$this->config['show'].'">'.
             '<input name="'.$this->name.'" type="hidden" value="'.$model->mId.'" readonly>';

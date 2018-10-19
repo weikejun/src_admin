@@ -28,6 +28,7 @@ class Model_DealDecision extends Base_DealDecision{
             ['同意','同意'],
             ['不同意','不同意'],
             ['弃权','弃权'],
+            ['不适用','不适用'],
         ];
     }
 }
