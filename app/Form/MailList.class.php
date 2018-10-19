@@ -15,6 +15,8 @@ class Form_MailList extends Form {
                     }
                     return htmlspecialchars($model->getData('status'));
                 }],
+                ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>true],
+                ['name'=>'content','label'=>'邮件内容','type'=>'textarea','default'=>null,'required'=>true],
                 ['name'=>'strategy_id','label'=>'策略ID','type'=>'choosemodel','model'=>'Model_MailStrategy','default'=>isset($_GET['strategy_id'])?$_GET['strategy_id']:'','required'=>true,'field'=>function($model){
                     $st = new Model_MailStrategy;
                     $st->addWhere('id', $model->getData('strategy_id'));
@@ -25,8 +27,6 @@ class Form_MailList extends Form {
                 ['name'=>'ref_id','label'=>'资源ID','type'=>'text','default'=>isset($_GET['ref_id'])?$_GET['ref_id']:'','required'=>true],
                 ['name'=>'mail_to','label'=>'收件人','type'=>'textarea','default'=>null,'required'=>true],
                 ['name'=>'mail_cc','label'=>'抄送','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>true],
-                ['name'=>'content','label'=>'邮件内容','type'=>'textarea','default'=>null,'required'=>true],
                 ['name'=>'create_type','label'=>'创建方式','type'=>'hidden','default'=>'手动','required'=>true],
                 ['name'=>'expect_time','label'=>'预计发送时间','type'=>'datetime','default'=>null,'field'=>function($model){
                     if ($model->getData('expect_time')) {

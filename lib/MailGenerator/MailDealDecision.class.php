@@ -34,7 +34,7 @@ class MailGenerator_MailDealDecision extends MailGenerator {
         }
         $deals = new Model_Project;
         $deals->addWhere('status', 'valid');
-        $deals->addWhere('update_time', strtotime('-1 days'), '>=');
+        //$deals->addWhere('update_time', strtotime('-1 days'), '>=');
         $deals->addWhere('id', $dealIds, 'IN');
         $deals->addWhere('decision_date', 0, '>');
         $deals = $deals->findMap('id');

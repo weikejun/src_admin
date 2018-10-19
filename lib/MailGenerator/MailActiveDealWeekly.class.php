@@ -72,14 +72,14 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
         $hour = date('H');
         $o = new stdClass;
         $o->mId = 0;
-        if ($weekday == 1 && $hour == 19 || IS_DEBUG) {
+        if ($weekday == 1 && $hour == 15 || IS_DEBUG) {
             return $this->_triggers = [$o];
         }
         return [];
     }
 
     protected function _genCycle($trigger) {
-        return [time() + 30 * 60];
+        return [time() + 3600];
     }
 
     public function generate() {

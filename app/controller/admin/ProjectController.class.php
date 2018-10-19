@@ -348,7 +348,26 @@ class ProjectController extends Page_Admin_Base {
                 $entity = new Model_Entity;
                 $entity->mId = $entityId;
                 $entity->select();
-                return $entity->getData('name');
+                $expr = [
+                    'project' => [
+                        'id' => $model->getData('id'),
+                        'fields' => [
+                            Form_Project::getFieldViewName('deal_type'),
+                            Form_Project::getFieldViewName('entity_id'),
+                            Form_Project::getFieldViewName('exit_entity_id'),
+                        ],
+                    ],
+                    'entity' => [
+                        'id' => $entity->getData('id'),
+                        'fields' => [
+                            Form_Entity::getFieldViewName('name'),
+                        ],
+                    ]
+                ];
+                return [
+                    'output' => $entity->getData('name'), 
+                    'expr'=>$expr
+                ];
             }],
             ['label' => '股份类型', 'field' => function($model) {
                 return $model->getData('new_old_stock');
