@@ -5,7 +5,7 @@
 <!-- BEGIN HEAD -->
 <head>
 	<meta charset="utf-8" />
-	<title>源码投资管理平台 | 登录页</title>
+	<title>源码法务管理平台 | 登录页</title>
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 	<meta content="" name="description" />
 	<meta content="" name="author" />
@@ -38,7 +38,7 @@
 	<div class="content">
 		<!-- BEGIN LOGIN FORM -->
 		<form class="form-vertical login-form" method="post" action="/admin/index/login">
-			<h3 class="form-title">源码投资管理平台</h3>
+			<h3 class="form-title">源码法务管理平台</h3>
 			<!--div class="alert alert-error hide">
 				<button class="close" data-dismiss="alert"></button>
 				<span>Enter any username and password.</span>

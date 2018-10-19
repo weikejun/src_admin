@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <h3>
-            源码投资管理平台
+            源码法务管理平台
         </h3>
     </div>
     <div class="row-fluid">
