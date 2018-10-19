@@ -36,6 +36,7 @@ class MailListController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('status'),'paramName'=>'status','choices'=>Model_MailList::getStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('strategy_id'),'paramName'=>'strategy_id','choices'=>$choiceSt,'class'=>'keep-all']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_MailList::getFieldViewName('expect_time'),'paramName'=>'expect_time','class'=>'keep-all']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_MailList::getFieldViewName('create_time'),'paramName'=>'create_time','class'=>'keep-all']),
         ];
 
         $this->single_actions=[

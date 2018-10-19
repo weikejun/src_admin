@@ -81,5 +81,65 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
     protected function _genCycle($trigger) {
         return [time() + 30 * 60];
     }
+
+    public function generate() {
+        foreach($this->_getTrigger() as $i => $trigger) {
+            $tplVars = $this->_setTplVars($trigger);
+
+            $this->_template->assign('vars', $tplVars);
+
+            $this->_clear($trigger->mId);
+
+            // 拆分邮件
+            $deals = $tplVars['data_list'];
+            $mailVars = [];
+            foreach(['manager', 'legal_person', 'finance_person'] as $member) {
+                $mailVars[$member] = [];
+                $sepLine = null;
+                foreach($deals as $deal) {
+                    if (!isset($deal->mId)) {
+                        $sepLine = $deal;
+                        continue;
+                    }
+                    if ($deal->getData($member)) {
+                        if (!isset($mailVars[$member][$deal->getData($member)])) {
+                            $mailVars[$member][$deal->getData($member)][] = $sepLine;
+                        }
+                        $mailVars[$member][$deal->getData($member)][] = $deal;
+                    }
+                }
+            }
+
+            foreach($this->_genCycle($trigger) as $cycle) {
+                if ($cycle < time()) continue;
+                $this->_genMail([
+                    'ref_id' => $trigger->mId,
+                    'to' => $this->_mailTpl->mMailTo,
+                    'cc' => $this->_mailTpl->mMailCc,
+                    'title' => $this->_mailTpl->mTitle,
+                    'content' => $this->_mailTpl->mContent,
+                    'expect_time' => $cycle,
+                ]);
+                // 生成拆分进度表邮件
+                $vars = $tplVars;
+                foreach($mailVars as $member => $person) {
+                    foreach($person as $personId => $lines) {
+                        $personMail = Model_Member::getEmailById($personId);
+                        $vars['data_list'] = $lines;
+                        $this->_template->assign('vars', $vars);
+                        $this->_genMail([
+                            'ref_id' => $trigger->mId,
+                            'to' => $personMail,
+                            'cc' => '',
+                            'title' => $this->_mailTpl->mTitle,
+                            'content' => $this->_mailTpl->mContent,
+                            'expect_time' => $cycle,
+                        ]);
+                    }
+                }
+            }
+
+        }
+    }
 }
 
