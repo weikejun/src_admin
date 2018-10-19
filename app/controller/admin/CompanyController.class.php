@@ -95,7 +95,9 @@ class CompanyController extends Page_Admin_Base {
         });
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();
-            $this->model->addWhere('id', $persIds['company'], 'IN', DBTable::ESCAPE);
+            if (!isset($persIds['all'])) {
+                $this->model->addWhere('id', $persIds['company'], 'IN', DBTable::ESCAPE);
+            }
         }
     }
 

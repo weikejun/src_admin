@@ -31,7 +31,9 @@ class MailSendController extends Page_Admin_Base {
         $model = new Model_Project;
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();
-            $model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+            if (!isset($persIds['all'])) {
+                $this->model->addWhereRaw('(company_id IN ('.implode(',', $persIds['company']).') OR id IN ('.implode(',', $persIds['project']).'))');
+            }
         }
         $model->addWhere('id', $_REQUEST['id']);
         $model->select();
