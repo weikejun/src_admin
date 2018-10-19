@@ -247,6 +247,11 @@ class Form_Project extends Form {
                     $entity = Page_Admin_Base::getResource($model->getData('entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
+                ['name'=>'ts_decision_amount','label'=>'TS/决策口径投资金额','type'=>'text','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('ts_decision_amount')) {
+                        return $model->getData('invest_currency') . ' ' . $model->getData('ts_decision_amount');
+                    }
+                },'help'=>'源码投资须填写，与收集投决相关'],
                 ['name'=>'our_amount','label'=>'源码合同投资金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('our_amount')) {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
@@ -255,7 +260,7 @@ class Form_Project extends Form {
                 ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
-                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','type'=>'text','default'=>null,'required'=>false,],
+                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','type'=>'text','default'=>null,'required'=>false,'help'=>'源码投资须填写，与收集投决相关'],
                 ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);

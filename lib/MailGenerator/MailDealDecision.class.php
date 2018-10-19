@@ -14,6 +14,12 @@ class MailGenerator_MailDealDecision extends MailGenerator {
                 $vars['project'][$key] = '（金额未填写）';
             }
         }
+        if (isset($vars['project']['entity_id'])) {
+            $entity = new Model_Entity;
+            $entity->mId = $vars['project']['entity_id'];
+            $entity->select();
+            $vars['project']['entity_id'] = $entity->mName;
+        }
         return $vars;
     }
 

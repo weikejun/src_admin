@@ -1,1 +1,1 @@
-alter table member add `sort` varchar(8) DEFAULT '99' COMMENT '排序';
+alter table `project` add `ts_decision_amount` text DEFAULT NULL COMMENT 'TS决策口径投资金额';

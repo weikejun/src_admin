@@ -189,6 +189,7 @@ CREATE TABLE `project` (
     `new_old_stock` varchar(32) DEFAULT NULL COMMENT '源码购新股老股', 
     `invest_currency` varchar(32) DEFAULT NULL COMMENT '源码投资计价货币', 
     `entity_id` varchar(32) DEFAULT NULL COMMENT '源码投资主体', 
+    `ts_decision_amount` text DEFAULT NULL COMMENT 'TS决策口径投资金额', 
     `our_amount` varchar(32) DEFAULT NULL COMMENT '源码合同投资金额', 
     `stocknum_get` varchar(32) DEFAULT NULL COMMENT '本主体投时持有本轮股数', 
     `invest_turn` varchar(32) DEFAULT NULL COMMENT '本主体购买股权所属轮次', 
