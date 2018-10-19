@@ -529,9 +529,10 @@ class ProjectController extends Page_Admin_Base {
                     }
                 }
                 foreach($dataList as $i => $dataItem) {
-                    if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                    //if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                    if ($dataItem->getData('stocknum_all'))
                         return sprintf('%.2f%%', $stockNum/$dataItem->getData('stocknum_all')*100);
-                    }
+                    //}
                 }
                 return '0.00%';
             }],
