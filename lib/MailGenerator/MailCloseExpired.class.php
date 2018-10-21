@@ -11,7 +11,7 @@ class MailGenerator_MailCloseExpired extends MailGenerator {
     }
 
     protected function _genCycle($trigger) {
-        for($i = 1; $i <= 12; $i++) {
+        for($i = 1; $i <= 12; $i = $i + 2) {
             $expect = $trigger->mCreateTime + $i * 30 * 86400;
             if ($expect > time()) {
                 return [$expect];

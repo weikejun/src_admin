@@ -354,7 +354,7 @@ CREATE TABLE `mail_strategy` (
     `mail_to` text DEFAULT NULL COMMENT '收件人', 
     `mail_cc` text DEFAULT NULL COMMENT '抄送', 
     `title` text DEFAULT NULL COMMENT '邮件标题', 
-    `content` text DEFAULT NULL COMMENT '邮件内容', 
+    `content` mediumtext DEFAULT NULL COMMENT '邮件内容', 
     `condition` text DEFAULT NULL COMMENT '条件说明', 
     `cycle` text DEFAULT NULL COMMENT '周期说明', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 

@@ -11,7 +11,7 @@ class Form_MailList extends Form {
                 ['name'=>'id','label'=>'邮件ID','type'=>'hidden','default'=>null,'required'=>false,],
                 ['name'=>'status','label'=>'发送状态','type'=>'choice','choices'=>Model_MailList::getStatusChoices(),'required'=>true,'default'=>'待发送','readonly'=>true,'field'=>function($model){
                     if ($model->getData('status') == '待发送') {
-                        return $model->getData('status').' <a href="/admin/mailList/send?id='.$model->getData('id').'">发送</a>';
+                        return $model->getData('status').' <a onclick="return confirm(\'确认发送ID='.$model->getData('id').'的邮件？\')" href="/admin/mailList/send?id='.$model->getData('id').'">发送</a>';
                     }
                     return htmlspecialchars($model->getData('status'));
                 }],
