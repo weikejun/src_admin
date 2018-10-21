@@ -96,14 +96,17 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
             foreach(['manager', 'legal_person', 'finance_person'] as $member) {
                 $mailVars[$member] = [];
                 $sepLine = null;
+                $sepMap = [];
                 foreach($deals as $deal) {
                     if (!isset($deal->mId)) {
                         $sepLine = $deal;
+                        $sepMap = [];
                         continue;
                     }
                     if ($deal->getData($member)) {
-                        if (!isset($mailVars[$member][$deal->getData($member)])) {
+                        if (!isset($sepMap[$member][$deal->getData($member)])) {
                             $mailVars[$member][$deal->getData($member)][] = $sepLine;
+                            $sepMap[$member][$deal->getData($member)] = true;
                         }
                         $mailVars[$member][$deal->getData($member)][] = $deal;
                     }
