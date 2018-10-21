@@ -1,0 +1,22 @@
+{%extends file="admin/empty_framework.tpl"%}
+{%block name="head" append%}
+<link href="/winphp/metronic/media/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
+{%/block%}
+{%block name="content"%}
+<div class="row-fluid">
+    <div class="span12" style="width:1360px;">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box light-grey">
+            <div class="portlet-title" style="border-top:1px solid #eee;">
+                <div class="caption"><i class="icon-globe"></i>{%$controllerText%}</div>
+            </div>
+            <div class="portlet-body">
+                <div><a href="/admin/company/memo?id={%$smarty.get.id%}&format=excel">导出excel</a></div>
+                {%include file="admin/company/_memo_table.html" inline%}
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+{%/block%}
+

@@ -15,8 +15,12 @@ class Form_MailList extends Form {
                     }
                     return htmlspecialchars($model->getData('status'));
                 }],
-                ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>true],
-                ['name'=>'content','label'=>'邮件内容','type'=>'textarea','default'=>null,'required'=>true],
+                ['name'=>'title','label'=>'邮件标题','type'=>'text','default'=>null,'required'=>true,'field'=>function($model) {
+                    return htmlspecialchars($model->getData('title'));
+                }],
+                ['name'=>'content','label'=>'邮件内容','type'=>'textarea','default'=>null,'required'=>true,'field'=>function($model){
+                    return strip_tags($model->getData('content'));
+                }],
                 ['name'=>'strategy_id','label'=>'策略ID','type'=>'choosemodel','model'=>'Model_MailStrategy','default'=>isset($_GET['strategy_id'])?$_GET['strategy_id']:'','required'=>true,'field'=>function($model){
                     $st = new Model_MailStrategy;
                     $st->addWhere('id', $model->getData('strategy_id'));

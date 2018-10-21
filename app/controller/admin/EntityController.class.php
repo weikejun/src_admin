@@ -41,12 +41,14 @@ class EntityController extends Page_Admin_Base {
         ];
 
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('name'),'paramName'=>'name','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('cate'),'paramName'=>'cate','choices'=>Model_Entity::getCateChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('id'),'paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('register_country'),'paramName'=>'register_country','fusion'=>true]),
-            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('cate'),'paramName'=>'cate','choices'=>Model_Entity::getCateChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('org_type'),'paramName'=>'org_type','choices'=>Model_Entity::getOrgTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
-            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices()]),
             new Page_Admin_TextForeignFilter(['name'=>'子主体','paramName'=>'sub_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'parent_id']),
             new Page_Admin_TextForeignFilter(['name'=>'父主体','paramName'=>'parent_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'sub_id']),
 

@@ -1,0 +1,293 @@
+<table border=1 cellpadding=0 cellspacing=0 style="border:1px solid #ccc;background-color:#fff;">
+    <tr height="40pt;">
+        <td style="padding:5px;" colspan="{%$vars.deal_cols%}">目标企业：{%$vars.company.name%}；项目简称：{%$vars.company.short%}；企业ID：{%$vars.company.id%}</td>
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">企业轮次</td>
+        {%foreach from=$vars.deals.turn_sub item=val%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">本轮交易类型</td>
+        {%foreach from=$vars.deals.deal_type item=val%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">交割日期</td>
+        {%foreach from=$vars.deals.close_date item=val%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="3">估值</td>
+        <td style="padding:5px;">投前</td>
+        {%foreach from=$vars.deals.pre_money item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">投后</td>
+        {%foreach from=$vars.deals.post_money item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">企业每股单价</td>
+        {%foreach from=$vars.deals._stock_price item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="4">投资方案</td>
+        <td style="padding:5px;">总融资额</td>
+        {%foreach from=$vars.deals.financing_amount item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">源码投退方案</td>
+        {%foreach from=$vars.deals.exit_entity_id item=val key=index%}
+        {%if $val%}
+        <td style="padding:5px;">{%$val%}-出售{%$vars.deals.exit_turn.$index%}-{%$vars.deals.exit_stock_property.$index%}：{%$vars.deals.exit_amount.$index%}</td>
+        {%elseif $vars.deals.entity_id.$index%}
+        <td style="padding:5px;">{%$vars.deals.entity_id.$index%}-{%$vars.deals.new_old_stock.$index%}-{%$vars.deals.stock_property.$index%}：{%$vars.deals.our_amount.$index%}</td>
+        {%else%}
+        <td style="padding:5px;"></td>
+        {%/if%}
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">其他主要投资人</td>
+        {%foreach from=$vars.deals.other_investor_summary item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">交易方案备注</td>
+        {%foreach from=$vars.deals.deal_memo item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="3">借款/CB</td>
+        <td style="padding:5px;">借款金额</td>
+        {%foreach from=$vars.deals.loan_entity_id item=val key=index%}
+        {%if $vars.deals.loan_cb == '有'%}
+        <td style="padding:5px;">{%$val%}：{%$vars.deals.loan_amount.$index%}</td>
+        {%else%}
+        <td style="padding:5px;"></td>
+        {%/if%}
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">借款处理</td>
+        {%foreach from=$vars.deals.loan_process item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">借款备注</td>
+        {%foreach from=$vars.deals.loan_memo item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="4">股权结构</td>
+        <td style="padding:5px;">源码本轮本主体股比</td>
+        {%foreach from=$vars.deals.exit_entity_id item=val key=index%}
+        {%if $val%}
+        <td style="padding:5px;">{%$val%}-出售{%$vars.deals.exit_turn.$index%}-{%$vars.deals.exit_stock_number.$index%}</td>
+        {%elseif $vars.deals.entity_id.$index%}
+        <td style="padding:5px;">{%$vars.deals.entity_id.$index%}-{%$vars.deals.invest_turn.$index%}-{%$vars.deals.stocknum_get.$index%}-{%$vars.deals._stock_ratio.$index%}{%$vars.deals.stock_property.$index%}</td>
+        {%else%}
+        <td style="padding:5px;"></td>
+        {%/if%}
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">源码本轮合计股比</td>
+        {%foreach from=$vars.deals._shareholding_turn_sum item=val key=index%}
+        <td style="padding:5px;">{%$val%}-{%$vars.deals._shareholding_ratio_turn_sum.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">主要创始人</td>
+        {%foreach from=$vars.deals.shareholding_founder item=val key=index%}
+        <td style="padding:5px;">{%$vars.company.main_founders%} {%$val%} {%$vars.deals._shareholding_ratio_founder.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">ESOP</td>
+        {%foreach from=$vars.deals.shareholding_esop item=val key=index%}
+        <td style="padding:5px;">{%$val%} {%$vars.deals._shareholding_ratio_esop.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">董事会</td>
+        {%foreach from=$vars.deals.board_number item=val key=index%}
+        <td style="padding:5px;">席位数量：{%$val%}，源码{%$vars.deals.our_board.$index%}董事会席位，{%$vars.deals.our_board_person.$index%}，{%$vars.deals.our_board_status.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">反稀释</td>
+        {%foreach from=$vars.deals.anti_dilution item=val key=index%}
+        <td style="padding:5px;">{%$val%}；{%$vars.deals.anti_dilution_way.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">优先清算权</td>
+        {%foreach from=$vars.deals.liquidation_preference item=val key=index%}
+        <td style="padding:5px;">{%$val%}；{%$vars.deals.liquidation_preference_way.$index%}；{%$vars.deals.liquidation_preference_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="3">一票否决权</td>
+        <td style="padding:5px;">董事会</td>
+        {%foreach from=$vars.deals.board_veto item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">股东会</td>
+        {%foreach from=$vars.deals.holder_veto item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">Veto备注</td>
+        {%foreach from=$vars.deals.veto_memo item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">优先认购权</td>
+        {%foreach from=$vars.deals.preemptive item=val key=index%}
+        <td style="padding:5px;">{%$val%}；{%$vars.deals.excess_preemptive.$index%}约定超额认购权；具体情况：{%$vars.deals.preemptive_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="2">Warrant</td>
+        <td style="padding:5px;">源码</td>
+        {%foreach from=$vars.deals.warrant item=val key=index%}
+        <td style="padding:5px;">源码{%$val%}Warrant；{%$vars.deals.warrant_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">其他人</td>
+        {%foreach from=$vars.deals.others_warrant item=val key=index%}
+        <td style="padding:5px;">其他人{%$val%}Warrant；{%$vars.deals.others_warrant_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">优先受让权</td>
+        {%foreach from=$vars.deals.pri_assignee item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">共售权</td>
+        {%foreach from=$vars.deals.sell_together item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">对非创始人普通股优先权</td>
+        {%foreach from=$vars.deals.pri_common_stock item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">信息权</td>
+        {%foreach from=$vars.deals.info_right item=val key=index%}
+        <td style="padding:5px;">源码{%$val%}信息权；信息权门槛：{%$vars.deals.info_right_threshold.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">优分红权</td>
+        {%foreach from=$vars.deals.dividends_preference item=val key=index%}
+        <td style="padding:5px;">源码{%$val%}分红权，具体情况：{%$vars.deals.dividends_preference_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">拖售权</td>
+        {%foreach from=$vars.deals.drag_along item=val key=index%}
+        <td style="padding:5px;">{%$val%}；源码对拖售权{%$vars.deals.drag_along_veto.$index%}独立Veto；{%$vars.deals.drag_along_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">QIPO</td>
+        {%foreach from=$vars.deals.qualified_ipo_period item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">回购权</td>
+        {%foreach from=$vars.deals.buyback_right item=val key=index%}
+        <td style="padding:5px;">{%$val%}；回购义务人为{%$vars.deals.buyback_obligor.$index%}；{%$vars.deals.buyback_standard.$index%}；{%$vars.deals.buyback_date.$index%}；其他情况：{%$vars.deals.buyback_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">Vesting</td>
+        {%foreach from=$vars.deals.founder_vesting item=val key=index%}
+        <td style="padding:5px;">{%$val%}；{%$vars.deals.founder_vesting_expiration.$index%}；{%$vars.deals.founder_vesting_memo.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="2">股权转让限制</td>
+        <td style="padding:5px;">对创始人</td>
+        {%foreach from=$vars.deals.founder_transfer_limit item=val key=index%}
+        <td style="padding:5px;">{%$val%}；{%$vars.deals.founder_transfer_limit_abstract.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">对投资人</td>
+        {%foreach from=$vars.deals.stock_transfer_limit item=val key=index%}
+        <td style="padding:5px;">{%$val%}；其他限制：{%$vars.deals.stock_transfer_limit_other.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" rowspan="6">其他</td>
+        <td style="padding:5px;">源码投资限制</td>
+        {%foreach from=$vars.deals.invest_competitor_limit item=val key=index%}
+        <td style="padding:5px;">投资竞品：{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">源码其他限制</td>
+        {%foreach from=$vars.deals.limit_other item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">源码权利备注</td>
+        {%foreach from=$vars.deals.rights_memo item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">各方权义备注</td>
+        {%foreach from=$vars.deals.each_side_duty item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">风险提示</td>
+        {%foreach from=$vars.deals.risk_tip item=val key=index%}
+        <td style="padding:5px;">{%$val%}<br />{%$vars.deals.risk_management_view.$index%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;">未决事项</td>
+        {%foreach from=$vars.deals.pending_detail item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">工作备忘</td>
+        {%foreach from=$vars.deals._memo item=val key=index%}
+        <td style="padding:5px;">{%$val%}</td>
+        {%/foreach%}
+    </tr>
+</table>

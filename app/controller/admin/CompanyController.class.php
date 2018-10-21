@@ -28,6 +28,9 @@ class CompanyController extends Page_Admin_Base {
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=company&res_id='.$model->mId;
             }],
+            ['label'=>'memo','target'=>'_blank','action'=>function($model){
+                return '/admin/company/memo?id='.$model->mId;
+            }],
         ];
 
         $this->single_actions_default = [
@@ -231,6 +234,58 @@ class CompanyController extends Page_Admin_Base {
         $_REQUEST['action'] = 'read';
         $this->indexAction();
         return ['admin/check.html', $this->_assigned];
+    }
+
+    public function memoAction() {
+        $reqModel = WinRequest::getModel();
+        $reqModel['controllerText'] = '目标企业 > Memo';
+        WinRequest::setModel($reqModel);
+        if(isset($_GET['id'])) {
+            $company = new Model_Company;
+            $company->addWhere('id', $_GET['id']);
+            $company->select();
+            $deals = new Model_Project;
+            $deals->addWhere('status', 'valid');
+            $deals->addWhere('company_id', $_GET['id']);
+            $deals->orderBy('id','ASC');
+            $deals = $deals->find();
+            $vars['deals'] = [];
+            foreach($deals as $i => $deal) {
+                // 字段统一赋值
+                foreach($deal->getData() as $fKey => $fVal) {
+                    $vars['deals'][$fKey][$i] = $fVal;
+                }
+                // 合计持股数
+                foreach(Form_Project::getFieldsMap() as $fieldArr) {
+                    if (is_callable($fieldArr['field'])) {
+                        $vars['deals'][$fieldArr['name']][$i] = call_user_func($fieldArr['field'], $deal);
+                    }
+                }
+                // 工作备忘
+                $vars['deals']['_memo'][$i] = '';
+                $memos = new Model_DealMemo;
+                $memos->addWhere('project_id', $deal->getData('id'));
+                $memos = $memos->find();
+                foreach($memos as $memo) {
+                    $vars['deals']['_memo'][$i] .= date('Ymd H:i:s', $memo->getData('update_time'))." ".$memo->getData('operator')." ".$memo->getData('title')." ".$memo->getData('content').'<br />';
+                }
+            }
+            $vars['company'] = $company->getData();
+            $vars['deal_cols'] = 2 + count($deals);
+            $vars['deal_count'] = count($deals);
+        }
+        if (isset($_GET['format']) && $_GET['format'] == 'excel') {
+            $template = DefaultViewSetting::getTemplate();
+            DefaultViewSetting::setTemplateSetting($template);
+            $template->assign(['vars' => $vars]);
+            $tableStr = $template->fetch('admin/company/_memo_table.html');
+            $tableStr = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv=Content-Type content="text/html; charset=utf-8" /><meta name=ProgId content=Excel.Sheet /><meta name=Generator content="Microsoft Excel 11" /></head><body>'.$tableStr.'</body></html>';
+            header("Content-Type: application/vnd.ms-excel");
+            header("Content-Disposition: attachment; filename=".$vars['company']['short']."_memo.xls");
+            print $tableStr;
+            die();
+        }
+        return ['admin/company/memo.html', ['vars' => $vars]];
     }
 }
 

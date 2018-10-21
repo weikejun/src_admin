@@ -9,7 +9,7 @@ class MailListController extends Page_Admin_Base {
         $this->model->orderBy('expect_time', 'DESC');
         WinRequest::mergeModel(array(
             'controllerText' => "提醒邮件列表",
-            'tableWrap' => '3096px',
+            'tableWrap' => '2500px',
         ));
 
         $this->form=new Form_MailList();
