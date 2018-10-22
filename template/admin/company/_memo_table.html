@@ -407,10 +407,10 @@
         <td style="padding:5px;">对投资人股转</td>
         {%foreach from=$vars.deals.stock_transfer_limit item=val key=index%}
         {%if $vars.combine.stock_transfer_limit.$index && $vars.combine.stock_transfer_limit_other %}
-        <td style="padding:5px;" colspan="{%$vars.combine.stock_transfer_limit.$index%}">{%$val%}股转限制；其他股转限制：{%$vars.deals.stock_transfer_limit_other.$index%}</td>
+        <td style="padding:5px;" colspan="{%$vars.combine.stock_transfer_limit.$index%}">{%$val%}股转竞品限制；其他股转限制：{%$vars.deals.stock_transfer_limit_other.$index%}</td>
         {%elseif $vars.deals.__stock_transfer_limit.$index && $vars.deals.__stock_transfer_limit_other %}
         {%else%}
-        <td style="padding:5px;">{%$val%}股转限制；其他股转限制：{%$vars.deals.stock_transfer_limit_other.$index%}</td>
+        <td style="padding:5px;">{%$val%}股转竞品限制；其他股转限制：{%$vars.deals.stock_transfer_limit_other.$index%}</td>
         {%/if%}
         {%/foreach%}
     </tr>
