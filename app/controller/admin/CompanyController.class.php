@@ -276,7 +276,7 @@ class CompanyController extends Page_Admin_Base {
             $j = 1;
             while($i < count($vars['deals']['turn_sub'])) {
                 $dealArr = $vars['deals'];
-                if ($dealArr['turn_sub'][$i] == $dealArr['turn_sub'][$i + $j]) { // 同轮次
+                if (isset($dealArr['turn_sub'][$i + $j]) && $dealArr['turn_sub'][$i] == $dealArr['turn_sub'][$i + $j]) { // 同轮次
                     foreach($dealArr as $fKey => $fArr) {
                         if ($dealArr[$fKey][$i] == $dealArr[$fKey][$i + $j]) {
                             if (isset($combine[$fKey][$i])) {
