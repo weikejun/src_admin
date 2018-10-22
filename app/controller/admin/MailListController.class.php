@@ -33,6 +33,7 @@ class MailListController extends Page_Admin_Base {
             $choiceSt[] = [$st->mId, $sKey];
         }
         $this->list_filter = [
+            new Page_Admin_TextFilter(['name'=>Form_MailList::getFieldViewName('title'),'paramName'=>'title','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('status'),'paramName'=>'status','choices'=>Model_MailList::getStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_MailList::getFieldViewName('strategy_id'),'paramName'=>'strategy_id','choices'=>$choiceSt,'class'=>'keep-all']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_MailList::getFieldViewName('expect_time'),'paramName'=>'expect_time','class'=>'keep-all']),

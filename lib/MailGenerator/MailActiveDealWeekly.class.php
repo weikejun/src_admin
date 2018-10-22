@@ -21,6 +21,7 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
+            Form_Project::getFieldViewName('deal_memo') => [],
             Form_Project::getFieldViewName('post_money') => [],
             Form_Project::getFieldViewName('our_amount') => [],
             Form_Project::getFieldViewName('financing_amount') => [],

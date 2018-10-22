@@ -140,7 +140,7 @@ class Form_Project extends Form {
                     $progs = $progs ? $progs : [];
                     $output = '';
                     foreach($progs as $i => $prog) {
-                        if ($i > 1) continue;
+                        if ($i > 2) continue;
                         $output .= $prog . "<br />";
                     }
                     return $output;
@@ -151,7 +151,7 @@ class Form_Project extends Form {
                     $progs = $progs ? $progs : [];
                     $output = '';
                     foreach($progs as $i => $prog) {
-                        if ($i > 1) continue;
+                        if ($i > 2) continue;
                         $output .= $prog . "<br />";
                     }
                     return $output;

@@ -89,7 +89,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
-            Form_Project::getFieldViewName('trade_schedule_memo') => [],
+            Form_Project::getFieldViewName('deal_memo') => [],
             Form_Project::getFieldViewName('proj_status') => [],
             Form_Project::getFieldViewName('pre_money') => [],
             Form_Project::getFieldViewName('post_money') => [],
@@ -109,6 +109,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('finance_person') => [],
             Form_Project::getFieldViewName('law_firm') => [],
             Form_Project::getFieldViewName('lawyer_fee') => [],
+            Form_Project::getFieldViewName('trade_schedule_memo') => [],
         ];
 
         $list_display = $this->list_display;
@@ -148,7 +149,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
-            Form_Project::getFieldViewName('trade_schedule_memo') => [],
+            Form_Project::getFieldViewName('deal_memo') => [],
             Form_Project::getFieldViewName('post_money') => [],
             Form_Project::getFieldViewName('our_amount') => [],
             Form_Project::getFieldViewName('financing_amount') => [],
@@ -157,6 +158,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('loan_schedule') => [],
             Form_Project::getFieldViewName('expect_pay_schedule') => [],
             Form_Project::getFieldViewName('manager') => [],
+            Form_Project::getFieldViewName('trade_schedule_memo') => [],
         ];
 
         $list_display = $this->list_display;

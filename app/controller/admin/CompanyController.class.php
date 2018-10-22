@@ -270,9 +270,35 @@ class CompanyController extends Page_Admin_Base {
                     $vars['deals']['_memo'][$i] .= date('Ymd H:i:s', $memo->getData('update_time'))." ".$memo->getData('operator')." ".$memo->getData('title')." ".$memo->getData('content').'<br />';
                 }
             }
+            // 合并列
+            $combine = [];
+            $i = 0;
+            $j = 1;
+            while($i < count($vars['deals']['turn_sub'])) {
+                $dealArr = $vars['deals'];
+                if ($dealArr['turn_sub'][$i] == $dealArr['turn_sub'][$i + $j]) { // 同轮次
+                    foreach($dealArr as $fKey => $fArr) {
+                        if ($dealArr[$fKey][$i] == $dealArr[$fKey][$i + $j]) {
+                            if (isset($combine[$fKey][$i])) {
+                                $combine[$fKey][$i]++;
+                            }
+                            else {
+                                $combine[$fKey][$i] = 2;
+                            }
+                            $vars['deals']["__$fKey"][$i + $j] = true;
+                        }
+                    }
+                    $j++;
+                    continue;
+                }  
+
+                $i = $i + $j; // 比较下一轮次
+                $j = 1;
+            }
             $vars['company'] = $company->getData();
             $vars['deal_cols'] = 2 + count($deals);
             $vars['deal_count'] = count($deals);
+            $vars['combine'] = $combine;
         }
         if (isset($_GET['format']) && $_GET['format'] == 'excel') {
             $template = DefaultViewSetting::getTemplate();
