@@ -213,6 +213,24 @@
 					</a>
 				</li>
                 {%/if%}
+                {%if $c=='KnowledgeCate'%}
+				<li class="start {%if $executeInfo.controllerName=='KnowledgeCate'%} active {%/if%}">
+					<a href="/admin/KnowledgeCate">
+					<i class="icon-home"></i> 
+                    <span class="title">知识大类</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='KnowledgeList'%}
+				<li class="start {%if $executeInfo.controllerName=='KnowledgeList'%} active {%/if%}">
+					<a href="/admin/KnowledgeList">
+					<i class="icon-home"></i> 
+                    <span class="title">知识列表</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
                 {%/foreach%}
 			</ul>
 

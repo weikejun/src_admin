@@ -28,6 +28,8 @@ class ACL{
         "PermissionAction",
         "ItemPermission",
         "SystemLog",
+        "KnowledgeCate",
+        "KnowledgeList",
     );
 
     public static function checkPermission($permissionName){
