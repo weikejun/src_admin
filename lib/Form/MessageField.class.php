@@ -7,6 +7,8 @@ class Form_MessageField extends Form_Field{
 
     public function to_html($is_new){
         $class=$this->config['class'];
+        $rows=isset($this->config['rows']) ? 'rows='.$this->config['rows'] : ''; 
+        $cols=isset($this->config['cols']) ? 'cols='.$this->config['cols'] : '';
         $arr=json_decode($this->value(),true);
         $arr=$arr?$arr:[];
         $links=array_map(function($a){
@@ -18,7 +20,7 @@ class Form_MessageField extends Form_Field{
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
             "<div class='controls'>".
             $links.
-            '<textarea class="span6 array_input '.$class.'"/></textarea><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
+            '<textarea '.$rows.' '.$cols.' class="span6 array_input '.$class.'"/></textarea><a class="json_array_add btn" href="javascript:;" class="button">添加</a>'.
             "<input type='hidden' name='{$this->name}'  value='".$this->value."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
@@ -43,6 +45,7 @@ EOF;
     }
     
     public function foot_js(){
+        $adminName = Model_Admin::getCurrentAdmin()->mName;
         $js=<<<EOF
 <script>
 (function(){
@@ -52,13 +55,22 @@ EOF;
     window.__init_json_array_field=true;
 
     var upload_btn;
-    var input_date = function() {
-        var dt = new Date();
-        var month = dt.getMonth() + 1;
-        month = month < 10 ? (0+''+month) : month;
-        var day = dt.getDate();
-        day = day < 10 ? (0+''+day) : day;
-        return dt.getFullYear() + '.' + month + '.' + day + ' ';
+    var input_headline = function(input) {
+        var dateStr = '';
+        if (input.hasClass('with_date')) {
+            var dt = new Date();
+            var month = dt.getMonth() + 1;
+            month = month < 10 ? (0+''+month) : month;
+            var day = dt.getDate();
+            day = day < 10 ? (0+''+day) : day;
+            dateStr = dt.getFullYear() + '.' + month + '.' + day + ' ';
+        }
+        var nameStr = '';
+        if (input.hasClass('with_name')) {
+            nameStr = '{$adminName}';
+        }
+        var outStr = (dateStr+'-'+nameStr).replace(/(\-$|^-)/, '');
+        return outStr.length > 0 ? (outStr + ' ') : '';
     }
     var htmlEscape = function(str) {
         return str ? str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : str;
@@ -68,7 +80,7 @@ EOF;
         var input=upload_btn.prev("textarea");
         var link_list;
         link_list=$(upload_btn).prevAll("ul");
-        link_list.prepend("<li><a target='_blank' href='javascript:;'>"+(input.hasClass('with_date')?input_date():'')+htmlEscape(input.val())+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button></li>");
+        link_list.prepend("<li><a target='_blank' href='javascript:;'>"+input_headline(input)+htmlEscape(input.val())+"</a><button type='button' class='close' aria-hidden='true'>&nbsp;</button></li>");
         update_input_value();
         input.val("");
         return false;

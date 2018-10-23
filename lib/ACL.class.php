@@ -19,6 +19,9 @@ class ACL{
         "DealMemo",
         "MailSend",
         "DataStat",
+        "KnowledgeCate",
+        "KnowledgeList",
+        "ContractTerm",
         "Admin",
         "Action",
         "Permission",
@@ -28,8 +31,6 @@ class ACL{
         "PermissionAction",
         "ItemPermission",
         "SystemLog",
-        "KnowledgeCate",
-        "KnowledgeList",
     );
 
     public static function checkPermission($permissionName){

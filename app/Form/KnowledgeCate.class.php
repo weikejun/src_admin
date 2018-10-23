@@ -13,11 +13,19 @@ class Form_KnowledgeCate extends Form {
                 ['name'=>'_item_num','label'=>'知识点数量','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = new Model_KnowledgeList;
                     $list->addWhere('cate_id', $model->getData('id'));
-                    return "<div class=data_item><a href='/admin/knowledgeList?__filter=".urlencode("cate_id=$model->mId")."'> ".$list->count()."</div>";
+                    $count = $list->count();
+                    return '<a href="/admin/knowledgeList?__filter='.urlencode("cate_id=".$model->mId).'">'.$count."</a>";
                 }],
-                ['name'=>'content','label'=>'知识内容','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'reference','label'=>'参考资料','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'memo','label'=>'备注','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'description','label'=>'大类说明','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'memo','label'=>'备注','type'=>'message','class'=>'with_date','field'=>function($model) {
+                    $memos = json_decode($model->getData('memo'));
+                    $memos = $memos ? $memos : [];
+                    $output = '';
+                    foreach($memos as $i => $memo) {
+                        $output .= $memo . "<br />";
+                    }
+                    return $output;
+                }],
                 ['name'=>'operator','label'=>'创建人','type'=>'text','default'=>Model_Admin::getCurrentAdmin()->mName,'required'=>true,'readonly'=>true],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','auto_update'=>true,'default'=>time(),'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));

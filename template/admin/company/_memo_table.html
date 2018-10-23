@@ -419,10 +419,10 @@
         <td style="padding:5px;">源码投资限制</td>
         {%foreach from=$vars.deals.invest_competitor_limit item=val key=index%}
         {%if $vars.combine.invest_competitor_limit.$index %}
-        <td style="padding:5px;" colspan="{%$vars.combine.invest_competitor_limit.$index%}">投资竞品：{%$val%}</td>
+        <td style="padding:5px;" colspan="{%$vars.combine.invest_competitor_limit.$index%}">投资竞品限制：{%$val%}</td>
         {%elseif $vars.deals.__invest_competitor_limit.$index %}
         {%else%}
-        <td style="padding:5px;">投资竞品：{%$val%}</td>
+        <td style="padding:5px;">投资竞品限制：{%$val%}</td>
         {%/if%}
         {%/foreach%}
     </tr>

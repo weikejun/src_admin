@@ -41,7 +41,7 @@ class KnowledgeListController extends Page_Admin_Base {
         ];
 
         $this->list_filter = [
-            new Page_Admin_TextForeignFilter(['name'=>Form_KnowledgeList::getFieldViewName('_cate_name'),'paramName'=>'name|cate_id','foreignTable'=>'Model_KnowledgeCate','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_KnowledgeList::getFieldViewName('cate_id'),'paramName'=>'name|cate_id','foreignTable'=>'Model_KnowledgeCate','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('content'),'paramName'=>'content','fusion'=>true,'class'=>'keep-all']),

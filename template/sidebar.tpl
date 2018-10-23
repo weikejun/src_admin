@@ -231,6 +231,15 @@
 					</a>
 				</li>
                 {%/if%}
+                {%if $c=='ContractTerm'%}
+				<li class="start {%if $executeInfo.controllerName=='ContractTerm'%} active {%/if%}">
+					<a href="/admin/ContractTerm">
+					<i class="icon-home"></i> 
+                    <span class="title">合同条款</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
                 {%/foreach%}
 			</ul>
 
