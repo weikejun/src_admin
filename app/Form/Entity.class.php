@@ -90,7 +90,6 @@ class Form_Entity extends Form {
                 ['name'=>'org_type','label'=>'组织形式','type'=>'selectInput','choices'=>Model_Entity::getOrgTypeChoices(),'required'=>false],
                 ['name'=>'co_investment','label'=>'co-investment','type'=>'choice','choices'=>Model_Entity::getCoInvestmentChoices(),'default'=>'否','required'=>false,'help'=>'主基金都不是，非主基金的和财务同事确认。'],
                 ['name'=>'currency','label'=>'资金货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>'USD','required'=>false,],
-                ['name'=>'memo','label'=>'备注','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'fund_name','label'=>'基金简称','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'fund_code','label'=>'基金代码','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'association_cate','label'=>'协会分类','type'=>'selectInput','choices'=>Model_Entity::getAssociationCateChoices(),'default'=>null,'required'=>false],

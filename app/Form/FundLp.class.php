@@ -62,7 +62,7 @@ class Form_FundLp extends Form {
                 ['name'=>'subscribe_currency','label'=>'认缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_amount','label'=>'认缴金额','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'paid_currency','label'=>'实缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'message','default'=>null,'required'=>false],
                 ['name'=>'latest_paid_date','label'=>'最新实缴日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('latest_paid_date')) {
                         return date('Ymd', $model->getData('latest_paid_date'));
