@@ -68,7 +68,7 @@ class ItemPermissionController extends Page_Admin_Base {
 
         $this->list_filter=array(
             new Page_Admin_TextForeignFilter(['name'=>'授权用户','paramName'=>'name|admin_id','foreignTable'=>'Model_Admin','fusion'=>true]),
-            new Page_Admin_TextForeignFilter(['name'=>'授权项目','paramName'=>'name|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>'授权项目','paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>'授权交易','paramName'=>'project_id','fusion'=>false]),
         );
 
