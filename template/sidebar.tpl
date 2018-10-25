@@ -103,6 +103,15 @@
                     </a>
                 </li>
                 {%/if%}
+                {%if $c=='FundLp'%}
+                <li class="start {%if $executeInfo.controllerName=='FundLp'%} active {%/if%}">
+                    <a href="/admin/fundLp">
+                        <i class="icon-home"></i>
+                        <span class="title">基金LP表</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
                 {%if $c=='Member'%}
                 <li class="start {%if $executeInfo.controllerName=='Member'%} active {%/if%}">
                     <a href="/admin/member">
@@ -204,6 +213,15 @@
 					</a>
 				</li>
                 {%/if%}
+                {%if $c=='entityPermission'%}
+				<li class="start {%if $executeInfo.controllerName=='entityPermission'%} active {%/if%}">
+					<a href="/admin/entityPermission">
+					<i class="icon-home"></i> 
+                    <span class="title">基金LP授权</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
                 {%if $c=='SystemLog'%}
 				<li class="start {%if $executeInfo.controllerName=='SystemLog'%} active {%/if%}">
 					<a href="/admin/systemLog">
@@ -227,6 +245,15 @@
 					<a href="/admin/KnowledgeList">
 					<i class="icon-home"></i> 
                     <span class="title">知识列表</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='ContractTerm'%}
+				<li class="start {%if $executeInfo.controllerName=='ContractTerm'%} active {%/if%}">
+					<a href="/admin/ContractTerm">
+					<i class="icon-home"></i> 
+                    <span class="title">合同条款</span>
 					<span class="selected"></span>
 					</a>
 				</li>

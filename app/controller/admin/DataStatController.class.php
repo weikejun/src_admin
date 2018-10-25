@@ -7,7 +7,7 @@ class DataStatController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         WinRequest::mergeModel(array(
             'controllerText'=>"数据统计",
-            'tableWrap' => '2048px',
+            'tableWrap' => '3096px',
         ));
 
         $this->hide_action_new = true;
@@ -283,7 +283,7 @@ class DataStatController extends Page_Admin_Base {
                 }
                 return $output;
             }],
-            ['label'=>'源码投资总额','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
+            ['label'=>'源码投资总额（合同）','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
                 $amounts = [];
                 foreach($deals as $i => $deal) {
                     if ($deal->getData($timeField) >= strtotime($selectDate['start'])
@@ -300,13 +300,47 @@ class DataStatController extends Page_Admin_Base {
                 }
                 return $output;
             }],
-            ['label'=>'源码退出总额','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
+            ['label'=>'源码投资总额（支付）','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
+                $amounts = [];
+                foreach($deals as $i => $deal) {
+                    if ($deal->getData($timeField) >= strtotime($selectDate['start'])
+                        && $deal->getData($timeField) <= strtotime($selectDate['end'])
+                        && strpos($deal->getData('deal_type'),'源码投') !== false) {
+                        $amounts[$deal->getData('invest_currency')] += $deal->getData('pay_amount');
+                    }
+                }
+                ksort($amounts);
+                $output = '';
+                foreach($amounts as $currency => $amount) {
+                    $amount = number_format($amount, 2);
+                    $output .= "$currency $amount <br />";
+                }
+                return $output;
+            }],
+            ['label'=>'源码退出总额（合同）','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
                 $amounts = [];
                 foreach($deals as $i => $deal) {
                     if ($deal->getData($timeField) >= strtotime($selectDate['start'])
                         && $deal->getData($timeField) <= strtotime($selectDate['end'])
                         && strpos($deal->getData('deal_type'),'源码退') !== false) {
                         $amounts[$deal->getData('exit_currency')] += $deal->getData('exit_amount');
+                    }
+                }
+                ksort($amounts);
+                $output = '';
+                foreach($amounts as $currency => $amount) {
+                    $amount = number_format($amount, 2);
+                    $output .= "$currency $amount <br />";
+                }
+                return $output;
+            }],
+            ['label'=>'源码退出总额（实收）','field'=>function($model)use(&$deals, &$timeField, &$selectDate){
+                $amounts = [];
+                foreach($deals as $i => $deal) {
+                    if ($deal->getData($timeField) >= strtotime($selectDate['start'])
+                        && $deal->getData($timeField) <= strtotime($selectDate['end'])
+                        && strpos($deal->getData('deal_type'),'源码退') !== false) {
+                        $amounts[$deal->getData('exit_currency')] += $deal->getData('exit_receive_amount');
                     }
                 }
                 ksort($amounts);
@@ -424,8 +458,8 @@ class DataStatController extends Page_Admin_Base {
         $this->_initIndex();
         $exeInfo = WinRequest::getModel('executeInfo');
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		header("Content-type: text/x-csv");
-		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".csv");
+		header("Content-type: application/vnd.ms-excel");
+		header("Content-Disposition:filename=".$exeInfo['controllerName']."_".date('YmdHis').".xls");
 
         $row=[];
         foreach ($this->list_display as $list_item){

@@ -7,6 +7,7 @@ class ACL{
         "Project",
         "Entity",
         "EntityRel",
+        "FundLp",
         "Member",
         "ActiveDeal",
         "DealDecision",
@@ -19,6 +20,10 @@ class ACL{
         "DealMemo",
         "MailSend",
         "DataStat",
+        "KnowledgeCate",
+        "KnowledgeList",
+        "ContractTerm",
+        "ContractTermCheck",
         "Admin",
         "Action",
         "Permission",
@@ -27,9 +32,8 @@ class ACL{
         "RolePermission",
         "PermissionAction",
         "ItemPermission",
+        "entityPermission",
         "SystemLog",
-        "KnowledgeCate",
-        "KnowledgeList",
     );
 
     public static function checkPermission($permissionName){

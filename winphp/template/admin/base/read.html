@@ -200,7 +200,7 @@
         $(document).scroll();
     });
     $('#main_form').keydown(function(evt) {
-        if (evt.which == 13) {
+        if (evt.which == 13 && evt.target.tagName.toLowerCase() != 'textarea') {
             return false;
         }
     });

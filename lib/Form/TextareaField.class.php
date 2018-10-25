@@ -7,10 +7,12 @@ class Form_TextareaField extends Form_Field{
 
     public function to_html($is_new){
         $class=$this->config['class'];
+        $rows=isset($this->config['rows']) ? 'rows='.$this->config['rows'] : ''; 
+        $cols=isset($this->config['cols']) ? 'cols='.$this->config['cols'] : '';
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
+        $html.= "<label class='control-label'>".$this->label."</label>".
             "<div class='controls'>".
-            "<textarea class='$class span6' name='{$this->name}'>{$this->value}</textarea>";
+            "<textarea class='$class span6' $rows $cols name='{$this->name}'>{$this->value}</textarea>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         }

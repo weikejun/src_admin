@@ -24,6 +24,12 @@ class Form_DealDecision extends Form {
                 ['name'=>'_project_turn_sub','label'=>Form_Project::getFieldViewName('turn_sub'),'type'=>'rawText','field'=>function($model)use(&$project,&$company) {
                     return $project->mId ? $project->getData('turn_sub') : '';
                 }],
+                ['name'=>'_project_ts_decision_amount','label'=>Form_Project::getFieldViewName('ts_decision_amount'),'type'=>'rawText','field'=>function($model)use(&$project,&$company) {
+                    return $project->mId ? $project->getData('ts_decision_amount') : '';
+                }],
+                ['name'=>'_project_ts_ratio','label'=>Form_Project::getFieldViewName('ts_ratio'),'type'=>'rawText','field'=>function($model)use(&$project,&$company) {
+                    return $project->mId ? $project->getData('ts_ratio') : '';
+                }],
                 ['name'=>'partner','label'=>'审批人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>true,'field'=>function($model) {
                     return Model_Member::getNameById($model->getData('partner')).':'.Model_Member::getEmailById($model->getData('partner'));
                 }],

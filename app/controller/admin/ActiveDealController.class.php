@@ -38,9 +38,9 @@ class ActiveDealController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('manager'),'paramName'=>'manager','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('legal_person'),'paramName'=>'legal_person','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'finance_person','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('manager'),'paramName'=>'name|manager','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('legal_person'),'paramName'=>'name|legal_person','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('decision_date'),'paramName'=>'decision_date']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('expect_sign_date'),'paramName'=>'expect_sign_date']),
         );
@@ -79,7 +79,7 @@ class ActiveDealController extends Page_Admin_Base {
 
         $this->model->addWhere('status', 'valid');
         WinRequest::mergeModel(array(
-            'tableWrap' => '3072px',
+            'tableWrap' => '4192px',
         ));
 
         $briefFields = [
@@ -87,6 +87,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('new_follow') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
             Form_Project::getFieldViewName('deal_memo') => [],
@@ -110,6 +111,9 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('law_firm') => [],
             Form_Project::getFieldViewName('lawyer_fee') => [],
             Form_Project::getFieldViewName('trade_schedule_memo') => [],
+            Form_Project::getFieldViewName('_loan_update') => [],
+            Form_Project::getFieldViewName('_close_update') => [],
+            Form_Project::getFieldViewName('_compliance_review') => [],
         ];
 
         $list_display = $this->list_display;
@@ -139,7 +143,7 @@ class ActiveDealController extends Page_Admin_Base {
 
         $this->model->addWhere('status', 'valid');
         WinRequest::mergeModel(array(
-            'tableWrap' => '2048px',
+            'tableWrap' => '3096px',
         ));
 
         $briefFields = [
@@ -147,6 +151,7 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('new_follow') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('deal_progress') => [],
             Form_Project::getFieldViewName('deal_memo') => [],

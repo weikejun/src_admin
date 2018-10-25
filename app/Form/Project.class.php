@@ -111,7 +111,7 @@ class Form_Project extends Form {
                         return date('Ymd', $model->getData('expect_sign_date'));
                     }
                 }],
-                ['name'=>'expect_pay_schedule','label'=>'预计交割付款安排','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'expect_pay_schedule','label'=>'预计交割付款/收款时间','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'_close_update','label'=>'交割update','type'=>'rawText','required'=>false,'field'=>function($model)use(&$mailSt){
                     $stId = $mailSt['交割update']->mId;
                     $mail = new Model_MailList;

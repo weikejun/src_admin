@@ -64,9 +64,9 @@
 
         <thead>
             <tr role="row">
-                <th><input type="checkbox" id="selectAll"/></th>
                 {%if ($pageAdmin->hide_item_op)%}
                 {%else%}
+                <th><input type="checkbox" id="selectAll"/></th>
                 <th>操作</th>
                 {%/if%}
                 {%foreach from=$pageAdmin->list_display item=list_item%}
