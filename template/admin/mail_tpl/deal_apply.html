@@ -17,7 +17,7 @@
 <p>10.源码退出方案：</p>
 {%if $vars.deal_type == '源码退出'%}
 <p>（1）<span>{%$vars.exit_entity_id%}</span>，退出金额为<span>{%$vars.exit_amount%}</span>，出售Post<span>{%$vars._exit_stock_ratio%}</span>的<span>{%$vars.exit_turn%}</span>轮股权。本次退出回报倍数为<span>{%$vars._exit_return_rate%}</span>。</p>
-<p>（2）源码退出款收取时间：</p>
+<p>（2）源码退出款收取时间：<span>{%$vars.expect_pay_schedule%}</span></p>
 <p>（3）源码合计：本次交易交割后，源码各主体合计持股<span>{%$vars._shareholding_ratio_turn_sum%}</span>。</p>
 {%/if%}
 <p>11.公司治理</p>

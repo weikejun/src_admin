@@ -103,6 +103,15 @@
                     </a>
                 </li>
                 {%/if%}
+                {%if $c=='FundLp'%}
+                <li class="start {%if $executeInfo.controllerName=='FundLp'%} active {%/if%}">
+                    <a href="/admin/fundLp">
+                        <i class="icon-home"></i>
+                        <span class="title">基金LP表</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
                 {%if $c=='Member'%}
                 <li class="start {%if $executeInfo.controllerName=='Member'%} active {%/if%}">
                     <a href="/admin/member">
@@ -200,6 +209,15 @@
 					<a href="/admin/ItemPermission">
 					<i class="icon-home"></i> 
                     <span class="title">交易记录授权</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='entityPermission'%}
+				<li class="start {%if $executeInfo.controllerName=='entityPermission'%} active {%/if%}">
+					<a href="/admin/entityPermission">
+					<i class="icon-home"></i> 
+                    <span class="title">基金LP授权</span>
 					<span class="selected"></span>
 					</a>
 				</li>

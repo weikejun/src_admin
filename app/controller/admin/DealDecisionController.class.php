@@ -11,7 +11,7 @@ class DealDecisionController extends Page_Admin_Base {
         $this->model->orderBy('decision', 'ASC');
         WinRequest::mergeModel(array(
             'controllerText'=>"投决意见",
-            'tableWrap' => '1536px',
+            'tableWrap' => '2048px',
         ));
 
         $this->form=new Form_DealDecision();

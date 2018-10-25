@@ -27,7 +27,7 @@ class KnowledgeListController extends Page_Admin_Base {
 
         $this->single_actions_default = [
             'edit' => true,
-            'delete' => true,
+            'delete' => false,
         ];
 
         $this->single_actions = [

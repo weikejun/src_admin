@@ -17,7 +17,7 @@ class Form_RawTextField extends Form_Field{
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label>".
-            "<div class='controls'><div class='raw-text'><i>$value</i></div>";
+            "<div class='controls'><div class='raw-text'><pre>$value</pre></div>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         } else {

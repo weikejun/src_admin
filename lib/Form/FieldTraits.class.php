@@ -5,13 +5,13 @@ Trait Form_FieldTraits {
     public function format_value() {
         $value = $this->value();
         $model = WinRequest::getModel('modelData');
-        if (is_callable($this->config['field']) && $model) {
+        if (isset($this->config['field']) && is_callable($this->config['field']) && $model) {
             $value = call_user_func($this->config['field'], $model);
             if (!$value && $value !== 0) {
                 $value = '无记录';
             }
         }
-        return htmlspecialchars($value);
+        return "<pre>".htmlspecialchars($value)."</pre>";
     }
 
     public function to_text(){

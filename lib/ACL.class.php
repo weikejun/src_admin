@@ -7,6 +7,7 @@ class ACL{
         "Project",
         "Entity",
         "EntityRel",
+        "FundLp",
         "Member",
         "ActiveDeal",
         "DealDecision",
@@ -30,6 +31,7 @@ class ACL{
         "RolePermission",
         "PermissionAction",
         "ItemPermission",
+        "entityPermission",
         "SystemLog",
     );
 

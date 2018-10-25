@@ -12,7 +12,7 @@ class EntityController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",
             '_preview' => true,
-            'tableWrap' => "2048px",
+            'tableWrap' => "6400px",
         ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
@@ -51,7 +51,6 @@ class EntityController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
             new Page_Admin_TextForeignFilter(['name'=>'子主体','paramName'=>'sub_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'parent_id']),
             new Page_Admin_TextForeignFilter(['name'=>'父主体','paramName'=>'parent_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'sub_id']),
-
         );
         $this->multi_actions=array(
             ['label'=>'导出csv','required'=>false,'action'=>'/admin/entity/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],
@@ -98,7 +97,7 @@ class EntityController extends Page_Admin_Base {
     public function checkAction() {
         $_REQUEST['action'] = 'read';
         $this->indexAction();
-        return ['admin/project/check.html', $this->_assigned];
+        return ['admin/check.html', $this->_assigned];
     }
 }
 

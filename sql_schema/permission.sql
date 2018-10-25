@@ -188,3 +188,22 @@ CREATE TABLE `item_permission` (
   UNIQUE KEY `admin_uni` (`admin_id`,`company_id`, `project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `entity_permission`
+--
+
+DROP TABLE IF EXISTS `entity_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `entity_permission` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `admin_id` varchar(16) DEFAULT NULL,
+  `entity_id` varchar(16) DEFAULT NULL,
+  `lp_id` varchar(16) DEFAULT NULL,
+  `operator_id` varchar(16) DEFAULT NULL,
+  `create_time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `admin_uni` (`admin_id`,`entity_id`, `lp_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;

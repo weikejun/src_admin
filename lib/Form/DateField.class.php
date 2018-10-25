@@ -8,10 +8,6 @@ class Form_DateField extends Form_Field{
         parent::__construct($config);
     }
 
-    public function format_value() {
-        return $this->value() ? date('Ymd', $this->value()) : '';
-    }
-
     public function to_html($is_new){
         $class=$this->config['class'];
         $value=$this->value?htmlspecialchars($this->value):$this->config['default'];

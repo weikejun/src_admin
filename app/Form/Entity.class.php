@@ -69,6 +69,20 @@ class Form_Entity extends Form {
                     }
                     return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('parent_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&parent_id='.$model->mId.'"> +新增 </a></span>';
                 }],
+                ['name'=>'_lp_direct_num','label'=>'LP直接人数','type'=>'rawText','field'=>function($model)use(&$lps) {
+                    $lps = new Model_FundLp;
+                    $lps->addWhere('entity_id', $model->getData('id'));
+                    $lps->addWhere('is_exit', '未退伙');
+                    $lps = $lps->find();
+                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('is_exit=未退伙&entity_id='.$model->mId).'">'.count($lps).'</a>';
+                }],
+                ['name'=>'_lp_through_num','label'=>'LP穿透人数','type'=>'rawText','field'=>function($model)use(&$lps) {
+                    $num = 0;
+                    foreach($lps as $lp) {
+                        $num += $lp->getData('through_num');
+                    }
+                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('is_exit=未退伙&entity_id='.$model->mId).'">'.$num.'</a>';
+                }],
                 ['name'=>'register_country','label'=>'注册国/省','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'description','label'=>'描述','type'=>'text','default'=>null,'required'=>false,'help'=>'示例“人民币早期一期主基金”，“美元专项基金SPV”'],
                 ['name'=>'cate','label'=>'类型','type'=>'selectInput','choices'=>Model_Entity::getCateChoices(),'required'=>false],
@@ -77,6 +91,75 @@ class Form_Entity extends Form {
                 ['name'=>'co_investment','label'=>'co-investment','type'=>'choice','choices'=>Model_Entity::getCoInvestmentChoices(),'default'=>'否','required'=>false,'help'=>'主基金都不是，非主基金的和财务同事确认。'],
                 ['name'=>'currency','label'=>'资金货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>'USD','required'=>false,],
                 ['name'=>'memo','label'=>'备注','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'fund_name','label'=>'基金简称','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'fund_code','label'=>'基金代码','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'association_cate','label'=>'协会分类','type'=>'selectInput','choices'=>Model_Entity::getAssociationCateChoices(),'default'=>null,'required'=>false],
+                ['name'=>'fund_manager_entity','label'=>'基金管理人','type'=>'choosemodel','model'=>'Model_Entity','default'=>null,'required'=>false,'field'=>function($model) {
+                    $en = new Model_Entity;
+                    $en->addWhere('id', $model->getData('fund_manager_entity'));
+                    $en->select();
+                    return $en->mName;
+                }],
+                ['name'=>'dm_material','label'=>'推介资料','type'=>'choice','choices'=>Model_Entity::getDmMaterialChoices(),'default'=>null,'required'=>false],
+                ['name'=>'rank_material','label'=>'产品评级资料','type'=>'choice','choices'=>Model_Entity::getRankMaterialChoices(),'default'=>null,'required'=>false],
+                ['name'=>'init_delivery_date','label'=>'首次交割日','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('init_delivery_date'))
+                        return date('Ymd', $model->getData('init_delivery_date'));
+                }],
+                ['name'=>'final_delivery_date','label'=>'最终交割日','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('final_delivery_date'))
+                        return date('Ymd', $model->getData('final_delivery_date'));
+                }],
+                ['name'=>'mfn','label'=>'MFN','type'=>'choice','choices'=>Model_Entity::getMfnChoices(),'default'=>null,'required'=>false],
+                ['name'=>'fdpe_code','label'=>'Form D prefiling and EDGAR code','type'=>'choice','choices'=>Model_Entity::getFdpeCodeChoices(),'default'=>null,'required'=>false],
+                ['name'=>'trusteeship','label'=>'托管情况','type'=>'choice','choices'=>Model_Entity::getTrusteeshipChoices(),'default'=>null,'required'=>false],
+                ['name'=>'put_on_record','label'=>'备案情况','type'=>'choice','choices'=>Model_Entity::getPutOnRecordChoices(),'default'=>null,'required'=>false],
+                ['name'=>'aic_change','label'=>'工商变更','type'=>'choice','choices'=>Model_Entity::getAicChangeChoices(),'default'=>null,'required'=>false],
+                ['name'=>'aic_change_desc','label'=>'工商变更说明','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'disclosure','label'=>'信息披露','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'key_terms','label'=>'核心条款','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'duration','label'=>'存续年限','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'invest_deadline','label'=>'投资截止时间','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('invest_deadline'))
+                        return date('Ymd', $model->getData('invest_deadline'));
+                }],
+                ['name'=>'duration_deadline','label'=>'存续截止时间','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('duration_deadline'))
+                        return date('Ymd', $model->getData('duration_deadline'));
+                }],
+                ['name'=>'duration_delay_deadline','label'=>'存续延长截止时间','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('duration_delay_deadline'))
+                        return date('Ymd', $model->getData('duration_delay_deadline'));
+                }],
+                ['name'=>'to_do','label'=>'Todo','type'=>'choice','choices'=>Model_Entity::getToDoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'to_do_detail','label'=>'Todo事项','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false],
+                ['name'=>'manager','label'=>'总负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('manager')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'ir_person','label'=>'IR负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('ir_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'finance_person','label'=>'财务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('finance_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'legal_person','label'=>'法务负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('legal_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'compliance_list','label'=>'合规要求清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'filing_list','label'=>'filing所需清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'memo','label'=>'备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'null'=>false,'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
                 }],
