@@ -157,8 +157,26 @@ class Form_Entity extends Form {
                         return isset($members[$person]) ? $members[$person]->mName : $person;
                     }
                 }],
-                ['name'=>'compliance_list','label'=>'合规要求清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
-                ['name'=>'filing_list','label'=>'filing所需清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'compliance_list','label'=>'合规要求清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('filing_list'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
+                ['name'=>'filing_list','label'=>'filing所需清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('filing_list'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'memo','label'=>'备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'null'=>false,'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));

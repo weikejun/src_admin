@@ -23,6 +23,7 @@ class ACL{
         "KnowledgeCate",
         "KnowledgeList",
         "ContractTerm",
+        "ContractTermCheck",
         "Admin",
         "Action",
         "Permission",
