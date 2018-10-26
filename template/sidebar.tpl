@@ -103,6 +103,15 @@
                     </a>
                 </li>
                 {%/if%}
+                {%if $c=='FundEntity'%}
+                <li class="start {%if $executeInfo.controllerName=='FundEntity'%} active {%/if%}">
+                    <a href="/admin/fundEntity">
+                        <i class="icon-home"></i>
+                        <span class="title">基金主体</span>
+                        <span class="selected"></span>
+                    </a>
+                </li>
+                {%/if%}
                 {%if $c=='FundLp'%}
                 <li class="start {%if $executeInfo.controllerName=='FundLp'%} active {%/if%}">
                     <a href="/admin/fundLp">
@@ -254,6 +263,15 @@
 					<a href="/admin/ContractTerm">
 					<i class="icon-home"></i> 
                     <span class="title">合同条款</span>
+					<span class="selected"></span>
+					</a>
+				</li>
+                {%/if%}
+                {%if $c=='ContractTermCheck'%}
+				<li class="start {%if $executeInfo.controllerName=='ContractTermCheck'%} active {%/if%}">
+					<a href="/admin/ContractTermCheck">
+					<i class="icon-home"></i> 
+                    <span class="title">合同条款审核</span>
 					<span class="selected"></span>
 					</a>
 				</li>

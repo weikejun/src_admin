@@ -9,6 +9,7 @@ class Form_ContractTerm extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'编号','type'=>'hidden','default'=>null,'required'=>false,],
+                //['name'=>'status','label'=>'审核状态','type'=>'text','default'=>'未审核','required'=>false,],
                 ['name'=>'trade_doc','label'=>'交易文件','type'=>'selectInput','choices'=>Model_ContractTerm::getTradeDocChoices(),'default'=>null,'required'=>false,],
                 ['name'=>'term','label'=>'所属条款','type'=>'text','default'=>null,'required'=>false,],
                 ['name'=>'term_detail','label'=>'条款具体事项','type'=>'text','default'=>null,'required'=>false,],
@@ -100,7 +101,11 @@ class Form_ContractTerm extends Form {
         return self::$fieldsMap;
     }
 
-    public function __construct() {
+    public function __construct($check) {
+        if ($check) {
+            self::getFieldsMap();
+            self::$fieldsMap[] = ['name'=>'status','label'=>'审核状态','type'=>'choice','choices'=>Model_ContractTerm::getStatusChoices(),'default'=>'已审核','required'=>false];
+        }
         parent::__construct(self::getFieldsMap());
     }
 

@@ -11,6 +11,7 @@ class KnowledgeListController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"知识列表",
             'tableWrap' => '2048px',
+            '_preview' => true,
         ));
 
         $this->form=new Form_KnowledgeList();

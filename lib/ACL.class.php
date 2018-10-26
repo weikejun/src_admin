@@ -7,6 +7,7 @@ class ACL{
         "Project",
         "Entity",
         "EntityRel",
+        "FundEntity",
         "FundLp",
         "Member",
         "ActiveDeal",

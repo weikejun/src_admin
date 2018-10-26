@@ -63,6 +63,12 @@ class FundLpController extends Page_Admin_Base {
         ));
 
         $this->model=new Model_FundLp();
+        if (!Model_AdminGroup::isCurrentAdminRoot()) {
+            $persIds = Model_EntityPermission::getAdminPerm();
+            if (!isset($persIds['all'])) {
+                $this->model->addWhereRaw('(entity_id IN ('.implode(',', $persIds['entity']).') OR id IN ('.implode(',', $persIds['lp']).'))');
+            }
+        }
     }
 
     private function _initFullAction() {

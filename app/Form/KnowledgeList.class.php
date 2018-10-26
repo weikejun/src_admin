@@ -23,7 +23,7 @@ class Form_KnowledgeList extends Form {
                     $memos = $memos ? $memos : [];
                     $output = '';
                     foreach($memos as $i => $memo) {
-                        $output .= $memo . "<br />";
+                        $output .= $memo . "\n";
                     }
                     return $output;
                 }],

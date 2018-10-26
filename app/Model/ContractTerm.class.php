@@ -9,4 +9,11 @@ class Model_ContractTerm extends Base_ContractTerm{
             ['ETA','ETA'],
         ];
     }
+
+    public static function getStatusChoices() {
+        return [
+            ['未审核','未审核'],
+            ['已审核','已审核'],
+        ];
+    }
 }

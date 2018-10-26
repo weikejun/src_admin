@@ -7,9 +7,13 @@ class ContractTermController extends Page_Admin_Base {
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_ContractTerm();
+        $this->model->addWhere('status', '已审核');
         $this->model->orderBy('id', 'DESC');
+        $this->model->on('before_update', function($model) {
+            $model->mStatus = "未审核";
+        });
         WinRequest::mergeModel(array(
-            'controllerText'=>"知识列表",
+            'controllerText'=>"合同条款",
             'tableWrap' => '4096px',
             '_preview' => true,
         ));
@@ -39,6 +43,7 @@ class ContractTermController extends Page_Admin_Base {
 
         $this->multi_actions = [
             array('label'=>'导出csv','required'=>false,'action'=>'/admin/ContractTerm/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),
+            array('label'=>'我的未审核合同','required'=>false,'action'=>'/admin/ContractTerm/pending'),
         ];
 
         $this->list_filter = [
@@ -55,6 +60,30 @@ class ContractTermController extends Page_Admin_Base {
         $_REQUEST['action'] = 'read';
         $this->indexAction();
         return ['admin/check.html', $this->_assigned];
+    }
+
+    public function pendingAction() {
+        $this->model=new Model_ContractTerm();
+        $this->model->addWhere('status', '未审核');
+        $this->model->addWhere('operator', Model_Admin::getCurrentAdmin()->mName);
+        $this->model->orderBy('id', 'DESC');
+        $this->single_actions_default = [
+            'edit' => false,
+            'delete' => false,
+        ];
+
+        $this->hide_item_op = true;
+
+        $this->single_actions = [
+            ['label'=>'预览','action'=>function($model){
+                return '/admin/contractTerm/check?id='.$model->mId;
+            }],
+        ];
+
+        $this->multi_actions = [
+            array('label'=>'已审核合同','required'=>false,'action'=>'/admin/ContractTerm/'),
+        ];
+        return $this->indexAction();
     }
 }
 
