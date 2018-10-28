@@ -80,7 +80,7 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
     }
 
     protected function _genCycle($trigger) {
-        return [time() + 3600];
+        return [time() + 5400];
     }
 
     public function generate() {
