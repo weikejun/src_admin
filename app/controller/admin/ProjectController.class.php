@@ -77,6 +77,7 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('pending'),'paramName'=>'pending','choices'=>Model_Project::getPendingChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>'交割情况','paramName'=>'_close_status','choices'=>[['未交割','未交割', 'and (`close_date` = 0 or `close_date` is NULL)']]]),
             new Page_Admin_ChoiceFilter(['name'=>'合同/支付金额','paramName'=>'_contract_pay_diff','choices'=>[['投资不一致','投资不一致', 'and `our_amount` != `pay_amount`'],['退出不一致','退出不一致', 'and `exit_amount` != `exit_receive_amount`']]]),
+            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['date','决策/启动、交割、签约日期空缺', 'and (`decision_date` = "" or `decision_date` is null or `decision_date` = 0 or `close_date` = "" or `close_date` is null or `close_date` = 0 or `kickoff_date` is null or `kickoff_date` = "" or `kickoff_date` = 0)'],['member','项目成员空缺','and (`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "" or `deal_manager` = "")']]]),
         );
     }
 

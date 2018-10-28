@@ -73,7 +73,7 @@ class Form_Project extends Form {
                 ['name'=>'company_character','label'=>'目标企业性质','type'=>'selectInput','choices'=>Model_Project::getCompanyCharacterChoices(),'required'=>false,],
                 ['name'=>'item_status','label'=>'整理状态','type'=>'choice','choices'=>Model_Project::getItemStatusChoices(),'required'=>true,'default'=>'待完成'],
                 ['name'=>'field-index-status','label'=>'本轮交易状态','type'=>'seperator'],
-                ['name'=>'decision_date','label'=>'决策日期','labelClass'=>'text-error','type'=>'date','default'=>null,'required'=>false,'help'=>'TS日期（优先）、IC决策日期、投资部告知的大致日期，尽量精确到月','field'=>function($model){
+                ['name'=>'decision_date','label'=>'决策/启动日期','labelClass'=>'text-error','type'=>'date','default'=>null,'required'=>false,'help'=>'源码投：TS日（优先）、IC决策日、投资部告知的大致日期；源码不投：启动日','field'=>function($model){
                     if ($model->getData('decision_date')) {
                         return date('Ymd', $model->getData('decision_date'));
                     }
@@ -134,7 +134,7 @@ class Form_Project extends Form {
                         return "提醒邮件".$mail->getData('status');
                     }
                 }],
-                ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
+                ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false,],
                 ['name'=>'deal_progress','label'=>'交易进展','type'=>'message','class'=>'with_date','field'=>function($model) {
                     $progs = json_decode($model->getData('deal_progress'));
                     $progs = $progs ? $progs : [];
@@ -172,7 +172,7 @@ class Form_Project extends Form {
                     return $model->getData('dilution_rate');
                 },'placeholder'=>'自动计算字段，如不填写则预览、列表可见'],
                 ['name'=>'raw_stock_memo','label'=>'老股转让情况备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
-                ['name'=>'deal_memo','label'=>'本轮交易方案备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea'],
+                ['name'=>'deal_memo','label'=>'本轮交易方案备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'default'=>null,'required'=>false,'input'=>'textarea','rows'=>10],
                 ['name'=>'field-index-value','label'=>'企业估值及每股单价','type'=>'seperator'],
                 ['name'=>'value_currency','label'=>'估值计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'pre_money','label'=>'企业投前估值','type'=>'number','required'=>false,'field'=>function($model){
@@ -257,6 +257,21 @@ class Form_Project extends Form {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
                     }
                 }],
+                ['name'=>'_entitys_shareholding','label'=>'本轮源码各主体投资总额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
+                    $amounts = [];
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('turn_sub') == $model->getData('turn_sub')
+                            && $deal->getData('deal_type') == $model->getData('deal_type')
+                            && strpos($model->getData('deal_type'), '源码投') !== false) {
+                            $amounts[$deal->getData('invest_currency')] += $deal->getData('our_amount');
+                        }
+                    }
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        $output .= "$currency " . number_format($amount) . "\n";
+                    }
+                    return $output;
+                }],
                 ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_get'))
                         return number_format($model->getData('stocknum_get'));
@@ -265,6 +280,19 @@ class Form_Project extends Form {
                 ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);
+                    }
+                }],
+                ['name'=>'_entitys_shareholding_ratio','label'=>'本轮源码各主体总投股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$deals){
+                    $amount = 0;
+                    foreach($deals as $i => $deal) {
+                        if ($deal->getData('turn_sub') == $model->getData('turn_sub')
+                            && $deal->getData('deal_type') == $model->getData('deal_type')
+                            && strpos($model->getData('deal_type'), '源码投') !== false) {
+                            $amount += $deal->getData('stocknum_get');
+                        }
+                    }
+                    if ($model->getData('stocknum_all')) {
+                        return sprintf('%.2f%%', $amount / $model->getData('stocknum_all') * 100);
                     }
                 }],
                 ['name'=>'invest_turn','label'=>'本主体购股轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,],

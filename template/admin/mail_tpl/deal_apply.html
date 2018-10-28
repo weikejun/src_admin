@@ -10,7 +10,8 @@
 <p>7.源码投资方案：</p>
 {%if $vars.deal_type == '企业融资（源码投）'%}
 <p>（1）源码本轮：<span>{%$vars.entity_id%}</span>，投资金额为<span>{%$vars.our_amount%}</span>，其中<span>{%$vars.our_amount%}</span>买<span>{%$vars.invest_turn%}</span>轮<span>{%$vars.new_old_stock%}</span>（post<span>{%$vars._stock_ratio%}</span>）</p>
-<p>（2）源码投资款支付时间：<span>{%$vars.expect_pay_schedule%}</span></p>
+<p>（2）源码本轮投资合计：各主体投资总额<span>{%$vars._entitys_shareholding%}</span>，总投资股比<span>{%$vars._entitys_shareholding_ratio%}</span></p>
+<p>（3）源码投资款支付时间：<span>{%$vars.expect_pay_schedule%}</span></p>
 {%/if%}
 <p>8.本轮交割后源码各主体合计持股：<span>{%$vars._shareholding_ratio_sum%}</span></p>
 <p>9.本轮其他主要投资人金额与Post比例：<span>{%$vars.other_investor_summary%}</span></p>

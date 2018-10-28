@@ -1,30 +1,32 @@
-alter table `action` modify `name` varchar(64) DEFAULT NULL COMMENT '权限名';
+/******************** create table ********************/
 
-alter table `entity` add `fund_name` varchar(64) DEFAULT NULL COMMENT '基金简称';
-alter table `entity` add `fund_code` varchar(64) DEFAULT NULL COMMENT '基金代码';
-alter table `entity` add `association_cate` varchar(32) DEFAULT NULL COMMENT '协会分类';
-alter table `entity` add `fund_manager_entity` varchar(16) DEFAULT NULL COMMENT '基金管理人';
-alter table `entity` add `dm_material` varchar(8) DEFAULT NULL COMMENT '推介资料';
-alter table `entity` add `rank_material` varchar(8) DEFAULT NULL COMMENT '产品评级资料';
-alter table `entity` add `init_delivery_date` varchar(11) DEFAULT NULL COMMENT '首次交割日';
-alter table `entity` add `final_delivery_date` varchar(11) DEFAULT NULL COMMENT '最终交割日';
-alter table `entity` add `mfn` varchar(8) DEFAULT NULL COMMENT 'MFN';
-alter table `entity` add `fdpe_code` varchar(8) DEFAULT NULL COMMENT 'Form D prefiling and EDGAR code';
-alter table `entity` add `trusteeship` varchar(8) DEFAULT NULL COMMENT '托管情况';
-alter table `entity` add `put_on_record` varchar(8) DEFAULT NULL COMMENT '备案情况';
-alter table `entity` add `aic_change` varchar(8) DEFAULT NULL COMMENT '工商变更'; 
-alter table `entity` add `aic_change_desc` text DEFAULT NULL COMMENT '工商变更说明';
-alter table `entity` add `disclosure` text DEFAULT NULL COMMENT '信息披露';
-alter table `entity` add `key_terms` text DEFAULT NULL COMMENT '核心条款';
-alter table `entity` add `duration` varchar(16) DEFAULT NULL COMMENT '存续年限';
-alter table `entity` add `invest_deadline` varchar(11) DEFAULT NULL COMMENT '投资截止时间'; 
-alter table `entity` add `duration_deadline` varchar(11) DEFAULT NULL COMMENT '存续截止时间'; 
-alter table `entity` add `duration_delay_deadline` varchar(11) DEFAULT NULL COMMENT '存续延长截止时间';
-alter table `entity` add `to_do` varchar(8) DEFAULT NULL COMMENT 'Todo'; 
-alter table `entity` add `to_do_detail` text DEFAULT NULL COMMENT 'Todo事项'; 
-alter table `entity` add `compliance_list` text DEFAULT NULL COMMENT '合规要求清单';
-alter table `entity` add `filing_list` text DEFAULT NULL COMMENT '所需filing清单';
-alter table `entity` add `manager` varchar(16) DEFAULT NULL COMMENT '总负责人';
-alter table `entity` add `ir_person` varchar(16) DEFAULT NULL COMMENT '总负责人';
-alter table `entity` add `finance_person` varchar(16) DEFAULT NULL COMMENT '总负责人';
-alter table `entity` add `legal_person` varchar(16) DEFAULT NULL COMMENT '总负责人';
+DROP TABLE IF EXISTS `compliance_matter`; /*合规审查事项*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `compliance_matter` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `entity_id` int(11) DEFAULT NULL COMMENT '主体ID',
+    `limit_source` varchar(16) DEFAULT NULL COMMENT '限制来源', 
+    `category` varchar(16) DEFAULT NULL COMMENT '事项分类', 
+    `sub_cate` varchar(256) DEFAULT NULL COMMENT '事项小类', 
+    `scene` text DEFAULT NULL COMMENT '场景', 
+    `requirement` text DEFAULT NULL COMMENT '具体要求', 
+    `expiry` varchar(32) DEFAULT NULL COMMENT '有效期', 
+    `action` varchar(16) DEFAULT NULL COMMENT '动作要求', 
+    `action_target` varchar(16) DEFAULT NULL COMMENT '动作对象', 
+    `terms_from` varchar(256) DEFAULT NULL COMMENT '条款来源', 
+    `terms_raw` text DEFAULT NULL COMMENT '条款原文', 
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/******************** alter table ********************/
+
+
+/******************** insert ********************/
+insert into `action` (`name`,`description`,`update_time`,`create_time`) values('compliancematter_index','合规审查事项：首页',unix_timestamp(),unix_timestamp()),('compliancematter_read','合规审查事项：查看',unix_timestamp(),unix_timestamp()),('compliancematter_create','合规审查事项：新增',unix_timestamp(),unix_timestamp()),('compliancematter_update','合规审查事项：更新',unix_timestamp(),unix_timestamp()),('compliancematter_delete','合规审查事项：删除',unix_timestamp(),unix_timestamp()),('compliancematter_search','合规审查事项：搜索',unix_timestamp(),unix_timestamp()),('compliancematter_select','合规审查事项：选择页',unix_timestamp(),unix_timestamp()),('compliancematter_select_search','合规审查事项：选择页搜索',unix_timestamp(),unix_timestamp()),('compliancematter_check_index','合规审查事项：预览页',unix_timestamp(),unix_timestamp()),('compliancematter_exporttocsv_index','合规审查事项：导出csv',unix_timestamp(),unix_timestamp()) on duplicate key update `name`=`name`;
+
+insert into `permission` (`name`,`description`,`create_time`) values('compliance_matter_read','合规审查事项：模块读',unix_timestamp()),('compliance_matter_write','合规审查事项：模块写',unix_timestamp()) on duplicate key update `create_time`=unix_timestamp();
+
+/******************** update ********************/

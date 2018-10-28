@@ -10,6 +10,8 @@ class Form_SelectInputField extends Form_Field{
 
     public function to_html($is_new){
         $class=$this->config['class'];
+        $rows=isset($this->config['rows']) ? 'rows='.$this->config['rows'] : ''; 
+        $cols=isset($this->config['cols']) ? 'cols='.$this->config['cols'] : '';
         $optionStr = '';
         for($i = 0; $i < count($this->config['choices']); $i++) {
             $optionStr .= '<div class="select-choice">'.$this->config['choices'][$i][0].'</div>';
@@ -17,7 +19,7 @@ class Form_SelectInputField extends Form_Field{
         $html="<div class='control-group'>";
         $value=htmlspecialchars($this->value, ENT_QUOTES);
         if ($this->config['input'] == 'textarea') {
-            $inputStr = "<textarea class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." name='{$this->name}'>$value</textarea>";
+            $inputStr = "<textarea $rows $cols class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." name='{$this->name}'>$value</textarea>";
         } else {
             $inputStr = "<input class='$class span6 select-input' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' autocomplete=off  value='".$value."' placeholder='".(isset($this->config['placeholder'])?$this->config['placeholder']:'')."'>";
         }

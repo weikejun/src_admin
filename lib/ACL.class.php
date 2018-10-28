@@ -5,22 +5,21 @@ class ACL{
         "交易版块" => [
             "目标企业" => ["Company","CompanyMemo"],
             "交易记录" => ["Project","DealMemo"],
-            "投资主体" => ["Entity","EntityRel"],
             "Active进度表" => ["ActiveDeal"],
+            "投资主体" => ["Entity","EntityRel"],
             "投决意见" => ["DealDecision"],
-            "合规审查事项" => ["ComplianceMatter"],
-            "项目成员" => ["Member"],
+            "模板邮件" => ["MailSend"],
             "交易记录授权" => ["ItemPermission"],
         ],
         "基金版块" => [
             "基金主体" => ["FundEntity"],
             "基金LP表" => ["FundLp"],
+            "合规审查事项" => ["ComplianceMatter"],
             "基金LP授权" => ["EntityPermission"],
         ],
         "邮件版块" => [
             "提醒邮件策略" => ["MailStrategy"],
             "提醒邮件列表" => ["MailList"],
-            "模板邮件" => ["MailSend"],
         ],
         "知识版块" => [
             "知识大类" => ["KnowledgeCate"],
@@ -30,6 +29,7 @@ class ACL{
         ],
         "权限版块" => [
             "系统用户" => ["Admin"],
+            "项目成员" => ["Member"],
             "权限" => ["Action"],
             "权限组" => ["Permission"],
             "角色" => ["Group"],
