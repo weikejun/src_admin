@@ -18,7 +18,7 @@ class ContractTermController extends Page_Admin_Base {
             '_preview' => true,
         ));
 
-        $this->form=new Form_ContractTerm();
+        $this->form=new Form_ContractTerm(false);
         $this->list_display = [];
         foreach(Form_ContractTerm::getFieldsMap() as $field) {
             if ($field['type'] != 'seperator') {

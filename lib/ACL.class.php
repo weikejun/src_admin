@@ -2,39 +2,45 @@
 
 class ACL{
     public static $controllers = array(
-        "IndexNew",
-        "Company",
-        "Project",
-        "Entity",
-        "EntityRel",
-        "FundEntity",
-        "FundLp",
-        "Member",
-        "ActiveDeal",
-        "DealDecision",
-        "MailStrategy",
-        "MailTrigger",
-        "MailCycle",
-        "MailList",
-        "Payment",
-        "CompanyMemo",
-        "DealMemo",
-        "MailSend",
-        "DataStat",
-        "KnowledgeCate",
-        "KnowledgeList",
-        "ContractTerm",
-        "ContractTermCheck",
-        "Admin",
-        "Action",
-        "Permission",
-        "Group",
-        "AdminGroup",
-        "RolePermission",
-        "PermissionAction",
-        "ItemPermission",
-        "entityPermission",
-        "SystemLog",
+        "交易版块" => [
+            "目标企业" => ["Company","CompanyMemo"],
+            "交易记录" => ["Project","DealMemo"],
+            "投资主体" => ["Entity","EntityRel"],
+            "Active进度表" => ["ActiveDeal"],
+            "投决意见" => ["DealDecision"],
+            "合规审查事项" => ["ComplianceMatter"],
+            "项目成员" => ["Member"],
+            "交易记录授权" => ["ItemPermission"],
+        ],
+        "基金版块" => [
+            "基金主体" => ["FundEntity"],
+            "基金LP表" => ["FundLp"],
+            "基金LP授权" => ["EntityPermission"],
+        ],
+        "邮件版块" => [
+            "提醒邮件策略" => ["MailStrategy"],
+            "提醒邮件列表" => ["MailList"],
+            "模板邮件" => ["MailSend"],
+        ],
+        "知识版块" => [
+            "知识大类" => ["KnowledgeCate"],
+            "知识列表" => ["KnowledgeList"],
+            "合同条款" => ["ContractTerm"],
+            "合同条款审核" => ["ContractTermCheck"],
+        ],
+        "权限版块" => [
+            "系统用户" => ["Admin"],
+            "权限" => ["Action"],
+            "权限组" => ["Permission"],
+            "角色" => ["Group"],
+            "用户角色" => ["AdminGroup"],
+            "角色权限组" => ["RolePermission"],
+            "权限组配置" => ["PermissionAction"],
+        ],
+        "统计版块" => [
+            "数据统计" => ["DataStat"],
+            "系统日志" => ["SystemLog"],
+        ]
     );
 
     public static function checkPermission($permissionName){
@@ -104,7 +110,7 @@ class ACL{
         if($admin_name == 'root'){
             return self::$controllers;
         }
-        
+
         $group_ids = Model_AdminGroup::getGroupIdsByAdmin($admin_id);
         $permission_ids_by_group = array();
         if(count($group_ids) > 0){
@@ -122,13 +128,17 @@ class ACL{
         #$permissionNames = Permission::getPermissionNames($permission_ids); 
         #$actionNames = Action::getActionNames($permissionNames);
         $actionNames = Model_Action::getActionNames($permission_ids);
-    
+
         $myControllers = array();
         if(count($actionNames) > 0){
-            foreach(self::$controllers as $c){
-                $controllerIndex = strtolower($c).'_index';
-                if(in_array($controllerIndex,$actionNames)){
-                    array_push($myControllers, $c);
+            foreach(self::$controllers as $boardName => $board){
+                foreach($board as $navName => $nav) {
+                    foreach($nav as $c) {
+                        $controllerIndex = strtolower($c).'_index';
+                        if(in_array($controllerIndex,$actionNames)){
+                            $myControllers[$boardName][$navName][]=$c;
+                        }
+                    }
                 }
             }
         }

@@ -1,153 +1,21 @@
-DROP TABLE IF EXISTS `knowledge_cate`; /*知识大类*/
-
-CREATE TABLE `knowledge_cate` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(256) DEFAULT NULL COMMENT '名称',
-    `description` text DEFAULT NULL COMMENT '说明', 
-    `memo` text DEFAULT NULL COMMENT '备注', 
-    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
-    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
-    `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `knowledge_list`; /*知识列表*/
-
-CREATE TABLE `knowledge_list` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `cate_id` int(11) DEFAULT NULL COMMENT '大类ID',
-    `name` varchar(256) DEFAULT NULL COMMENT '名称',
-    `content` mediumtext DEFAULT NULL COMMENT '内容', 
-    `reference` text DEFAULT NULL COMMENT '参考资料', 
-    `memo` text DEFAULT NULL COMMENT '备注', 
-    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
-    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
-    `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
-    INDEX `cate_id_idx` (`cate_id`),
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `fund_lp`; /*基金LP信息*/
-
-CREATE TABLE `fund_lp` (
-    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '认购人ID',
-    `entity_id` varchar(11) DEFAULT NULL COMMENT '募资主体ID',
-    `subscriber` varchar(64) DEFAULT NULL COMMENT '认购人',
-    `subscriber_code` varchar(32) DEFAULT NULL COMMENT '认购人代码',
-    `subscriber_controller` varchar(64) DEFAULT NULL COMMENT '认购人实际控制人',
-    `partner_type` varchar(8) DEFAULT NULL COMMENT '合伙人类型',
-    `subscriber_bg` varchar(64) DEFAULT NULL COMMENT '认购人背景',
-    `subscriber_org` varchar(8) DEFAULT NULL COMMENT '认购人组织形式',
-    `cert_type` varchar(64) DEFAULT NULL COMMENT '证照类型',
-    `cert_no` varchar(64) DEFAULT NULL COMMENT '证照文件号码',
-    `contact_info` varchar(256) DEFAULT NULL COMMENT '联系人信息',
-    `mail_province` varchar(64) DEFAULT NULL COMMENT '邮寄所在省份',
-    `aic_pending` varchar(8) DEFAULT NULL COMMENT '工商待办事项',
-    `aic_memo` text DEFAULT NULL COMMENT '工商备注',
-    `undetermined` varchar(8) DEFAULT NULL COMMENT '待定事项',
-    `undetermined_memo` text DEFAULT NULL COMMENT '待定事项备注',
-    `communication` varchar(8) DEFAULT NULL COMMENT '待沟通事项',
-    `communication_memo` text DEFAULT NULL COMMENT '待沟通事项备注',
-    `join_turn` varchar(32) DEFAULT NULL COMMENT '进入批次',
-    `sign_lpa_date` varchar(11) DEFAULT NULL COMMENT '签署LPA日期',
-    `subscriber_delivery_date` varchar(11) DEFAULT NULL COMMENT '本认购人交割日期',
-    `subscribe_currency` varchar(8) DEFAULT NULL COMMENT '认缴货币',
-    `subscribe_amount` varchar(16) DEFAULT NULL COMMENT '认缴金额',
-    `paid_currency` varchar(8) DEFAULT NULL COMMENT '实缴货币',
-    `paid_amount` varchar(16) DEFAULT NULL COMMENT '实缴金额',
-    `latest_paid_date` varchar(11) DEFAULT NULL COMMENT '最新实缴日期',
-    `subscribe_pdf` varchar(8) DEFAULT NULL COMMENT '认购文件PDF',
-    `subscribe_doc` varchar(16) DEFAULT NULL COMMENT '认购文件原件',
-    `gb_sign` varchar(8) DEFAULT NULL COMMENT 'GP&管理人已章',
-    `aic_material` varchar(8) DEFAULT NULL COMMENT '工商变更资料提供',
-    `side_letter` varchar(8) DEFAULT NULL COMMENT 'SideLetter',
-    `side_letter_detail` text DEFAULT NULL COMMENT 'SideLetter主要内容',
-    `mfn` varchar(8) DEFAULT NULL COMMENT 'MFN',
-    `lpac` varchar(8) DEFAULT NULL COMMENT 'LPAC',
-    `lpac_commission` varchar(8) DEFAULT NULL COMMENT 'LPAC委任书',
-    `entrust_agreement` varchar(16) DEFAULT NULL COMMENT '委托管理协议',
-    `bank_entrustment` varchar(16) DEFAULT NULL COMMENT '银行托管信息页',
-    `no_entrustment` varchar(16) DEFAULT NULL COMMENT '不托管协议',
-    `share_transfer` varchar(8) DEFAULT NULL COMMENT '有无份额转让',
-    `share_transfer_memo` text DEFAULT NULL COMMENT '份额转让备注',
-    `share_entrustment` varchar(8) DEFAULT NULL COMMENT '是否有代持',
-    `share_entrust_agreement` varchar(8) DEFAULT NULL COMMENT '代持协议',
-    `share_entrustment_memo` text DEFAULT NULL COMMENT '代持备注',
-    `is_exit` varchar(8) DEFAULT NULL COMMENT '是否已退伙',
-    `exit_file` varchar(16) DEFAULT NULL COMMENT '退伙文件',
-    `other_agreement` varchar(8) DEFAULT NULL COMMENT '其他协议',
-    `other_agreement_main` text DEFAULT NULL COMMENT '其他协议主要内容',
-    `subscribe_doc_memo` text DEFAULT NULL COMMENT '认购交易文件备注',
-    `kyc_file` varchar(8) DEFAULT NULL COMMENT 'KYC文件',
-    `fatca_crs` varchar(8) DEFAULT NULL COMMENT 'FATCA/CRS',
-    `w_form` varchar(8) DEFAULT NULL COMMENT 'w8/9税表',
-    `capital_from` varchar(16) DEFAULT NULL COMMENT '资金来源说明',
-    `sa` varchar(16) DEFAULT NULL COMMENT 'SA',
-    `risk_evaluate_date` varchar(11) DEFAULT NULL COMMENT '类型确认及风险评估时间',
-    `investor_type` varchar(8) DEFAULT NULL COMMENT '投资者类型确认',
-    `through_num` varchar(16) DEFAULT NULL COMMENT '在本募资主体中穿透人数',
-    `check_num_date` varchar(11) DEFAULT NULL COMMENT '核查人数时间',
-    `investor_type_cert` varchar(16) DEFAULT NULL COMMENT '投资者类型证明',
-    `investor_appropriateness` varchar(8) DEFAULT NULL COMMENT '投资者适当性匹配',
-    `subscribe_fillin` varchar(8) DEFAULT NULL COMMENT '认购册填写',
-    `subscribe_memo` text DEFAULT NULL COMMENT '认购册备注',
-    `coolingoff_period` varchar(8) DEFAULT NULL COMMENT '冷静期及回访',
-    `compliance_check` varchar(8) DEFAULT NULL COMMENT '核对合规要求',
-    `subscribe_compliance_memo` text DEFAULT NULL COMMENT '认购程序及合规备注',
-    `filling_list_check` varchar(8) DEFAULT NULL COMMENT '核对filing清单',
-    `filling_memo` text DEFAULT NULL COMMENT 'filing备注',
-    `mail_matter` text DEFAULT NULL COMMENT '当期邮寄事项',
-    `gp_mailed` varchar(8) DEFAULT NULL COMMENT 'GP是否寄出',
-    `gp_mailed_detail` text DEFAULT NULL COMMENT 'GP邮寄详情',
-    `lp_mailed` varchar(8) DEFAULT NULL COMMENT 'LP是否寄出',
-    `lp_mailed_detail` text DEFAULT NULL COMMENT 'LP邮寄详情',
-    `gp_received` varchar(8) DEFAULT NULL COMMENT 'GP是否已收到',
-    `mail_receive_date` varchar(11) DEFAULT NULL COMMENT '收悉日期',
-    `mailing_memo` text DEFAULT NULL COMMENT '邮寄备注',
+DROP TABLE IF EXISTS `compliance_matter`; /*合规审查事项*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `compliance_matter` (
+    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `entity_id` int(11) DEFAULT NULL COMMENT '主体ID',
+    `limit_source` varchar(16) DEFAULT NULL COMMENT '限制来源', 
+    `category` varchar(16) DEFAULT NULL COMMENT '事项分类', 
+    `sub_cate` varchar(256) DEFAULT NULL COMMENT '事项小类', 
+    `scene` text DEFAULT NULL COMMENT '场景', 
+    `requirement` text DEFAULT NULL COMMENT '具体要求', 
+    `expiry` varchar(32) DEFAULT NULL COMMENT '有效期', 
+    `action` varchar(16) DEFAULT NULL COMMENT '动作要求', 
+    `action_target` varchar(16) DEFAULT NULL COMMENT '动作对象', 
+    `terms_from` varchar(256) DEFAULT NULL COMMENT '条款来源', 
+    `terms_raw` text DEFAULT NULL COMMENT '条款原文', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `contract_term`; /*合同条款*/
-
-CREATE TABLE `contract_term` (
-    `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
-    `trade_doc` varchar(32) DEFAULT NULL COMMENT '交易文件', 
-    `term` varchar(256) DEFAULT NULL COMMENT '所属条款', 
-    `term_detail` text DEFAULT NULL COMMENT '条款具体事项', 
-    `standard` text DEFAULT NULL COMMENT '源码标准及关注点', 
-    `permission` text DEFAULT NULL COMMENT '权限说明', 
-    `lawyer_reminder` text DEFAULT NULL COMMENT '提醒律师的事项', 
-    `our_reason` text DEFAULT NULL COMMENT '我方主要理由', 
-    `opp_reason` text DEFAULT NULL COMMENT '对方主要理由', 
-    `terms_rmb` text DEFAULT NULL COMMENT '标准条款-RMB', 
-    `terms_usd` text DEFAULT NULL COMMENT '标准条款-USD', 
-    `exceptional` text DEFAULT NULL COMMENT '特殊情况处理', 
-    `compromise` text DEFAULT NULL COMMENT '折中处理', 
-    `compromise_rmb` text DEFAULT NULL COMMENT '折中方案的示范条款-RMB项目', 
-    `compromise_usd` text DEFAULT NULL COMMENT '折中方案的示范条款-USD项目', 
-    `baseline` text DEFAULT NULL COMMENT '底线方案', 
-    `baseline_rmb` text DEFAULT NULL COMMENT '底线方案示范条款-RMB', 
-    `baseline_usd` text DEFAULT NULL COMMENT '底线方案示范条款-USD', 
-    `other_case` text DEFAULT NULL COMMENT '其他可参考方案', 
-    `other_term` text DEFAULT NULL COMMENT '其他可参考条款', 
-    `other_detail` text DEFAULT NULL COMMENT '其他说明或要注意的问题', 
-    `memo` text DEFAULT NULL COMMENT '备注', 
-    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
-    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
-    `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `entity_permission`;
-
-CREATE TABLE `entity_permission` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
-      `admin_id` varchar(16) DEFAULT NULL,
-      `entity_id` varchar(16) DEFAULT NULL,
-      `lp_id` varchar(16) DEFAULT NULL,
-      `operator_id` varchar(16) DEFAULT NULL,
-      `create_time` int(11) DEFAULT NULL,
-      PRIMARY KEY (`id`),
-      UNIQUE KEY `admin_uni` (`admin_id`,`entity_id`, `lp_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
