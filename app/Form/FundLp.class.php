@@ -102,7 +102,16 @@ class Form_FundLp extends Form {
                 ['name'=>'bank_entrustment','label'=>'银行托管信息页','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'no_entrustment','label'=>'不托管协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_transfer','label'=>'有无份额转让','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
-                ['name'=>'share_transfer_memo','label'=>'份额转让备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'share_transfer_memo','label'=>'份额转让备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('share_transfer_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'share_entrustment','label'=>'是否有代持','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrust_agreement','label'=>'代持协议','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrustment_memo','label'=>'代持备注','type'=>'textarea','default'=>null,'required'=>false],
@@ -110,8 +119,26 @@ class Form_FundLp extends Form {
                 ['name'=>'exit_file','label'=>'退伙文件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'other_agreement','label'=>'其他协议','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'other_agreement_main','label'=>'其他协议主要内容','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'subscribe_doc_memo','label'=>'认购交易文件备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
-                ['name'=>'change_memo','label'=>'基金变更备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'subscribe_doc_memo','label'=>'认购交易文件备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('subscribe_doc_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
+                ['name'=>'change_memo','label'=>'基金变更备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('change_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'field-index-program-compliance','label'=>'认购程序性及合规文件','type'=>'seperator'],
                 ['name'=>'kyc_file','label'=>'KYC文件','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'kyc_file_memo','label'=>'KYC文件备注','type'=>'textarea','default'=>null,'required'=>false],
@@ -139,8 +166,11 @@ class Form_FundLp extends Form {
                 ['name'=>'subscribe_fillin','label'=>'认购册填写','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_memo','label'=>'认购册备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'coolingoff_period','label'=>'冷静期及回访','type'=>'choice','choices'=>Model_FundLp::getCoolingoffPeriodChoices(),'default'=>null,'required'=>false],
-                ['name'=>'_compliance_list','label'=>'合规要求清单','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
-                    $list = json_decode($entity->getData('compliance_list'));
+                ['name'=>'compliance_checklist','label'=>'合规要求清单','type'=>'choosemodel','model'=>'Model_Checklist','default'=>null,'required'=>false,'show'=>'version','field'=>function($model) {
+                    $cli = new Model_Checklist;
+                    $cli->addWhere('id', $model->getData('compliance_checklist'));
+                    $cli->select();
+                    $list = json_decode($cli->getData('content'));
                     if ($list) {
                         $output = '';
                         foreach($list as $li) {
@@ -150,9 +180,21 @@ class Form_FundLp extends Form {
                     return $output;
                 }],
                 ['name'=>'compliance_check','label'=>'核对合规要求','type'=>'choice','choices'=>Model_FundLp::getComplianceCheckChoices(),'default'=>null,'required'=>false],
-                ['name'=>'subscribe_compliance_memo','label'=>'认购程序及合规备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
-                ['name'=>'_filing_list','label'=>'所需filing文件清单','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
-                    $list = json_decode($entity->getData('filing_list'));
+                ['name'=>'subscribe_compliance_memo','label'=>'认购程序及合规备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('subscribe_compliance_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
+                ['name'=>'filing_checklist','label'=>'所需filing文件清单','type'=>'choosemodel','model'=>'Model_Checklist','default'=>null,'required'=>false,'show'=>'version','field'=>function($model) {
+                    $cli = new Model_Checklist;
+                    $cli->addWhere('id', $model->getData('filing_checklist'));
+                    $cli->select();
+                    $list = json_decode($cli->getData('content'));
                     if ($list) {
                         $output = '';
                         foreach($list as $li) {
@@ -162,9 +204,27 @@ class Form_FundLp extends Form {
                     return $output;
                 }],
                 ['name'=>'filling_list_check','label'=>'核对filing清单','type'=>'choice','choices'=>Model_FundLp::getFillingListCheckChoices(),'default'=>null,'required'=>false],
-                ['name'=>'filling_memo','label'=>'filing备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'filling_memo','label'=>'filing备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('filling_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'field-index-mailing','label'=>'邮寄情况','type'=>'seperator'],
-                ['name'=>'mail_matter','label'=>'当期邮寄事项','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'mail_matter','label'=>'当期邮寄事项','type'=>'message','class'=>'','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('mail_matter'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'gp_mailed','label'=>'GP是否寄出','type'=>'choice','choices'=>Model_FundLp::getMailStatusChoices(),'default'=>null,'required'=>false],
                 ['name'=>'gp_mailed_detail','label'=>'GP邮寄详情','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'lp_mailed','label'=>'LP是否寄出','type'=>'choice','choices'=>Model_FundLp::getMailStatusChoices(),'default'=>null,'required'=>false],

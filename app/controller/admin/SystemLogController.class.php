@@ -1,5 +1,7 @@
 <?php
 class SystemLogController extends Page_Admin_Base {
+    use ExportActions;
+
     public function diffAction() {
         $model = new Model_SystemLog;
         if (!isset($_GET['resource']) || !isset($_GET['res_id'])) {
@@ -120,6 +122,7 @@ class SystemLogController extends Page_Admin_Base {
             new Page_Admin_TextForeignFilter(['name'=>'操作人','paramName'=>'name|operator_id','foreignTable'=>'Model_Admin','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>'资源','paramName'=>'resource','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>'资源ID','paramName'=>'res_id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>'动作','paramName'=>'action','fusion'=>false]),
             new Page_Admin_TimeRangeFilter(['name'=>'操作时间','paramName'=>'create_time']),
         );
 
@@ -127,6 +130,10 @@ class SystemLogController extends Page_Admin_Base {
 
         $this->single_actions_default = ['delete' => false, 'edit' => false];
         
+        $this->multi_actions=array(
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/SystemLog/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
+            //['label'=>'导入csv','required'=>false,'action'=>'/admin/project/csvImport'],
+        );
         //$this->search_fields=array('admin_id','buyer_id','user_id','log');
     }
 

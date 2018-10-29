@@ -199,12 +199,14 @@ CREATE TABLE `fund_lp` (
     `mail_receive_date` varchar(11) DEFAULT NULL COMMENT '收悉日期',
     `mailing_memo` text DEFAULT NULL COMMENT '邮寄备注',
     `subscribe_currency_memo` text DEFAULT NULL COMMENT '认缴货币备注',
-    `subscribe_doc_memo` text DEFAULT NULL COMMENT '认购文件原件备注',
+    `subscribe_file_memo` text DEFAULT NULL COMMENT '认购文件原件备注',
     `change_memo` text DEFAULT NULL COMMENT '基金变更备注',
     `kyc_file_memo` text DEFAULT NULL COMMENT 'KYC文件备注',
     `through_num_memo` text DEFAULT NULL COMMENT '穿透人数备注',
     `investor_through_memo` text DEFAULT NULL COMMENT '投资者穿透特殊情况备注',
     `investor_through` varchar(8) DEFAULT NULL COMMENT '投资者穿透特殊情况',
+    `compliance_checklist` varchar(32) DEFAULT NULL COMMENT '合规要求清单',
+    `filing_checklist` varchar(32) DEFAULT NULL COMMENT 'filing文件清单',
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -554,3 +556,21 @@ CREATE TABLE `compliance_matter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `fund_checklist`
+--
+
+DROP TABLE IF EXISTS `checklist`; /*基金checklist清单*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `checklist` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `version` varchar(32) DEFAULT NULL COMMENT '版本', 
+    `field` varchar(16) DEFAULT NULL COMMENT '字段类型', 
+    `content` text DEFAULT NULL COMMENT '内容', 
+    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;

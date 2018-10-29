@@ -15,6 +15,7 @@ class ACL{
             "基金主体" => ["FundEntity"],
             "基金LP表" => ["FundLp"],
             "合规审查事项" => ["ComplianceMatter"],
+            "Checklist清单" => ["Checklist"],
             "基金LP授权" => ["EntityPermission"],
         ],
         "邮件版块" => [

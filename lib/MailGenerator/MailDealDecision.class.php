@@ -50,7 +50,7 @@ class MailGenerator_MailDealDecision extends MailGenerator {
 
     protected function _genCycle($trigger) {
         $deal = $this->_deals[$trigger->mProjectId];
-        foreach([2, 5, 10, 15] as $i => $day) {
+        foreach([3, 7, 15] as $i => $day) {
             $expect = $deal->mDecisionDate + $day * 86400;
             if ($expect > time()) {
                 return [$expect];
