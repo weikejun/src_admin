@@ -598,9 +598,17 @@ class Form_Company extends Form {
                     $output = '';
                     foreach($holds as $currency => $amount) {
                         if (count($holds) == 1) {
-                            $output .= sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
+                            if (isset($holdValue[$currency])) {
+                                $output .= sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . "\n";
+                            } else {
+                                $output .= $currency."投资 ".number_format($amount)."（与账面币种不同，需手动计算回报）\n";
+                            }
                         } else {
-                            $output .= $currency."投资 ".sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . '<br />';
+                            if (isset($holdValue[$currency])) {
+                                $output .= $currency."投资 ".sprintf('%.2f', ($holdValue[$currency]/$amount-0)) . "\n";
+                            } else {
+                                $output .= $currency."投资 ".number_format($amount)."（与账面币种不同，需手动计算回报）\n";
+                            }
                         }
                     }
                     return $output;
@@ -720,7 +728,7 @@ class Form_Company extends Form {
                     $output = '';
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('pending') == '有') {
-                            $output .= $dataItem->getData('pending_detail') . '<br />';
+                            $output .= $dataItem->getData('pending_detail') . "\n";
                         }
                     }
                     return $output;

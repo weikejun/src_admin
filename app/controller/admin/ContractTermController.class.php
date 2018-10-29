@@ -51,7 +51,7 @@ class ContractTermController extends Page_Admin_Base {
 
         $this->multi_actions = [
             array('label'=>'导出csv','required'=>false,'action'=>'/admin/ContractTerm/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),
-            array('label'=>'我的未审核合同','required'=>false,'action'=>'/admin/ContractTerm/pending'),
+            array('label'=>'我的未审核条款','required'=>false,'action'=>'/admin/ContractTerm/pending'),
         ];
 
         $this->list_filter = [
@@ -89,7 +89,7 @@ class ContractTermController extends Page_Admin_Base {
         ];
 
         $this->multi_actions = [
-            array('label'=>'已审核合同','required'=>false,'action'=>'/admin/ContractTerm/'),
+            array('label'=>'全部已审核条款','required'=>false,'action'=>'/admin/ContractTerm/'),
         ];
 
         // 审核表中可以对草稿进行修改

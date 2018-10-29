@@ -188,11 +188,11 @@ class ProjectController extends Page_Admin_Base {
             }],*/
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('_company_id') => [],
+            Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('kickoff_date') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('close_date') => [],
             Form_Project::getFieldViewName('deal_type') => [],
-            Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('financing_amount') => [],
             Form_Project::getFieldViewName('post_money') => [],
             Form_Project::getFieldViewName('stocknum_all') => [],
@@ -348,10 +348,12 @@ class ProjectController extends Page_Admin_Base {
                 } else {
                     $entityId = $model->getData('entity_id');
                 }
-                $entity = new Model_Entity;
-                $entity->mId = $entityId;
-                $entity->select();
-                return $entity->getData('name');
+                if ($entityId) {
+                    $entity = new Model_Entity;
+                    $entity->mId = $entityId;
+                    $entity->select();
+                    return $entity->getData('name');
+                }
             }],
             ['label' => '股份类型', 'field' => function($model) {
                 return $model->getData('new_old_stock');

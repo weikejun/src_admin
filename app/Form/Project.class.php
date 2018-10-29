@@ -68,6 +68,7 @@ class Form_Project extends Form {
                 ['name'=>'_company_id','label'=>'企业ID','type'=>'rawText','required'=>false,'field'=>'company_id','field'=>function($model){
                     return $model->getData('company_id');
                 }],
+                ['name'=>'turn_sub','label'=>'企业所处轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
                 ['name'=>'first_financing','label'=>'企业是否首次融资','type'=>'choice','choices'=>Model_Project::getFirstFinancingChoices(),'required'=>true,],
                 ['name'=>'company_period','label'=>'目标企业阶段','type'=>'selectInput','choices'=>Model_Project::getCompanyPeriodChoices(),'required'=>false,],
                 ['name'=>'company_character','label'=>'目标企业性质','type'=>'selectInput','choices'=>Model_Project::getCompanyCharacterChoices(),'required'=>false,],
@@ -158,7 +159,6 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'field-index-base','label'=>'本轮交易基本信息','type'=>'seperator'],
                 ['name'=>'deal_type','label'=>'本轮交易类型','type'=>'choice','choices'=>Model_Project::getDealTypeChoices(),'required'=>false,'labelClass'=>'text-error'],
-                ['name'=>'turn_sub','label'=>'企业所处轮次','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'按交易文件的界定填写，示范“A3”、“B+”'],
                 ['name'=>'turn','label'=>'企业轮次归类','type'=>'choice','choices'=>Model_Project::getTurnChoices(),'required'=>false,],
                 ['name'=>'new_follow','label'=>'项目新老类型','type'=>'choice','choices'=>Model_Project::getNewFollowChoices(),'required'=>false,],
                 ['name'=>'enter_exit_type','label'=>'源码投退类型','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getEnterExitTypeChoices(),'required'=>false,],
