@@ -8,7 +8,7 @@ class ContractTermCheckController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_ContractTerm();
         $this->model->addWhere('status', '未审核');
-        $this->model->orderBy('id', 'DESC');
+        $this->model->orderBy('update_time', 'ASC');
         WinRequest::mergeModel(array(
             'controllerText'=>"合同条款审核",
             'tableWrap' => '4096px',
@@ -29,14 +29,17 @@ class ContractTermCheckController extends Page_Admin_Base {
 
         $this->single_actions_default = [
             'edit' => true,
-            'delete' => false,
+            'delete' => true,
         ];
 
         $this->hide_action_new = true;
 
         $this->single_actions = [
             ['label'=>'预览','action'=>function($model){
-                return '/admin/contractTerm/check?id='.$model->mId;
+                return '/admin/contractTermCheck/check?id='.$model->mId;
+            }],
+            ['label'=>'审阅','action'=>function($model){
+                return '/admin/systemLog/diff?resource=ContractTerm&res_id='.$model->mId;
             }],
         ];
 

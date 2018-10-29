@@ -22,6 +22,13 @@ CREATE TABLE `compliance_matter` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /******************** alter table ********************/
+alter table `fund_lp` add `subscribe_currency_memo` text DEFAULT NULL COMMENT '认缴货币备注';
+alter table `fund_lp` add `subscribe_doc_memo` text DEFAULT NULL COMMENT '认购文件原件备注';
+alter table `fund_lp` add `change_memo` text DEFAULT NULL COMMENT '基金变更备注';
+alter table `fund_lp` add `kyc_file_memo` text DEFAULT NULL COMMENT 'KYC文件备注';
+alter table `fund_lp` add `through_num_memo` text DEFAULT NULL COMMENT '穿透人数备注';
+alter table `fund_lp` add `investor_through_memo` text DEFAULT NULL COMMENT '投资者穿透特殊情况备注';
+alter table `fund_lp` add `investor_through` varchar(8) DEFAULT NULL COMMENT '投资者穿透特殊情况';
 
 
 /******************** insert ********************/

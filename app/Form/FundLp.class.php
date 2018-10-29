@@ -35,7 +35,16 @@ class Form_FundLp extends Form {
                 ['name'=>'subscriber_org','label'=>'认购人组织形式','type'=>'selectInput','choices'=>Model_FundLp::getSubscriberOrgChoices(),'default'=>null,'required'=>false],
                 ['name'=>'cert_type','label'=>'证照类型','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'cert_no','label'=>'证照文件号码','type'=>'text','default'=>null,'required'=>false],
-                ['name'=>'contact_info','label'=>'联系人信息','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'contact_info','label'=>'联系人信息','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('contact_info'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'mail_province','label'=>'邮寄所在省份','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'create_time','label'=>'创建时间','type'=>'datetime','default'=>time(),'required'=>false,'readonly'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('create_time'));
@@ -60,9 +69,19 @@ class Form_FundLp extends Form {
                     }
                 }],
                 ['name'=>'subscribe_currency','label'=>'认缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
+                ['name'=>'subscribe_currency_memo','label'=>'认缴货币备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'subscribe_amount','label'=>'认缴金额','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'paid_currency','label'=>'实缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'message','default'=>null,'required'=>false],
+                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('paid_amount'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'latest_paid_date','label'=>'最新实缴日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('latest_paid_date')) {
                         return date('Ymd', $model->getData('latest_paid_date'));
@@ -71,6 +90,7 @@ class Form_FundLp extends Form {
                 ['name'=>'field-index-law-files','label'=>'认购及变更法律文件情况','type'=>'seperator'],
                 ['name'=>'subscribe_pdf','label'=>'认购文件PDF','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_doc','label'=>'认购文件原件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'subscribe_doc_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'gb_sign','label'=>'GP&管理人已章','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'aic_material','label'=>'工商变更资料提供','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'side_letter','label'=>'SideLetter','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
@@ -91,8 +111,10 @@ class Form_FundLp extends Form {
                 ['name'=>'other_agreement','label'=>'其他协议','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'other_agreement_main','label'=>'其他协议主要内容','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'subscribe_doc_memo','label'=>'认购交易文件备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'change_memo','label'=>'基金变更备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
                 ['name'=>'field-index-program-compliance','label'=>'认购程序性及合规文件','type'=>'seperator'],
                 ['name'=>'kyc_file','label'=>'KYC文件','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
+                ['name'=>'kyc_file_memo','label'=>'KYC文件备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'fatca_crs','label'=>'FATCA/CRS','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'w_form','label'=>'w8/9税表','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'capital_from','label'=>'资金来源说明','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
@@ -103,7 +125,10 @@ class Form_FundLp extends Form {
                     }
                 }],
                 ['name'=>'investor_type','label'=>'投资者类型确认','type'=>'choice','choices'=>Model_FundLp::getInvestorTypeChoices(),'default'=>null,'required'=>false],
+                ['name'=>'investor_through','label'=>'投资者穿透特殊情况','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'investor_through_memo','label'=>'投资者穿透特殊情况备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'through_num','label'=>'在本募资主体中穿透人数','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'through_num_memo','label'=>'穿透人数备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'check_num_date','label'=>'核查人数时间','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('check_num_date')) {
                         return date('Ymd', $model->getData('check_num_date'));

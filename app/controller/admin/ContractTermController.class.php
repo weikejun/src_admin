@@ -2,15 +2,23 @@
 class ContractTermController extends Page_Admin_Base {
     use ControllerPreproc;
     use ExportActions;
+
+    public function getBackUrl() {
+        return str_replace('Controller', '', get_class($this)).'/pending';
+    }
+
     public function __construct(){
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
         $this->model=new Model_ContractTerm();
         $this->model->addWhere('status', '已审核');
-        $this->model->orderBy('id', 'DESC');
+        $this->model->orderBy('update_time', 'DESC');
         $this->model->on('before_update', function($model) {
-            $model->mStatus = "未审核";
+            if ($model->mStatus == '已审核'
+                || empty($model->mStatus)) {
+                $model->mStatus = '未审核';
+            }
         });
         WinRequest::mergeModel(array(
             'controllerText'=>"合同条款",
@@ -64,9 +72,9 @@ class ContractTermController extends Page_Admin_Base {
 
     public function pendingAction() {
         $this->model=new Model_ContractTerm();
-        $this->model->addWhere('status', '未审核');
+        $this->model->addWhere('status', '已审核', '!=');
         $this->model->addWhere('operator', Model_Admin::getCurrentAdmin()->mName);
-        $this->model->orderBy('id', 'DESC');
+        $this->model->orderBy('update_time', 'DESC');
         $this->single_actions_default = [
             'edit' => false,
             'delete' => false,
@@ -83,6 +91,14 @@ class ContractTermController extends Page_Admin_Base {
         $this->multi_actions = [
             array('label'=>'已审核合同','required'=>false,'action'=>'/admin/ContractTerm/'),
         ];
+
+        // 审核表中可以对草稿进行修改
+        $this->list_display[0] = ['name'=>'_op','label'=>'操作','field'=>function($model) {
+            if ($model->mStatus == '草稿') {
+                return "<a href='/admin/ContractTerm?action=read&id=$model->mId'>编辑</a>&nbsp;<a href='/admin/ContractTerm?action=delete&id=$model->mId'>删除</a>";
+            }
+        }];
+
         return $this->indexAction();
     }
 }

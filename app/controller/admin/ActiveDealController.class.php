@@ -43,7 +43,7 @@ class ActiveDealController extends Page_Admin_Base {
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('decision_date'),'paramName'=>'decision_date']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('expect_sign_date'),'paramName'=>'expect_sign_date']),
-            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','and (`manager` = "" or `legal_person` = "" or `finance_person` = "")']]]),
+            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','and (`manager` = "" or `legal_person` = "" or `finance_person` = "")'],['decision_date','决策/启动日期','and (`decision_date` = 0 or `decision_date` = "" or `decision_date` is null)'],['expect_sign_date','预计签约日期','and (`expect_sign_date` = 0 or `expect_sign_date` is null or `expect_sign_date` = "")']]]),
         );
     }
 

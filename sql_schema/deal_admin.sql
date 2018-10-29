@@ -198,6 +198,13 @@ CREATE TABLE `fund_lp` (
     `gp_received` varchar(8) DEFAULT NULL COMMENT 'GP是否已收到',
     `mail_receive_date` varchar(11) DEFAULT NULL COMMENT '收悉日期',
     `mailing_memo` text DEFAULT NULL COMMENT '邮寄备注',
+    `subscribe_currency_memo` text DEFAULT NULL COMMENT '认缴货币备注',
+    `subscribe_doc_memo` text DEFAULT NULL COMMENT '认购文件原件备注',
+    `change_memo` text DEFAULT NULL COMMENT '基金变更备注',
+    `kyc_file_memo` text DEFAULT NULL COMMENT 'KYC文件备注',
+    `through_num_memo` text DEFAULT NULL COMMENT '穿透人数备注',
+    `investor_through_memo` text DEFAULT NULL COMMENT '投资者穿透特殊情况备注',
+    `investor_through` varchar(8) DEFAULT NULL COMMENT '投资者穿透特殊情况',
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -89,7 +89,7 @@ class Form_ContractTerm extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'operator','label'=>'创建人','type'=>'text','default'=>Model_Admin::getCurrentAdmin()->mName,'required'=>true,'readonly'=>true],
+                ['name'=>'operator','label'=>'编撰人','type'=>'text','default'=>Model_Admin::getCurrentAdmin()->mName,'required'=>true,'readonly'=>true,],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','auto_update'=>true,'default'=>time(),'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
                 }],
@@ -104,7 +104,15 @@ class Form_ContractTerm extends Form {
     public function __construct($check) {
         if ($check) {
             self::getFieldsMap();
-            self::$fieldsMap[] = ['name'=>'status','label'=>'审核状态','type'=>'choice','choices'=>Model_ContractTerm::getStatusChoices(),'default'=>'已审核','required'=>false];
+            self::$fieldsMap[] = ['name'=>'status','label'=>'审核状态','type'=>'choice','choices'=>Model_ContractTerm::getCheckStatusChoices(),'default'=>'已审核','required'=>false];
+        } else {
+            self::getFieldsMap();
+            self::$fieldsMap[] = ['name'=>'status','label'=>'审核状态','type'=>'choice','choices'=>Model_ContractTerm::getUncheckStatusChoices(),'default'=>'草稿','required'=>false,'help'=>'“草稿”状态下记录可以被编辑，“待审核”状态下不可被编辑，审核通过后才会出现在首页列表中'];
+            foreach(self::$fieldsMap as $i => $field) { // 修改后编撰人变为编辑用户
+                if ($field['name'] == 'operator') {
+                    self::$fieldsMap[$i]['useDefault'] = true;
+                }
+            }
         }
         parent::__construct(self::getFieldsMap());
     }

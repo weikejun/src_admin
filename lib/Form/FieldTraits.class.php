@@ -17,7 +17,7 @@ Trait Form_FieldTraits {
     public function to_text(){
         if ($this->config['type'] == 'hidden') return;
         $html="<div class='control-group'>";
-        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label><div class='controls'><div class='raw-text'><i>".$this->format_value()."</i></div></div></div>";
+        $html.= "<label class='control-label'>".htmlspecialchars($this->label)."</label><div class='controls'><div class='raw-text'>".$this->format_value()."</div></div></div>";
         return $html;
     }
 

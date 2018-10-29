@@ -31,7 +31,7 @@ DROP TABLE IF EXISTS `contract_term`; /*合同条款*/
 
 CREATE TABLE `contract_term` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
-    `status` varchar(16) DEFAULT NULL COMMENT '审核状态', 
+    `status` varchar(16) DEFAULT '未审核' COMMENT '审核状态', 
     `trade_doc` varchar(32) DEFAULT NULL COMMENT '交易文件', 
     `term` varchar(256) DEFAULT NULL COMMENT '所属条款', 
     `term_detail` text DEFAULT NULL COMMENT '条款具体事项', 

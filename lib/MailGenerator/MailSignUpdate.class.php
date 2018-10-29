@@ -11,7 +11,10 @@ class MailGenerator_MailSignUpdate extends MailGenerator {
     }
 
     protected function _genCycle($trigger) {
-        return [$trigger->mExpectSignDate - 14 * 86400];
+        return [
+            $trigger->mExpectSignDate - 5 * 86400,
+            $trigger->mExpectSignDate - 14 * 86400
+        ];
     }
 }
 
