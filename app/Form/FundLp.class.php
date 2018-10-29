@@ -90,7 +90,7 @@ class Form_FundLp extends Form {
                 ['name'=>'field-index-law-files','label'=>'认购及变更法律文件情况','type'=>'seperator'],
                 ['name'=>'subscribe_pdf','label'=>'认购文件PDF','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_doc','label'=>'认购文件原件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
-                ['name'=>'subscribe_doc_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'subscribe_file_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'gb_sign','label'=>'GP&管理人已章','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'aic_material','label'=>'工商变更资料提供','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'side_letter','label'=>'SideLetter','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
