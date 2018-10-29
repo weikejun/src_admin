@@ -545,7 +545,7 @@ class ProjectController extends Page_Admin_Base {
                 }
                 return '0.00%';
             }],
-            ['label' => '最新账面价值', 'field' => function($model)use($dataList, &$holdStocks){
+            ['label' => '最新账面价值', 'field' => function($model)use($dataList, &$holdStocks, &$holdValue){
                 if (!$model->getData('id')) {
                     $stockNum = $holdStocks;
                 } else {
@@ -565,12 +565,13 @@ class ProjectController extends Page_Admin_Base {
                 }
                 foreach($dataList as $i => $dataItem) {
                     if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
-                        return $dataItem->getData('value_currency') . ' ' . number_format($stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money'), 2);
+                        $holdValue[$dataItem->getData('value_currency')] = $stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money');
+                        return $dataItem->getData('value_currency') . ' ' . number_format($holdValue[$dataItem->getData('value_currency')], 2);
                     }
                 }
                 return 0;
             }],
-            ['label' => '历史投资金额', 'field' => function($model)use($dataList, &$investValues){
+            ['label' => '历史投资金额', 'field' => function($model)use($dataList, &$investValues, &$curInvestValues){
                 if (!$model->getData('id')) {
                     if (!$investValues) {
                         return 0;
@@ -589,6 +590,7 @@ class ProjectController extends Page_Admin_Base {
                         }
                     }
                 }
+                $curInvestValues = $amounts;
                 if (!$amounts) {
                     return 0;
                 }
@@ -639,7 +641,7 @@ class ProjectController extends Page_Admin_Base {
                     echo "$currency " . number_format($amount, 2) . '<br />';
                 }
             }],
-            ['label' => '退出金额', 'field' => function($model)use($dataList, &$exitValues){
+            ['label' => '退出金额', 'field' => function($model)use($dataList, &$exitValues, &$curExitValues){
                 if (!$model->getData('id')) {
                     if (!$exitValues) {
                         return 0;
@@ -656,6 +658,7 @@ class ProjectController extends Page_Admin_Base {
                         $amounts[$dataItem->getData('exit_currency')] += $dataItem->getData('exit_amount');
                     }
                 }
+                $curExitValues = $amounts;
                 if (!$amounts) {
                     return 0;
                 }
@@ -677,6 +680,25 @@ class ProjectController extends Page_Admin_Base {
                 }
                 $totalExitStocks += $stockNum;
                 return number_format($stockNum);
+            }],
+            ['label' => '回报倍数', 'field' => function($model)use(&$holdValue, &$curInvestValues, &$curExitValues, &$investValues, &$exitValues) {
+                if (!$model->getData('id')) {
+                    $curInvestValues = $investValues;
+                    $curExitValues = $exitValues;
+                }
+                $currencys = array_unique(array_merge(
+                    array_keys($holdValue), 
+                    array_keys($curInvestValues),
+                    array_keys($curExitValues)
+                ));
+                $output = '';
+                foreach($currencys as $currency) {
+                    if (isset($holdValue[$currency]) 
+                        && isset($curInvestValues[$currency])) {
+                        $output .= "$currency 投资：".number_format(($holdValue[$currency] + $curExitValues[$currency])/$curInvestValues[$currency], 2) . "\n";
+                    }
+                }
+                return $output;
             }],
         ];
 

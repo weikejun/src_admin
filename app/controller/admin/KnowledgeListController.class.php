@@ -46,6 +46,7 @@ class KnowledgeListController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('content'),'paramName'=>'content','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_KnowledgeList::getFieldViewName('operator'),'paramName'=>'operator','fusion'=>true,'class'=>'keep-all']),
         ];
     }
 
