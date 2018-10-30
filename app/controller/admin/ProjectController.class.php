@@ -52,7 +52,7 @@ class ProjectController extends Page_Admin_Base {
 
     private function _initListFilter() {
         $this->list_filter=array(
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all','in'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'entity_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('exit_entity_id'),'paramName'=>'exit_entity_id','fusion'=>false,'hidden'=>true,'class'=>'keep-all']),
@@ -220,6 +220,17 @@ class ProjectController extends Page_Admin_Base {
             Form_Project::getFieldViewName('pending_detail') => [],
             Form_Project::getFieldViewName('_memo') => [],
         ];
+
+        if ($_GET['fields']) { // 选取字段，用于公式检查
+            $fields = explode(',', $_GET['fields']);
+            $briefFields = [];
+            foreach($fields as $field) {
+                $briefFields[Form_Project::getFieldViewName($field)] = [];
+            }
+            $reqModel = WinRequest::getModel();
+            $reqModel['tableWrap'] = (count($fields)*120).'px';
+            WinRequest::setModel($reqModel);
+        }
 
         $list_display = $this->list_display;
         $this->list_display = [];
@@ -507,21 +518,26 @@ class ProjectController extends Page_Admin_Base {
                 if (!$model->getData('id')) {
                     return number_format($holdStocks);
                 }
+                $formula = [];
                 $stockNum = 0;
                 foreach($dataList as $i => $dataItem) {
                     if ($dataItem->getData('entity_id') == $model->getData('id') 
                         && $dataItem->getData('close_date')) {
                         $stockNum += $dataItem->getData('stocknum_get');
+                        $formula['id'][] = $dataItem->getData('id');
                     }
                     if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
                         && $dataItem->getData('close_date')) {
                         $stockNum -= $dataItem->getData('exit_stock_number');
+                        $formula['id'][] = $dataItem->getData('id');
                     }
                 }
+                $formula['field'] = ['close_date','entity_id','stocknum_get','exit_stock_number'];
                 $holdStocks += $stockNum;
-                return number_format($stockNum);
+                return '<a target="_blank" href="/admin/Project?fields=id,stocknum_get,exit_stock_number,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter='.urlencode('id='.implode(',',$formula['id'])).'">'.number_format($stockNum).'</a>';
             }],
             ['label' => '最新持股比例', 'field' => function($model)use($dataList, &$holdStocks){
+                $formula = [];
                 if (!$model->getData('id')) {
                     $stockNum = $holdStocks;
                 } else {
@@ -530,6 +546,7 @@ class ProjectController extends Page_Admin_Base {
                         if ($dataItem->getData('entity_id') == $model->getData('id') 
                             && $dataItem->getData('close_date')) {
                             $stockNum += $dataItem->getData('stocknum_get');
+                            $formula['id'][] = $dataItem->getData('id');
                         }
                         if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
                             && $dataItem->getData('close_date')) {
@@ -539,8 +556,13 @@ class ProjectController extends Page_Admin_Base {
                 }
                 foreach($dataList as $i => $dataItem) {
                     //if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
-                    if ($dataItem->getData('stocknum_all'))
-                        return sprintf('%.2f%%', $stockNum/$dataItem->getData('stocknum_all')*100);
+                    if ($dataItem->getData('stocknum_all')) {
+                        $formula['id'][] = $dataItem->getData('id');
+                        if (!$model->getData('id')) {
+                            return sprintf('%.2f%%', $stockNum/$dataItem->getData('stocknum_all')*100);
+                        }
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter=%s">%.2f%%</a>', urlencode('id='.implode(',',$formula['id'])),$stockNum/$dataItem->getData('stocknum_all')*100);
+                    }
                     //}
                 }
                 return '0.00%';

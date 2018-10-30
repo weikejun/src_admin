@@ -54,7 +54,8 @@ class ActiveDealController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
 
         $this->model=new Model_Project();
-        $this->model->orderBy('deal_type', 'ASC');
+        $this->model->orderBy('deal_progress', 'DESC');
+        $this->model->orderBy('id', 'DESC');
         $this->model->addWhere('active_deal', '是');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_ItemPermission::getAdminItem();

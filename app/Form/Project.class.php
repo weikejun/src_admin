@@ -272,7 +272,7 @@ class Form_Project extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'stocknum_get','label'=>'投时持本轮股数','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
+                ['name'=>'stocknum_get','label'=>'投时持本轮股数','labelClass'=>'text-error','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_get'))
                         return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
@@ -622,7 +622,7 @@ class Form_Project extends Form {
                 ['name'=>'mirror_hold','label'=>'镜像持股','type'=>'choice','choices'=>Model_Project::getMirrorHoldChoices(),'required'=>false],
                 ['name'=>'mirror_hold_ratio','label'=>'镜像持股比例','type'=>'choice','choices'=>Model_Project::getMirrorHoldRatioChoices(),'required'=>false],
                 ['name'=>'entrustment','label'=>'是否存在代持情况','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false],
-                ['name'=>'entrustment_entity_id','label'=>'代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入代持主体全称，如有'],
+                ['name'=>'entrustment_entity_id','label'=>'（被）代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入（被）代持主体全称，如有'],
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
                 ['name'=>'_current_partner','label'=>'最新主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
                     $members = Model_Member::listAll();

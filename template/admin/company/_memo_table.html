@@ -99,7 +99,7 @@
         {%if $val%}
         <td style="padding:5px;">{%$val%}-出售{%$vars.deals.exit_turn.$index%}-{%$vars.deals.exit_stock_property.$index%}：{%$vars.deals.exit_amount.$index%}</td>
         {%elseif $vars.deals.entity_id.$index%}
-        <td style="padding:5px;">{%$vars.deals.entity_id.$index%}-购买{%$vars.deals.new_old_stock.$index%}-{%$vars.deals.stock_property.$index%}：{%$vars.deals.our_amount.$index%}</td>
+        <td style="padding:5px;">{%$vars.deals.entity_id.$index%}-购买{%$vars.deals.invest_turn.$index%}{%$vars.deals.new_old_stock.$index%}-{%$vars.deals.stock_property.$index%}：{%$vars.deals.our_amount.$index%}</td>
         {%else%}
         <td style="padding:5px;"></td>
         {%/if%}

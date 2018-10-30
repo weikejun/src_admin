@@ -44,6 +44,7 @@ class MailGenerator_MailActiveDealWeekly extends MailGenerator {
         $deals = new Model_Project;
         $deals->addWhere('status', 'valid');
         $deals->addWhere('active_deal', '是');
+        $deals->orderBy('deal_progress', 'DESC');
         $deals = $deals->find();
         $tmpDeals = [];
         foreach($deals as $i => $deal) {
