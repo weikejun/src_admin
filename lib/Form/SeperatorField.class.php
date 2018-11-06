@@ -46,6 +46,8 @@ $(document).ready(function() {
                 pDiv.find('input').val('');
                 pDiv.find(':radio').removeAttr('checked');
                 pDiv.find(':radio').parent().removeClass('checked');
+                pDiv.find(':checkbox').removeAttr('checked');
+                pDiv.find(':checkbox').parent().removeClass('checked');
                 pDiv.find('textarea').val('');
                 continue;
             } 

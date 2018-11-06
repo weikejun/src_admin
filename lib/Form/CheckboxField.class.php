@@ -43,6 +43,7 @@ class Form_CheckboxField extends Form_Field{
                 $html.="<label class='checkbox'><div class='checkbox'><span><input type='checkbox' $checked name='{$this->name}[]' value='".htmlspecialchars($value)."'></span>$display</div></label>";
             }
         }
+        $html .= '<input type="hidden" name="'.$this->name.'[]" value="" />';
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         } else {

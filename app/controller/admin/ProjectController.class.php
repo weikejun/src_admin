@@ -46,6 +46,7 @@ class ProjectController extends Page_Admin_Base {
         $this->multi_actions=array(
             ['label'=>'回收站', 'required'=>false, 'action'=>'/admin/project/recovery'],
             ['label'=>'导出csv','required'=>false,'action'=>'/admin/project/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
+            ['label'=>'导入csv','required'=>false,'action'=>'/admin/project/import?method=full&__filter='.urlencode($this->_GET("__filter"))],
             //['label'=>'导入csv','required'=>false,'action'=>'/admin/project/csvImport'],
         );
     }
@@ -251,8 +252,13 @@ class ProjectController extends Page_Admin_Base {
 
     public function recoveryAction() {
         if (isset($_GET['id']) && !empty($_GET['id'])) {
-            $this->model->addWhere('id', $_REQUEST['id'])->update(['status'=>['"valid"', DBTable::NO_ESCAPE]]);
-            $this->model->select();
+            $this->preMethod('index');
+            $this->model
+                ->addWhere('id', $_REQUEST['id'])
+                ->setCols(['id','status'])
+                ->select()
+                ->setDataMerge(['status'=>'valid'])
+                ->save();
             return ['redirect: ' . dirname($_SERVER['SCRIPT_NAME'])];
         }
         $this->_initListDisplay();
@@ -288,7 +294,12 @@ class ProjectController extends Page_Admin_Base {
      * 重载_delete()方法
      */
     public function _delete() {
-        $this->model->addWhere('id', $_REQUEST['id'])->update(['status'=>['"invalid"', DBTable::NO_ESCAPE]]);
+        $this->model
+            ->addWhere('id', $_REQUEST['id'])
+            ->setCols(['id','status'])
+            ->select()
+            ->setDataMerge(['status'=>'invalid'])
+            ->save();
     }
 
     /*
@@ -457,16 +468,19 @@ class ProjectController extends Page_Admin_Base {
                     return sprintf('%.2f%%',$model->getData('stocknum_get')/$model->getData('stocknum_all')*100);
                 }
             }],
-            ['label' => '最新股比', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
+            ['label' => '<a title="当本主体购股轮次=源码售股轮次时且源码投资主体=源码退出主体时，(∑投时持本轮股数-∑源码退出的股数)/最新一轮本轮企业总股数">最新股比</a>', 'field' => function($model)use(&$latestDeal,&$exitDataList) {
+                $formula = ['id' => [$latestDeal->getData('id'),$model->getData('id')]];
                 $turn = $model->getData('invest_turn');
                 $exitStockNum = 0;
                 foreach($exitDataList as $i => $turnData) {
                     if ($turnData->getData('exit_turn') == $turn
                         && $turnData->getData('exit_entity_id') == $model->getData('entity_id')) {
                         $exitStockNum += $turnData->getData('exit_stock_number');
+                        $formula['id'][] = $turnData->getData('id');
                     }
                 }
-                return sprintf('%.2f%%',($model->getData('stocknum_get') - $exitStockNum)/$latestDeal->getData('stocknum_all')*100);
+                $output = sprintf('%.2f%%',($model->getData('stocknum_get') - $exitStockNum)/$latestDeal->getData('stocknum_all')*100);
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,deal_type,stocknum_get,exit_stock_number,invest_turn,exit_turn,stocknum_all,_company_short,turn_sub,close_date,entity_id,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
         ];
 
@@ -514,7 +528,7 @@ class ProjectController extends Page_Admin_Base {
 
                 return '合计';
             }],
-            ['label' => '最新持有股数', 'field' => function($model)use($dataList, &$holdStocks){
+            ['label' => '<a title="当交割日期存在或者计入captable时，∑投时持本轮股数-∑源码退出股数">最新持有股数</a>', 'field' => function($model)use($dataList, &$holdStocks){
                 if (!$model->getData('id')) {
                     return number_format($holdStocks);
                 }
@@ -536,7 +550,7 @@ class ProjectController extends Page_Admin_Base {
                 $holdStocks += $stockNum;
                 return '<a target="_blank" href="/admin/Project?fields=id,stocknum_get,exit_stock_number,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter='.urlencode('id='.implode(',',$formula['id'])).'">'.number_format($stockNum).'</a>';
             }],
-            ['label' => '最新持股比例', 'field' => function($model)use($dataList, &$holdStocks){
+            ['label' => '<a title="当交割日期存在或者计入captable时，(∑投时持本轮股数-∑源码退出股数)/最新一轮本轮企业总股数">最新持股比例</a>', 'field' => function($model)use($dataList, &$holdStocks){
                 $formula = [];
                 if (!$model->getData('id')) {
                     $stockNum = $holdStocks;
@@ -567,7 +581,8 @@ class ProjectController extends Page_Admin_Base {
                 }
                 return '0.00%';
             }],
-            ['label' => '最新账面价值', 'field' => function($model)use($dataList, &$holdStocks, &$holdValue){
+            ['label' => '<a title="当交割日期存在或者计入captable时，(∑投时持本轮股数-∑源码退出股数)/最新一轮本轮企业总股数x企业投后估值">最新账面价值</a>', 'field' => function($model)use($dataList, &$holdStocks, &$holdValue){
+                $formula = [];
                 if (!$model->getData('id')) {
                     $stockNum = $holdStocks;
                 } else {
@@ -577,23 +592,30 @@ class ProjectController extends Page_Admin_Base {
                             if ($dataItem->getData('entity_id') == $model->getData('id') 
                                 && strpos($dataItem->getData('deal_type'), '源码投') !== false) {
                                 $stockNum += $dataItem->getData('stocknum_get');
+                                $formula['id'][] = $dataItem->getData('id');
                             }
                             if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
                                 && strpos($dataItem->getData('deal_type'), '源码退') !== false) {
                                 $stockNum -= $dataItem->getData('exit_stock_number');
+                                $formula['id'][] = $dataItem->getData('id');
                             }
                         }
                     }
                 }
                 foreach($dataList as $i => $dataItem) {
-                    if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                    //if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
                         $holdValue[$dataItem->getData('value_currency')] = $stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money');
-                        return $dataItem->getData('value_currency') . ' ' . number_format($holdValue[$dataItem->getData('value_currency')], 2);
-                    }
+                        $bookValue = $dataItem->getData('value_currency') . ' ' . number_format($holdValue[$dataItem->getData('value_currency')], 2);
+                        if (!$model->getData('id')) {
+                            return $bookValue;
+                        }
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,post_money,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$bookValue);
+                    //}
                 }
                 return 0;
             }],
-            ['label' => '历史投资金额', 'field' => function($model)use($dataList, &$investValues, &$curInvestValues){
+            ['label' => '<a title="当本轮交易类型=企业融资（源码投）时，∑源码合同投资金额">历史投资金额</a>', 'field' => function($model)use($dataList, &$investValues, &$curInvestValues){
+                $formula = [];
                 if (!$model->getData('id')) {
                     if (!$investValues) {
                         return 0;
@@ -609,6 +631,7 @@ class ProjectController extends Page_Admin_Base {
                         if ($dataItem->getData('entity_id') == $model->getData('id') 
                             && strpos($dataItem->getData('deal_type'), '源码投') !== false) {
                             $amounts[$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
+                            $formula['id'][] = $dataItem->getData('id');
                         }
                     }
                 }
@@ -616,26 +639,33 @@ class ProjectController extends Page_Admin_Base {
                 if (!$amounts) {
                     return 0;
                 }
+                $output = '';
                 foreach($amounts as $currency => $amount) {
                     $investValues[$currency] += $amount;
-                    echo "$currency " . number_format($amount, 2) . '<br />';
+                    $output .= "$currency " . number_format($amount, 2) . '<br />';
                 }
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,our_amount,_company_short,turn_sub,deal_type,close_date,entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
-            ['label' => '历史投资股数', 'field' => function($model)use($dataList, &$investStocks){
+            ['label' => '<a title="当本轮交易类型=企业融资（源码投）时，∑投时持本轮股数">历史投资股数</a>', 'field' => function($model)use($dataList, &$investStocks){
+                $formula = [];
                 if (!$model->getData('id')) {
                     return number_format($investStocks);
                 }
                 $stockNum = 0;
                 foreach($dataList as $i => $dataItem) {
                     if ($dataItem->getData('entity_id') == $model->getData('id') 
-                        && $dataItem->getData('close_date')) {
+                        && $dataItem->getData('close_date')
+                        && $dataItem->getData('stocknum_get')) {
                         $stockNum += $dataItem->getData('stocknum_get');
+                        $formula['id'][] = $dataItem->getData('id');
                     }
                 }
                 $investStocks += $stockNum;
-                return number_format($stockNum);
+                $output = number_format($stockNum);
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,_company_short,turn_sub,deal_type,close_date,entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
-            ['label' => '独立CB金额', 'field' => function($model)use($dataList, &$cbValues){
+            ['label' => '<a title="当本轮交易类型=源码独立CB且借款处理=待处理时，∑源码借款合同金额">独立CB金额</a>', 'field' => function($model)use($dataList, &$cbValues){
+                $formula = [];
                 if (!$model->getData('id')) {
                     if (!$cbValues) {
                         return 0;
@@ -652,18 +682,22 @@ class ProjectController extends Page_Admin_Base {
                             && stripos($dataItem->getData('deal_type'), '源码独立CB') !== false
                             && $dataItem->getData('loan_process') == '待处理') {
                             $amounts[$dataItem->getData('loan_currency')] += $dataItem->getData('loan_amount');
+                            $formula['id'][] = $dataItem->getData('id');
                         }
                     }
                 }
                 if (!$amounts) {
                     return 0;
                 }
+                $output = '';
                 foreach($amounts as $currency => $amount) {
                     $cbValues[$currency] += $amount;
-                    echo "$currency " . number_format($amount, 2) . '<br />';
+                    $output .= "$currency " . number_format($amount, 2) . '<br />';
                 }
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,loan_amount,loan_process,_company_short,turn_sub,deal_type,close_date,loan_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
-            ['label' => '退出金额', 'field' => function($model)use($dataList, &$exitValues, &$curExitValues){
+            ['label' => '<a title="∑源码本次退出合同金额">退出金额</a>', 'field' => function($model)use($dataList, &$exitValues, &$curExitValues){
+                $formula = [];
                 if (!$model->getData('id')) {
                     if (!$exitValues) {
                         return 0;
@@ -678,18 +712,22 @@ class ProjectController extends Page_Admin_Base {
                     if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
                         && $dataItem->getData('close_date')) {
                         $amounts[$dataItem->getData('exit_currency')] += $dataItem->getData('exit_amount');
+                        $formula['id'][] = $dataItem->getData('id');
                     }
                 }
                 $curExitValues = $amounts;
                 if (!$amounts) {
                     return 0;
                 }
+                $output = '';
                 foreach($amounts as $currency => $amount) {
                     $exitValues[$currency] += $amount;
-                    echo "$currency " . number_format($amount, 2) . '<br />';
+                    $output .= "$currency " . number_format($amount, 2) . '<br />';
                 }
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,exit_amount,_company_short,turn_sub,deal_type,close_date,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
-            ['label' => '退出股数', 'field' => function($model)use($dataList, &$totalExitStocks){
+            ['label' => '<a title="∑源码退出的股数">退出股数</a>', 'field' => function($model)use($dataList, &$totalExitStocks){
+                $formula = [];
                 if (!$model->getData('id')) {
                     return number_format($totalExitStocks);
                 }
@@ -698,12 +736,14 @@ class ProjectController extends Page_Admin_Base {
                     if ($dataItem->getData('exit_entity_id') == $model->getData('id') 
                         && $dataItem->getData('close_date')) {
                         $stockNum += $dataItem->getData('exit_stock_number');
+                        $formula['id'][] = $dataItem->getData('id');
                     }
                 }
                 $totalExitStocks += $stockNum;
-                return number_format($stockNum);
+                $output = number_format($stockNum);
+                return sprintf('<a target=_blank href="/admin/Project?fields=id,exit_stock_number,_company_short,turn_sub,deal_type,close_date,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
             }],
-            ['label' => '回报倍数', 'field' => function($model)use(&$holdValue, &$curInvestValues, &$curExitValues, &$investValues, &$exitValues) {
+            ['label' => '<a title="(最新账面价值+退出金额)/历史投资金额">回报倍数</a>', 'field' => function($model)use(&$holdValue, &$curInvestValues, &$curExitValues, &$investValues, &$exitValues) {
                 if (!$model->getData('id')) {
                     $curInvestValues = $investValues;
                     $curExitValues = $exitValues;
@@ -776,17 +816,33 @@ class ProjectController extends Page_Admin_Base {
         $this->display("admin/base/select.html");
     }
 
-    public function csvImportAction() {
+    public function importAction() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST' 
             && isset($_FILES['content'])
             && $_FILES['content']['error'] == 0) {
             $csv = fopen($_FILES['content']['tmp_name'], 'r');
-            $csvHeader = fgets($csv);
+            $csvLines = [];
+            $csvHeader = [];
+            while(!feof($csv)) { // 转置
+                $csvLine = trim(fgets($csv));
+                if (!$csvLine) continue;
+                $utfEnc = mb_detect_encoding($csvLine, 'UTF-8', true);
+                if (!$utfEnc) { // 只支持GB编码导入
+                    $csvLine = mb_convert_encoding($csvLine, 'UTF-8', 'gbk');
+                }
+                $colums = str_getcsv($csvLine);
+                $csvHeader[] = $colums[0];
+                for($i = 1; $i < count($colums); $i++) {
+                    $csvLines[$i][] = $colums[$i];
+                }
+            }
+            /*$csvHeader = fgets($csv);
             $utfEnc = mb_detect_encoding($csvHeader, 'UTF-8', true);
             if (!$utfEnc) { // 只支持GB编码导入
                 $csvHeader = mb_convert_encoding($csvHeader, 'UTF-8', 'gbk');
             }
-            $csvHeader = str_getcsv($csvHeader);
+            $csvHeader = str_getcsv($csvHeader);*/
+            $this->preMethod('index');
 
             // 生成字段映射
             $fieldMap = Form_Project::getFieldsMap();
@@ -800,17 +856,20 @@ class ProjectController extends Page_Admin_Base {
                 $csvHeader[$i] = $dbMap[$fieldText];
             }
 
-            while(!feof($csv)) {
+            //while(!feof($csv)) {
+            foreach($csvLines as $i => $csvLine) {
+                /*
                 $csvLine = fgets($csv);
                 if (!$utfEnc) {
                     $csvLine = mb_convert_encoding($csvLine, 'UTF-8', 'gbk');
                 }
                 $csvLine = str_getcsv($csvLine);
+                 */
                 if (count($csvLine) == count($csvHeader)) { // 表头对应正常
                     $saveData = [];
                     foreach($csvHeader as $i => $fieldName) {
                         // 计算字段不入库
-                        if (strpos($fieldName, '_') === 0) {
+                        if (strpos($fieldName, '_') === 0 || empty($csvLine[$i])) {
                             continue;
                         }
                         if (strpos($fieldName, 'company_id') !== false) {
@@ -821,26 +880,38 @@ class ProjectController extends Page_Admin_Base {
                         } elseif ((strpos($fieldName, '_date') !== false
                             && $csvLine[$i] != 0 
                             && is_numeric($csvLine[$i])) 
-                            || $fieldName == 'update_time') {
+                            || $fieldName == 'update_time'
+                            || $fieldName == 'create_time') {
                             $csvLine[$i] = strtotime($csvLine[$i]);
                         } elseif (strpos($fieldName, 'entity_id') !== false) {
                             $entity = new Model_Entity;
                             $entity->addWhere('name', $csvLine[$i]);
                             $entity->select();
                             $csvLine[$i] = $entity->mId;
+                        } elseif (in_array($fieldName, ['partner','manager','finance_person','legal_person','deal_manager'])) {
+                            $mId = Model_Member::getIdsByName($csvLine[$i]);
+                            $csvLine[$i] = $mId[0];
                         }
                         $saveData[$fieldName] = $csvLine[$i];
                     }
+                    if (!Model_AdminGroup::isCurrentAdminRoot()) {
+                        unset($saveData['id']);
+                    }
+                    $saveData['status'] = 'valid';
+                    $this->model->clear();
+                    $this->model->setData($saveData);
+                    $this->model->save();
                 } else {
                 }
             }
 
             fclose($csv);
+            return ["redirect: /admin/project"];
         }
         $this->form=new Form([
             ['name'=>'id','label'=>'交易记录csv','type'=>'file'],
         ]);
-        return ["admin/project/csvimport.html"];
+        return ["admin/project/import.html"];
     }
 }
 

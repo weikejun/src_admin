@@ -320,8 +320,16 @@ class Form_Project extends Form {
                     if ($model->getData('loan_amount'))
                         return $model->getData('loan_currency') . ' ' . number_format($model->getData('loan_amount'), 2);
                 }],
-                ['name'=>'loan_sign_date','label'=>'借款合同签署日期','type'=>'date','default'=>null,'required'=>false,],
-                ['name'=>'loan_end_date','label'=>'借款到期日','type'=>'date','default'=>null,'required'=>false,],
+                ['name'=>'loan_sign_date','label'=>'借款合同签署日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('loan_sign_date')) {
+                        return date("Ymd", $model->getData('loan_sign_date'));
+                    }
+                }],
+                ['name'=>'loan_end_date','label'=>'借款到期日','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
+                    if ($model->getData('loan_end_date')) {
+                        return date("Ymd", $model->getData('loan_end_date'));
+                    }
+                }],
                 ['name'=>'loan_process','label'=>'借款处理','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getLoanProcessChoices(),'required'=>false,],
                 ['name'=>'loan_memo','label'=>'借款备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-otherinvestor','label'=>'非源码投资人投资方案','type'=>'seperator'],
@@ -411,12 +419,12 @@ class Form_Project extends Form {
                 ['name'=>'shareholding_cofounders','label'=>'co-founders股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return is_numeric($model->getData('shareholding_cofounders')) ? number_format($model->getData('shareholding_cofounders')) : $model->getData('shareholding_cofounders');
                 }],
-                ['name'=>'shareholding_member','label'=>'co-founders持股比例','type'=>'hidden','required'=>false], // 兼容老数据
-                ['name'=>'_shareholding_member','label'=>'co-founders持股比例','type'=>'rawText','required'=>false,'field'=>function($model) {
+                //['name'=>'shareholding_member','label'=>'co-founders持股比例','type'=>'hidden','required'=>false], // 兼容老数据
+                ['name'=>'_shareholding_cofounders_ratio','label'=>'co-founders持股比例','type'=>'rawText','required'=>false,'field'=>function($model) {
                     if ($model->getData('stocknum_all') && $model->getData('shareholding_cofounders')) {
                         return number_format($model->getData('shareholding_cofounders')/$model->getData('stocknum_all')*100,2).'%';
                     }
-                    return $model->getData('shareholding_member');
+                    //return $model->getData('shareholding_member');
                 }],
                 ['name'=>'shareholding_esop','label'=>'ESOP股数','type'=>'number','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'field'=>function($model){
                     return is_numeric($model->getData('shareholding_esop')) ? number_format($model->getData('shareholding_esop')) : $model->getData('shareholding_esop');
@@ -464,6 +472,13 @@ class Form_Project extends Form {
                 ['name'=>'field-seperator-shareholding-our','label'=>'源码所持本轮次股权最新','type'=>'seperator2'],
                 ['name'=>'_stocknum_new','label'=>'本主体最新持本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model)use(&$deals,&$stockNumNew){
                     $stockNum = 0;
+                    if (!$model->getData('entity_id')) {
+                        if ($model->getData('exit_entity_id')) {
+                            $model->mEntityId = $model->getData('exit_entity_id');
+                        } elseif ($model->getData('loan_entity_id')) {
+                            $model->mEntityId = $model->getData('loan_entity_id');
+                        }
+                    }
                     foreach($deals as $i => $deal) {
                         if ($model->getData('entity_id') && $deal->getData('entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('invest_turn')) {
                             $stockNum += $deal->getData('stocknum_get');
