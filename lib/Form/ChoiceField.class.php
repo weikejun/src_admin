@@ -17,6 +17,7 @@ class Form_ChoiceField extends Form_Field{
         $html="<div class='control-group'>";
         $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>";
         $html.="<div class='controls'>";
+        $html.= '<input type="hidden" name="'.$this->name.'" value="" />';
         foreach($this->choices as $choice){
             $value=$choice[0];
             $display=isset($choice[1])?$choice[1]:$value;

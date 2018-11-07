@@ -132,11 +132,12 @@ class CompanyController extends Page_Admin_Base {
         $this->_initListFilter();
 
         WinRequest::mergeModel(array(
-            'tableWrap' => '3064px',
+            'tableWrap' => '3200px',
         ));
 
         $briefFields = [
             Form_Company::getFieldViewName('id') => [],
+            Form_Company::getFieldViewName('code') => [],
             Form_Company::getFieldViewName('short') => [],
             Form_Company::getFieldViewName('project_type') => [],
             Form_Company::getFieldViewName('_captable') => [],

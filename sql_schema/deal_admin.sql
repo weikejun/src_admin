@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `company`; /*企业信息*/
 CREATE TABLE `company` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(64) DEFAULT NULL COMMENT '目标企业', 
+    `code` varchar(64) DEFAULT NULL COMMENT '企业编号', 
     `short` varchar(32) DEFAULT NULL COMMENT '项目简称', 
     `hold_status` varchar(32) DEFAULT '正常' COMMENT '持有状态', 
     `project_type` varchar(32) DEFAULT NULL COMMENT '项目类别', 

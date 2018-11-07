@@ -112,6 +112,8 @@ class ProjectController extends Page_Admin_Base {
         });
         $this->model->on('after_update', function($model) {
             $mails = json_decode($model->getData('committee_view'));
+            $decision = new Model_DealDecision;
+            $decision->addWhere('project_id', $model->getData('id'))->delete();
             foreach($mails as $i => $mail) {
                 $id = Model_Member::getIdByEmail($mail);
                 if ($id) {
