@@ -37,6 +37,7 @@ class ACL{
             "用户角色" => ["AdminGroup"],
             "角色权限组" => ["RolePermission"],
             "权限组配置" => ["PermissionAction"],
+            "特工模式" => ["Spy"],
         ],
         "统计版块" => [
             "数据统计" => ["DataStat"],

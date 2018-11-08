@@ -94,9 +94,12 @@ abstract class Page_Admin_Base extends BaseController{
             //$model->addWhere('id', 0);
             return;
         }
+        $model->addWhere('id', 0, '>');
+        $model->addWhereRaw(' and ( 1 = 0');
         foreach($this->search_fields as $field){
             $model->addWhere($field,"%$search%",'like','or');
         }
+        $model->addWhereRaw(')');
     }
 
     public function search(){
