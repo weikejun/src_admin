@@ -457,7 +457,7 @@ CREATE TABLE `project` (
     `expect_pay_schedule` text DEFAULT NULL COMMENT '预计交割付款安排', 
     `trade_schedule_memo` text DEFAULT NULL COMMENT '交易进度其他说明', 
     `trade_schedule_todo` text DEFAULT NULL COMMENT '交易进度ToDo', 
-    `ts_ratio` varchar(8) DEFAULT NULL COMMENT 'TS/决策口径占比',
+    `ts_ratio` text DEFAULT NULL COMMENT 'TS/决策口径占比',
     `lawyer_fee` varchar(8) DEFAULT NULL COMMENT '律师费',
     `active_deal` varchar(8) DEFAULT NULL COMMENT '活动交易',
     `deal_progress` text DEFAULT NULL COMMENT '交易进展', 

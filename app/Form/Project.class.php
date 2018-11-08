@@ -251,7 +251,7 @@ class Form_Project extends Form {
                     if ($model->getData('ts_decision_amount')) {
                         return $model->getData('invest_currency') . ' ' . $model->getData('ts_decision_amount');
                     }
-                },'help'=>'源码投资须填写，与收集投决相关'],
+                },'help'=>'源码投资须填写，与收集投决相关，可写文字'],
                 ['name'=>'our_amount','label'=>'源码合同投资金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('our_amount')) {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('our_amount'), 2);
@@ -276,7 +276,7 @@ class Form_Project extends Form {
                     if ($model->getData('stocknum_get'))
                         return number_format($model->getData('stocknum_get'));
                 },'help'=>'本轮未投写“0”'],
-                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'源码投资须填写，与收集投决相关'],
+                ['name'=>'ts_ratio','label'=>'TS/决策口径占比','labelClass'=>'text-error','type'=>'text','default'=>null,'required'=>false,'help'=>'源码投资须填写，与收集投决相关，可写文字'],
                 ['name'=>'_stock_ratio','label'=>'投时持股比例','type'=>'rawText','readonly'=>true,'default'=>'','required'=>false,'field'=>function($model){
                     if ($model->getData('stocknum_all')) {
                         return sprintf('%.2f%%', $model->getData('stocknum_get') / $model->getData('stocknum_all') * 100);
@@ -334,7 +334,7 @@ class Form_Project extends Form {
                 ['name'=>'loan_memo','label'=>'借款备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-otherinvestor','label'=>'非源码投资人投资方案','type'=>'seperator'],
                 ['name'=>'other_investor','label'=>'本轮非源码投资人','type'=>'choice','choices'=>Model_Project::getOtherInvestorChoices(),'required'=>false,],
-                ['name'=>'other_investor_summary','label'=>'其他主要投资人金额与比例','type'=>'textarea','default'=>null,'required'=>false,'help'=>'选一两个填即可。'],
+                ['name'=>'other_investor_summary','label'=>'非源码投资人金额与比例','type'=>'textarea','default'=>null,'required'=>false,'help'=>'选一两个填即可。'],
                 ['name'=>'field-index-exit','label'=>'源码退出方案及详情','type'=>'seperator'],
                 ['name'=>'has_exit','label'=>'源码是否有退出','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'exit_currency','label'=>'源码退出计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
@@ -390,11 +390,11 @@ class Form_Project extends Form {
                             if (!$costPrice) {
                                 return '股权购买成本无记录';
                             } else {
-                                return sprintf('%.2f%%', ($model->getData('exit_amount') / ($exitStock * $costPrice) - 1) * 100);
+                                return sprintf('%.2f', ($model->getData('exit_amount') / ($exitStock * $costPrice) - 0));
                             }
                         }
                     }
-                }],
+                },'help'=>'倍数<1 downround；=1 持平；>1 上涨'],
                 ['name'=>'exit_memo','label'=>'源码退出备注','type'=>'text','default'=>null,'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
                 ['name'=>'stocknum_all','label'=>'本轮企业总股数','labelClass'=>'text-error','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
@@ -533,7 +533,7 @@ class Form_Project extends Form {
                 ['name'=>'field-index-term-investorlimit','label'=>'核心条款：对本轮投资人限制','type'=>'seperator'],
                 ['name'=>'invest_competitor_limit','label'=>'投资人投资竞品限制','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
                 ['name'=>'stock_transfer_limit','label'=>'投资人股权转让竞品限制','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],
-                ['name'=>'stock_transfer_limit_other','label'=>'投资人股权转让其他限制','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'stock_transfer_limit_other','label'=>'投资人股权转让限制备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'limit_other','label'=>'源码其他限制/责任备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-term-founderlimit','label'=>'核心条款：对创始人限制','type'=>'seperator'],
                 ['name'=>'founder_transfer_limit','label'=>'创始人股转限制','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],

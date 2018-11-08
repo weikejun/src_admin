@@ -410,9 +410,7 @@ class Form_Company extends Form {
                 ['name'=>'_director_turn','label'=>'董事委派轮次','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     ksort($dataList);
                     foreach($dataList as $i => $dataItem) {
@@ -424,9 +422,7 @@ class Form_Company extends Form {
                 ['name'=>'_director_name','label'=>'最新源码董事姓名','type'=>'rawText','default'=>'无董事席位','required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
@@ -436,9 +432,7 @@ class Form_Company extends Form {
                 ['name'=>'_director_status','label'=>'最新源码董事状态','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
@@ -448,9 +442,7 @@ class Form_Company extends Form {
                 ['name'=>'_observer','label'=>'最新源码观察员','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
@@ -460,9 +452,7 @@ class Form_Company extends Form {
                 ['name'=>'_supervisor','label'=>'最新源码监事','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project){
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
@@ -472,9 +462,7 @@ class Form_Company extends Form {
                 ['name'=>'_holder_veto','label'=>'最新股东会Veto','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
@@ -484,9 +472,7 @@ class Form_Company extends Form {
                 ['name'=>'_board_veto','label'=>'最新董事会Veto','type'=>'rawText','required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('id')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {

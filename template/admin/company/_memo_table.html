@@ -487,4 +487,12 @@
         <td style="padding:5px;">{%$val%}</td>
         {%/foreach%}
     </tr>
+    <tr height="25pt;">
+        <td style="padding:5px;" colspan="2">项目备注</td>
+        <td style="padding:5px;" colspan="{%$vars.deal_count%}">
+            {%foreach from=$vars.company_memo item=val%}
+            <p>{%date('Ymd', $val->mUpdateTime)%} {%$val->mOperator%} {%$val->mTitle|escape:'html'%}：{%$val->mContent|escape:'html'%}</p>
+            {%/foreach%}
+        </td>
+    </tr>
 </table>

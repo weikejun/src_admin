@@ -17,6 +17,59 @@
         </span>
     </form>
     {%/if%}
+    {%capture name="pagination" assign="_pagination"%}
+    <div class="row-fluid">
+        {%if $_allCount%}
+        <div class="span4">
+            <div class="dataTables_info" id="sample_1_info">
+                 本页显示第 {%$_startIndex+1%} 到 {%$_startIndex+count($modelDataList)%} 结果，共 {%$_allCount%} 结果</div>
+        </div>
+        {%/if%}
+        <div class="span8">
+            <div class="dataTables_paginate paging_bootstrap pagination">
+                {%$_pageAll=ceil($_allCount/$_pageSize)%}
+                {%if $_pageAll > 1%} 
+                <ul>
+                    {%if $_page>0%}
+                    <li>
+                        <a href="{%build_url page=$_page-1%}">
+                        ← <span class="hidden-480">上一页
+                        </a>
+                    </li>
+                    {%/if%}
+
+                    {%$startPage=max(0,$_page-3)%}
+                    {%$endPage=min($_pageAll-1,$_page+4)%}
+                    {%if $startPage>0%}
+                    <li><a href="{%build_url page=0%}">1</a></li>
+                    <li><a>...</a></li>
+                    {%/if%}
+                    
+                    {%foreach range($startPage,$endPage) as $page%}
+                    <li{%if $_page==$page%} class="active"{%/if%}><a href="{%build_url page=$page%}">{%$page+1%}</a></li>
+                    {%/foreach%}
+                    
+                    {%if $endPage<$_pageAll-1%}
+                    <li><a>...</a></li>
+                    <li><a href="{%build_url page=$_pageAll-1%}">{%$_pageAll%}</a></li>
+                    {%/if%}
+
+                    {%if $_page<$_pageAll-1%}
+                    <li>
+                        <a href="{%build_url page=$_page+1%}">
+                            <span class="hidden-480">
+                                下一页</span> → 
+                        </a>
+                    </li>
+                    {%/if%}
+                </ul>
+                {%/if%}
+            </div>
+        </div>
+
+    </div>
+    {%/capture%}
+    {%$_pagination%}
     {%if $pageAdmin->search_fields%}
     <div class="row-fluid">
         <div class="span6">
@@ -132,58 +185,7 @@
         </tbody>
     </table>
     </div>
-    <div class="row-fluid">
-        {%if $_allCount%}
-        <div class="span4">
-            <div class="dataTables_info" id="sample_1_info">
-                 本页显示第 {%$_startIndex+1%} 到 {%$_startIndex+count($modelDataList)%} 结果，共 {%$_allCount%} 结果</div>
-        </div>
-        {%/if%}
-        <div class="span8">
-            <div class="dataTables_paginate paging_bootstrap pagination">
-                {%$_pageAll=ceil($_allCount/$_pageSize)%}
-                {%if $_pageAll > 1%} 
-                <ul>
-                    {%if $_page>0%}
-                    <li>
-                        <a href="{%build_url page=$_page-1%}">
-                        ← <span class="hidden-480">上一页
-                        </a>
-                    </li>
-                    {%/if%}
-
-                    {%$startPage=max(0,$_page-3)%}
-                    {%$endPage=min($_pageAll-1,$_page+4)%}
-                    {%if $startPage>0%}
-                    <li><a href="{%build_url page=0%}">1</a></li>
-                    <li><a>...</a></li>
-                    {%/if%}
-                    
-                    {%foreach range($startPage,$endPage) as $page%}
-                    <li{%if $_page==$page%} class="active"{%/if%}><a href="{%build_url page=$page%}">{%$page+1%}</a></li>
-                    {%/foreach%}
-                    
-                    {%if $endPage<$_pageAll-1%}
-                    <li><a>...</a></li>
-                    <li><a href="{%build_url page=$_pageAll-1%}">{%$_pageAll%}</a></li>
-                    {%/if%}
-
-                    {%if $_page<$_pageAll-1%}
-                    <li>
-                        <a href="{%build_url page=$_page+1%}">
-                            <span class="hidden-480">
-                                下一页</span> → 
-                        </a>
-                    </li>
-                    {%/if%}
-                </ul>
-                {%/if%}
-            </div>
-        </div>
-
-    </div>
-
-
+    {%$_pagination%}
 </div>
 
 

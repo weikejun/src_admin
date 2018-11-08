@@ -29,6 +29,7 @@ class DealDecisionController extends Page_Admin_Base {
         //$this->hide_action_new = true;
 
         $this->list_filter=array(
+            new Page_Admin_TextFilter(['name'=>Form_DealDecision::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_DealDecision::getFieldViewName('project_id'),'paramName'=>'project_id','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_DealDecision::getFieldViewName('_company_short'),'paramName'=>'company_id|project_id','foreignTable'=>'Model_Project','fusion'=>false,'preSearch'=>function($val) {$model=new Model_Company;$model->addWhere('short',"%$val%",'like');$model=$model->findMap('id');return array_keys($model);},'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_DealDecision::getFieldViewName('decision'),'paramName'=>'decision','choices'=>Model_DealDecision::getDecisionChoices(),'class'=>'keep-all']),

@@ -1,8 +1,9 @@
 /******************** create table ********************/
 
 /******************** alter table ********************/
-alter table `company` add `code` varchar(64) DEFAULT NULL COMMENT "企业编号" after `id`;
+alter table `project` modify `ts_ratio` text DEFAULT NULL COMMENT 'TS/决策口径占比';
 
 /******************** insert ********************/
 
 /******************** update ********************/
+update `project` set `company_character` = '境外实体（非中国VIE）' where `company_character` = '非境外VIE';

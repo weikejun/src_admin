@@ -60,6 +60,7 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('_company_character'),'paramName'=>'id|id','foreignTable'=>'Model_Project','fusion'=>false,'preSearch'=>function($val){$model = new Model_Project;$model->setCols(['company_id'])->addComputedCol('MAX(id)', 'id')->addWhere('status','valid')->addWhereRaw(' and (`close_date` > 0 or `count_captable` = "计入")')->groupBy('company_id');$ids=array_keys($model->findMap('id'));$model=new Model_Project;$model->addWhere('id',$ids,'IN')->addWhere('company_character',"%$val%",'like');$model=$model->findMap('id');return array_keys($model);},'forSelField'=>'company_id']),
             new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
+            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','(`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "")'],['founder','最主要创始人空缺','(`main_founders` = "")']]]),
         );
     }
 
@@ -297,6 +298,9 @@ class CompanyController extends Page_Admin_Base {
                 $i = $i + $j; // 比较下一轮次
                 $j = 1;
             }
+            $coMemo = new Model_CompanyMemo;
+            $coMemo->addWhere('company_id', $_GET['id']);
+            $vars['company_memo'] = $coMemo->find();
             $vars['company'] = $company->getData();
             $vars['deal_cols'] = 2 + count($deals);
             $vars['deal_count'] = count($deals);
