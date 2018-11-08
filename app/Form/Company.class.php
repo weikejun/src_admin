@@ -22,7 +22,7 @@ class Form_Company extends Form {
                     return $model->getData('id');
                 }],
                 ['name'=>'name','label'=>'目标企业','type'=>'text','default'=>null,'required'=>true,'help'=>'填入企业融资平台准确全称','validator'=>new Form_UniqueValidator(new Model_Company, 'name')],
-                ['name'=>'code','label'=>'企业编号','type'=>'text','default'=>null,'required'=>false,'validator'=>new Form_UniqueValidator(new Model_Company, 'name')],
+                ['name'=>'code','label'=>'存档编号','type'=>'text','default'=>null,'required'=>false,'validator'=>new Form_UniqueValidator(new Model_Company, 'name')],
                 ['name'=>'short','label'=>'项目简称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入项目唯一简称，后续变动可此处修改。','validator'=>new Form_UniqueValidator(new Model_Company, 'short')],
                 ['name'=>'hold_status','label'=>'源码持有状态','type'=>'choice','choices'=>Model_Company::getHoldStatusChoices(),'default'=>'正常','required'=>true,],
                 ['name'=>'project_type','label'=>'项目类别','type'=>'choice','choices'=>Model_Company::getProjectTypeChoices(),'required'=>true,],

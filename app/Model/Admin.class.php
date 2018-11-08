@@ -14,6 +14,9 @@ class Model_Admin extends Base_Admin{
             return false;
         }
         $adminData=$_SESSION['admin'];
+        if (!is_array($adminData)) {
+            $adminData = $adminData->getData();
+        }
         $admin->clear()->setData($adminData);
         return $admin;
         //return $user->addWhere("id",$id)->select();
