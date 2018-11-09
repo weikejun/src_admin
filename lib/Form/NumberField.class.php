@@ -14,12 +14,13 @@ class Form_NumberField extends Form_Field{
     }
 
     public function to_html($is_new){
+        $valueApply = (($this->tempValue && isset($this->config['echo'])) ? "_value=$this->tempValue" : "");
         $class=$this->config['class'];
         $html="<div class='control-group'>";
         $value=(!$this->value&&$this->value!==0)?$this->value:htmlspecialchars(number_format(floatval($this->value), 2), ENT_QUOTES);
         $html.= "<label class='control-label ".$this->config['labelClass']."'>".$this->label."</label>".
             "<div class='controls'>".
-            "<input class='numeric $class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}'  value='".$value."'>";
+            "<input class='numeric $class span6' ".($this->config['readonly']&&($this->config['default']||!$is_new&&strlen(trim($value))!=0)?'readonly':"")." type='text' name='{$this->name}' $valueApply value='".$value."'>";
         if($this->error){
             $html.="<span class='help-inline'>".$this->error."</span>";
         } else {
@@ -35,6 +36,28 @@ class Form_NumberField extends Form_Field{
 <script>
     $(document).ready(function() {
         $('input.numeric').each(function(index,elem) {
+            if ($(elem).attr('_value')) {
+                var timer = null;
+                $(elem).hover(function() {
+                    var preVal = $(elem).attr('_value');
+                    if (!preVal || $(elem).val()) return;
+                    timer = setTimeout(function() {
+                        var ret = (confirm('使用上一轮交易数据“'+preVal+'”'));
+                        if (ret) {
+                            $(elem).val(preVal);
+                        } else {
+                            $(elem).removeAttr('_value');
+                        }
+                    }, 1);
+                }, function() {
+                    clearTimeout(timer);
+                    timer = null;
+                });
+                $(elem).click(function() {
+                    clearTimeout(timer);
+                    timer = null;
+                });
+            }
             $(elem).data('timers', -1);
             $(elem).keyup(function(evt) {
                 if(evt.keyCode == 37 || evt.keyCode == 39) {

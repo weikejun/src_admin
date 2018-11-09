@@ -69,7 +69,6 @@
 
     </div>
     {%/capture%}
-    {%$_pagination%}
     {%if $pageAdmin->search_fields%}
     <div class="row-fluid">
         <div class="span6">
@@ -104,6 +103,7 @@
         </div>
     </div>
     {%/if%}
+    {%$_pagination%}
     {%if isset($tableWrap) %}
     <style>
     #data_tbwrap {overflow-x:scroll;}

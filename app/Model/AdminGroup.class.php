@@ -2,7 +2,7 @@
 class Model_AdminGroup extends Base_Admin_Group{
     public static function getGroupIdsByAdmin($adminId){
         $admin_group = new self();
-        $admin_groups = $admin_group->addWhere('admin_id', Model_Admin::getCurrentAdmin()->mId)->find();
+        $admin_groups = $admin_group->addWhere('admin_id', $adminId)->find();
         $group_ids = array();
         if($admin_groups){
             foreach($admin_groups as $group){

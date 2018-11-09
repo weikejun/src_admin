@@ -419,6 +419,19 @@ class Form_Company extends Form {
                         }
                     }
                 }],
+                ['name'=>'_has_director','label'=>'是否委派过董事','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project){
+                    $dataList = [];
+                    foreach($project as $i => $dataItem) {
+                        $dataList[$dataItem->getData('id')] = $dataItem;
+                    }
+                    ksort($dataList);
+                    foreach($dataList as $i => $dataItem) {
+                        if ($dataItem->getData('our_board') == '有') {
+                            return '是';
+                        }
+                    }
+                    return '否';
+                }],
                 ['name'=>'_director_name','label'=>'最新源码董事姓名','type'=>'rawText','default'=>'无董事席位','required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
                     foreach($project as $i => $dataItem) {

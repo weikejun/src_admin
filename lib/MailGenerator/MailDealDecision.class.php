@@ -25,8 +25,6 @@ class MailGenerator_MailDealDecision extends MailGenerator {
 
     protected function _getTrigger() {
         $decisions = new Model_DealDecision;
-        $decisions->addWhere('decision', '');
-        $decisions->addWhere('decision', null, 'IS', 'or');
         $decisions = $decisions->find();
         $dealIds = [];
         foreach($decisions as $i => $decision) {
@@ -52,7 +50,7 @@ class MailGenerator_MailDealDecision extends MailGenerator {
         $deal = $this->_deals[$trigger->mProjectId];
         foreach([3, 7, 15] as $i => $day) {
             $expect = $deal->mDecisionDate + $day * 86400;
-            if ($expect > time()) {
+            if ($expect > time() && empty($trigger->mDecision)) {
                 return [$expect];
             }
         }

@@ -73,6 +73,15 @@ class Form_Project extends Form {
                 ['name'=>'company_period','label'=>'目标企业阶段','type'=>'selectInput','choices'=>Model_Project::getCompanyPeriodChoices(),'required'=>false,],
                 ['name'=>'company_character','label'=>'目标企业性质','type'=>'selectInput','choices'=>Model_Project::getCompanyCharacterChoices(),'required'=>false,],
                 ['name'=>'item_status','label'=>'整理状态','type'=>'choice','choices'=>Model_Project::getItemStatusChoices(),'required'=>true,'default'=>'待完成'],
+                ['name'=>'_company_bussiness','label'=>'所属行业','type'=>'rawText','field'=>function($model)use(&$company) {
+                    return $company->mBussiness;
+                }],
+                ['name'=>'_company_region','label'=>'主营地','type'=>'rawText','field'=>function($model)use(&$company) {
+                    return $company->mRegion;
+                }],
+                ['name'=>'_company_register_region','label'=>'注册地','type'=>'rawText','field'=>function($model)use(&$company) {
+                    return $company->mRegisterRegion;
+                }],
                 ['name'=>'field-index-status','label'=>'本轮交易状态','type'=>'seperator'],
                 ['name'=>'decision_date','label'=>'决策/启动日期','labelClass'=>'text-error','type'=>'date','default'=>null,'required'=>false,'help'=>'源码投：TS日（优先）、IC决策日、投资部告知的大致日期；源码不投：启动日','field'=>function($model){
                     if ($model->getData('decision_date')) {
@@ -135,7 +144,7 @@ class Form_Project extends Form {
                         return "提醒邮件".$mail->getData('status');
                     }
                 }],
-                ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false,],
+                ['name'=>'trade_schedule_todo','label'=>'To Do','type'=>'textarea','default'=>null,'required'=>false,],
                 ['name'=>'deal_progress','label'=>'交易进展','type'=>'message','class'=>'with_date','field'=>function($model) {
                     $progs = json_decode($model->getData('deal_progress'));
                     $progs = $progs ? $progs : [];
@@ -193,6 +202,10 @@ class Form_Project extends Form {
                     if ($model->getData('post_money'))
                         return $model->getData('value_currency') . ' ' . number_format($model->getData('post_money'), 2);
                 }],
+                ['name'=>'stocknum_all','label'=>'本轮企业总股数','labelClass'=>'text-error','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','echo'=>true,'field'=>function($model){
+                    if ($model->getData('stocknum_all'))
+                        return number_format($model->getData('stocknum_all'));
+                }],
                 ['name'=>'_stock_price','label'=>'企业每股单价','type'=>'rawText','required'=>false,'help'=>'本轮“企业投后估值“除以本轮“企业投后总股数”','field'=>function($model)use(&$stockPrice){
                     $postMoney = $model->getData('pre_money') + $model->getData('financing_amount');
                     if ($model->getData('post_money')) {
@@ -243,7 +256,7 @@ class Form_Project extends Form {
                 }],
                 ['name'=>'affiliate_transaction','label'=>'是否关联交易','type'=>'choice','choices'=>Model_Project::getStandardYesNoChoices(),'required'=>false,],
                 ['name'=>'invest_currency','label'=>'源码投资计价货币','labelClass'=>'text-error','type'=>'choice','choices'=>Model_Project::getInvestCurrencyChoices(),'required'=>false,],
-                ['name'=>'entity_id','label'=>'源码投资主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>isset($_GET['entity_id'])&&$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
+                ['name'=>'entity_id','label'=>'源码投资主体','labelClass'=>'text-error','type'=>'choosemodel','model'=>'Model_Entity','default'=>isset($_GET['entity_id'])&&$_GET['entity_id']?$_GET['entity_id']:0,'required'=>false,'field'=>function($model){
                     $entity = Page_Admin_Base::getResource($model->getData('entity_id'), 'Model_Entity', new Model_Entity);
                     return $entity ? $entity->getData('name') : false;
                 }],
@@ -396,11 +409,25 @@ class Form_Project extends Form {
                     }
                 },'help'=>'倍数<1 downround；=1 持平；>1 上涨'],
                 ['name'=>'exit_memo','label'=>'源码退出备注','type'=>'text','default'=>null,'required'=>false,'input'=>'textarea'],
-                ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
-                ['name'=>'stocknum_all','label'=>'本轮企业总股数','labelClass'=>'text-error','type'=>'number','default'=>null,'required'=>false,'help'=>'交割后的股数或注册资本','field'=>function($model){
-                    if ($model->getData('stocknum_all'))
-                        return number_format($model->getData('stocknum_all'));
+                ['name'=>'field-index-entity-detail','label'=>'源码投退主体详情','type'=>'seperator'],
+                ['name'=>'_entity_type','label'=>'源码投资主体类型','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                    $entity = new Model_Entity;
+                    $entity->mId = $model->getData('entity_id');
+                    $entity->select();
+                    return $entity->getData('tp');
                 }],
+                ['name'=>'_entity_currency','label'=>'源码主体资金币种','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
+                    $entity = new Model_Entity;
+                    $entity->mId = $model->getData('entity_id');
+                    $entity->select();
+                    return $entity->getData('currency');
+                }],
+                ['name'=>'entity_odi','label'=>'源码主体ODI','type'=>'choice','choices'=>Model_Project::getEntityOdiChoices(),'required'=>false],
+                ['name'=>'mirror_hold','label'=>'镜像持股','type'=>'choice','choices'=>Model_Project::getMirrorHoldChoices(),'required'=>false],
+                ['name'=>'mirror_hold_ratio','label'=>'镜像持股比例','type'=>'choice','choices'=>Model_Project::getMirrorHoldRatioChoices(),'required'=>false],
+                ['name'=>'entrustment','label'=>'是否存在代持情况','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false],
+                ['name'=>'entrustment_entity_id','label'=>'（被）代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入（被）代持主体全称，如有'],
+                ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
                 ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
                 ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model)use(&$company){
@@ -620,24 +647,6 @@ class Form_Project extends Form {
                 ['name'=>'risk_management_view','label'=>'风控保留意见','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'terms_memo','label'=>'条款其他备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'good_item','label'=>'好条款摘选','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
-                ['name'=>'field-index-entity-detail','label'=>'源码投退主体详情','type'=>'seperator'],
-                ['name'=>'_entity_type','label'=>'源码投资主体类型','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $entity = new Model_Entity;
-                    $entity->mId = $model->getData('entity_id');
-                    $entity->select();
-                    return $entity->getData('tp');
-                }],
-                ['name'=>'_entity_currency','label'=>'源码主体资金币种','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model){
-                    $entity = new Model_Entity;
-                    $entity->mId = $model->getData('entity_id');
-                    $entity->select();
-                    return $entity->getData('currency');
-                }],
-                ['name'=>'entity_odi','label'=>'源码主体ODI','type'=>'choice','choices'=>Model_Project::getEntityOdiChoices(),'required'=>false],
-                ['name'=>'mirror_hold','label'=>'镜像持股','type'=>'choice','choices'=>Model_Project::getMirrorHoldChoices(),'required'=>false],
-                ['name'=>'mirror_hold_ratio','label'=>'镜像持股比例','type'=>'choice','choices'=>Model_Project::getMirrorHoldRatioChoices(),'required'=>false],
-                ['name'=>'entrustment','label'=>'是否存在代持情况','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false],
-                ['name'=>'entrustment_entity_id','label'=>'（被）代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入（被）代持主体全称，如有'],
                 ['name'=>'field-index-staff','label'=>'项目组成员','type'=>'seperator'],
                 ['name'=>'_current_partner','label'=>'最新主管合伙人','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$company){
                     $members = Model_Member::listAll();

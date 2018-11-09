@@ -8,7 +8,9 @@ class Form_DealDecision extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'id','label'=>'意见ID','type'=>'rawText'],
+                ['name'=>'id','label'=>'意见ID','type'=>'rawText','field'=>function($model) {
+                    return $model->getData('id');
+                }],
                 ['name'=>'project_id','label'=>'交易ID','type'=>'choosemodel','model'=>'Model_Project','default'=>isset($_GET['project_id'])?$_GET['project_id']:'','required'=>true, 'show'=>'id'],
                 ['name'=>'_company_short','label'=>Form_Company::getFieldViewName('short'),'type'=>'rawText','field'=>function($model)use(&$project,&$company) {
                     $project = new Model_Project;

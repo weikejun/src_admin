@@ -11,13 +11,18 @@ class SpyController extends Page_Admin_Base {
     }
 
     public function indexAction() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
-            $admin = new Model_Admin;
-            $admin->addWhere('id', $_POST['admin_id']);
-            $admin->select();
-            if ($admin->mId) {
-                $_SESSION['admin'] = $admin->getData();
-                return ["redirect: /admin/index"];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST'
+            && Model_AdminGroup::isCurrentAdminRoot()
+            && $_POST['admin_id']) { 
+            $groupIds = Model_AdminGroup::getGroupIdsByAdmin($_POST['admin_id']);
+            if (!Model_Group::isRoot($groupIds)) {
+                $admin = new Model_Admin;
+                $admin->addWhere('id', $_POST['admin_id']);
+                $admin->select();
+                if ($admin->mId) {
+                    $_SESSION['admin'] = $admin->getData();
+                    return ["redirect: /admin/index"];
+                }
             }
         }
         $this->form=new Form([

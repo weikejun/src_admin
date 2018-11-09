@@ -29,7 +29,7 @@ class ProjectController extends Page_Admin_Base {
                 return '/admin/project/check?id='.$model->mId;
             }],
             ['label'=>'复制','action'=>function($model){
-                return '/admin/project?action=clone&ex=deal_type,decision_date,proj_status,longstop_date,kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo,new_old_stock,active_deal,loan_schedule,trade_file_schedule,expect_sign_date,expect_pay_schedule,trade_schedule_todo,deal_progress,close_notice,trade_schedule_memo,create_time,update_time,stocknum_all&id='.$model->mId;
+                return '/admin/project?action=clone&ex=deal_type,decision_date,proj_status,longstop_date,kickoff_date,close_date,loan_cb,loan_currency,loan_type,loan_entity_id,loan_amount,loan_sign_date,loan_end_date,loan_process,loan_memo,new_old_stock,active_deal,loan_schedule,trade_file_schedule,expect_sign_date,expect_pay_schedule,trade_schedule_todo,deal_progress,close_notice,trade_schedule_memo,create_time,update_time,stocknum_all,committee_view&id='.$model->mId;
             }],
             ['label'=>'审阅','action'=>function($model){
                 return '/admin/systemLog/diff?resource=project&res_id='.$model->mId;
@@ -64,7 +64,7 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('item_status'),'paramName'=>'item_status','choices'=>Model_Project::getItemStatusChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('proj_status'),'paramName'=>'proj_status','choices'=>Model_Project::getProjStatusChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('turn_sub'),'paramName'=>'turn_sub','fusion'=>true,]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('turn'),'paramName'=>'turn','choices'=>Model_Project::getTurnChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('active_deal'),'paramName'=>'active_deal','choices'=>Model_Project::getStandardYesNoChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('invest_currency'),'paramName'=>'invest_currency','choices'=>Model_Project::getInvestCurrencyChoices()]),
             new Page_Admin_RangeFilter(['name'=>Form_Project::getFieldViewName('our_amount'),'paramName'=>'our_amount']),
@@ -84,7 +84,7 @@ class ProjectController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('exit_type'),'paramName'=>'exit_type','choices'=>Model_Project::getExitTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>'交割情况','paramName'=>'_close_status','choices'=>[['未交割','未交割', 'and (`close_date` = 0 or `close_date` is NULL)']]]),
             new Page_Admin_ChoiceFilter(['name'=>'合同/支付金额','paramName'=>'_contract_pay_diff','choices'=>[['投资不一致','投资不一致', 'and `our_amount` != `pay_amount`'],['退出不一致','退出不一致', 'and `exit_amount` != `exit_receive_amount`']]]),
-            new Page_Admin_ChoiceFilter(['name'=>'数据完整性检查','paramName'=>'_data_integrity','choices'=>[['date','决策/启动、交割、签约日期空缺', 'and (`decision_date` = "" or `decision_date` is null or `decision_date` = 0 or `close_date` = "" or `close_date` is null or `close_date` = 0 or `kickoff_date` is null or `kickoff_date` = "" or `kickoff_date` = 0)'],['member','项目成员空缺','and (`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "" or `deal_manager` = "")'],['value_currency','估值计价货币','and (`value_currency` = "" or `value_currency` is null)'],['invest_currency','源码投资计价货币','and (`invest_currency` = "" or `invest_currency` is null)'],['exit_currency','源码退出计价货币','and (`exit_currency` = "" or `exit_currency` is null)'],['loan_currency','源码借款计价货币','and (`loan_currency` = "" or `loan_currency` is null)'],['our_board',Form_Project::getFieldViewName('our_board'),'and (`our_board` = "" or `our_board` is null)'],['stocknum_all',Form_Project::getFieldViewName('stocknum_all'),'and (`stocknum_all` = "" or `stocknum_all` is null)'],['entity_id',Form_Project::getFieldViewName('entity_id'),'and (`entity_id` = "" or `entity_id` is null)'],['exit_entity_id',Form_Project::getFieldViewName('exit_entity_id'),'and (`exit_entity_id` = "" or `exit_entity_id` is null)']]]),
+            new Page_Admin_ChoiceFilter(['name'=>'数据完整性检查','paramName'=>'_data_integrity','choices'=>[['date','决策/启动、交割、签约日期空缺', 'and (`decision_date` = "" or `decision_date` is null or `decision_date` = 0 or `close_date` = "" or `close_date` is null or `close_date` = 0 or `kickoff_date` is null or `kickoff_date` = "" or `kickoff_date` = 0)'],['member','项目成员空缺','and (`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "" or `deal_manager` = "")'],['value_currency','估值计价货币','and (`value_currency` = "" or `value_currency` is null)'],['invest_currency','源码投资计价货币','and (`invest_currency` = "" or `invest_currency` is null)'],['exit_currency','源码退出计价货币','and (`exit_currency` = "" or `exit_currency` is null)'],['loan_currency','源码借款计价货币','and (`loan_currency` = "" or `loan_currency` is null)'],['our_board',Form_Project::getFieldViewName('our_board'),'and (`our_board` = "" or `our_board` is null)'],['stocknum_all',Form_Project::getFieldViewName('stocknum_all'),'and (`stocknum_all` = "" or `stocknum_all` is null)'],['entity_id',Form_Project::getFieldViewName('entity_id'),'and (`entity_id` = "" or `entity_id` is null)'],['exit_entity_id',Form_Project::getFieldViewName('exit_entity_id'),'and (`exit_entity_id` = "" or `exit_entity_id` is null)'],['invest_turn',Form_Project::getFieldViewName('invest_turn'),'and (`invest_turn` = "" or `invest_turn` is null)'],['exit_turn',Form_Project::getFieldViewName('exit_turn'),'and (`exit_turn` = "" or `exit_turn` is null)']]]),
         );
     }
 
@@ -118,8 +118,21 @@ class ProjectController extends Page_Admin_Base {
         });
         $this->model->on('after_update', function($model) {
             $mails = json_decode($model->getData('committee_view'));
+            // 清除之前的投决信息及邮件
             $decision = new Model_DealDecision;
-            $decision->addWhere('project_id', $model->getData('id'))->delete();
+            $decision->addWhere('project_id', $model->getData('id'));
+            $decisions = $decision->find();
+            foreach($decisions as $decision) {
+                if (empty($decision->mDecision)) {
+                    $mail = new Model_MailList;
+                    $mail
+                        ->addWhere('ref', 'DealDecision')
+                        ->addWhere('ref_id', $decision->mId)
+                        ->addWhere('status', '待发送')
+                        ->delete();
+                    $decision->delete();
+                }
+            }
             foreach($mails as $i => $mail) {
                 $id = Model_Member::getIdByEmail($mail);
                 if ($id) {
@@ -229,7 +242,7 @@ class ProjectController extends Page_Admin_Base {
             Form_Project::getFieldViewName('pending_detail') => [],
             Form_Project::getFieldViewName('partner') => [],
             Form_Project::getFieldViewName('manager') => [],
-            Form_Project::getFieldViewName('financing_amount') => [],
+            Form_Project::getFieldViewName('finance_person') => [],
             Form_Project::getFieldViewName('legal_person') => [],
             Form_Project::getFieldViewName('_memo') => [],
         ];
@@ -361,7 +374,8 @@ class ProjectController extends Page_Admin_Base {
             if ($dataItem->getData('exit_entity_id')) {
                 $captableIds[$dataItem->getData('exit_entity_id')] = 1;
             }
-            if ($dataItem->getData('loan_entity_id')) {
+            if ($dataItem->getData('loan_entity_id')
+                && $dataItem->getData('deal_type') == '源码独立CB') {
                 $captableIds[$dataItem->getData('loan_entity_id')] = 1;
             }
             if ($dataItem->getData('count_captable') == '计入'
@@ -868,6 +882,7 @@ class ProjectController extends Page_Admin_Base {
                 $csvHeader[$i] = $dbMap[$fieldText];
             }
 
+            $adminId = Model_Admin::getCurrentAdmin()->mId;
             //while(!feof($csv)) {
             foreach($csvLines as $i => $csvLine) {
                 /*
@@ -881,7 +896,7 @@ class ProjectController extends Page_Admin_Base {
                     $saveData = [];
                     foreach($csvHeader as $i => $fieldName) {
                         // 计算字段不入库
-                        if (strpos($fieldName, '_') === 0 || empty($csvLine[$i])) {
+                        if (strpos($fieldName, '_') === 0 /*|| empty($csvLine[$i])*/) {
                             continue;
                         }
                         if (strpos($fieldName, 'company_id') !== false) {
@@ -906,13 +921,21 @@ class ProjectController extends Page_Admin_Base {
                         }
                         $saveData[$fieldName] = $csvLine[$i];
                     }
-                    if (!Model_AdminGroup::isCurrentAdminRoot()) {
-                        unset($saveData['id']);
+                    if (isset($saveData['id'])
+                        && !Model_AdminGroup::isCurrentAdminRoot()
+                        && !Model_ItemPermission::isDealAuth($adminId, $saveData['id'])) {
+                        continue;
+                    } 
+                    if (!empty($saveData)) {
+                        if (!isset($saveData['id'])) {
+                            $saveData['create_time'] = time();
+                        }
+                        $saveData['status'] = 'valid';
+                        $saveData['update_time'] = time();
+                        $this->model->clear();
+                        $this->model->setData($saveData);
+                        $this->model->save();
                     }
-                    $saveData['status'] = 'valid';
-                    $this->model->clear();
-                    $this->model->setData($saveData);
-                    $this->model->save();
                 } else {
                 }
             }
