@@ -499,19 +499,28 @@ class Form_Project extends Form {
                 ['name'=>'field-seperator-shareholding-our','label'=>'源码所持本轮次股权最新','type'=>'seperator2'],
                 ['name'=>'_stocknum_new','label'=>'本主体最新持本轮股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体投时持有本轮股数“减去已转让本轮股权股数。','field'=>function($model)use(&$deals,&$stockNumNew){
                     $stockNum = 0;
-                    if (!$model->getData('entity_id')) {
-                        if ($model->getData('exit_entity_id')) {
-                            $model->mEntityId = $model->getData('exit_entity_id');
-                        } elseif ($model->getData('loan_entity_id')) {
-                            $model->mEntityId = $model->getData('loan_entity_id');
-                        }
-                    }
                     foreach($deals as $i => $deal) {
-                        if ($model->getData('entity_id') && $deal->getData('entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('invest_turn')) {
-                            $stockNum += $deal->getData('stocknum_get');
-                        }
-                        if ($model->getData('entity_id') && $deal->getData('exit_entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
-                            $stockNum -= $deal->getData('exit_stock_number');
+                        if ($model->getData('exit_entity_id')) {
+                            if ($deal->getData('entity_id') == $model->getData('exit_entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('exit_turn')) {
+                                $stockNum += $deal->getData('stocknum_get');
+                            }
+                            if ($deal->getData('exit_entity_id') == $model->getData('exit_entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('exit_turn')) {
+                                $stockNum -= $deal->getData('exit_stock_number');
+                            }
+                        } elseif ($model->getData('loan_entity_id')) {
+                            if ($deal->getData('entity_id') == $model->getData('loan_entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('invest_turn')) {
+                                $stockNum += $deal->getData('stocknum_get');
+                            }
+                            if ($deal->getData('exit_entity_id') == $model->getData('exit_entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
+                                $stockNum -= $deal->getData('exit_stock_number');
+                            }
+                        } elseif ($model->getData('entity_id')) {
+                            if ($deal->getData('entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码投') !== false && $deal->getData('invest_turn') == $model->getData('invest_turn')) {
+                                $stockNum += $deal->getData('stocknum_get');
+                            }
+                            if ($deal->getData('exit_entity_id') == $model->getData('entity_id') && strpos($deal->getData('deal_type'), '源码退出') !== false && $deal->getData('exit_turn') == $model->getData('invest_turn')) {
+                                $stockNum -= $deal->getData('exit_stock_number');
+                            }
                         }
                     }
                     $stockNumNew = $stockNum;
