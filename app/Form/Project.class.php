@@ -41,7 +41,7 @@ class Form_Project extends Form {
                     $deal = new Model_Project;
                     $deal->addWhere('status', 'valid');
                     $deal->addWhere('company_id', $model->getData('company_id'));
-                    $deal->orderBy('id', 'DESC');
+                    $deal->orderBy('sequ', 'DESC');
                     $tmpDeals = $deal->find();
                     $deals = [];
                     foreach($tmpDeals as $i => $d) {
@@ -59,6 +59,7 @@ class Form_Project extends Form {
                     return $model->getData('id');
                 }],
                 ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
+                ['name'=>'sequ','label'=>'计算顺序','type'=>'text','default'=>null,'required'=>false,'help'=>'用于设定同一项目不同轮次的计算顺序，默认与ID相同'],
                 ['name'=>'company_id','label'=>'目标企业','type'=>'choosemodel','model'=>'Model_Company','default'=>isset($_GET['company_id'])?$_GET['company_id']:'','required'=>true,'field'=>function($model)use(&$company) {
                     return $company->mName;
                 }],

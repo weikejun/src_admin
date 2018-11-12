@@ -284,6 +284,7 @@ DROP TABLE IF EXISTS `project`; /*交易表*/
 CREATE TABLE `project` (
     `id` int(11) not NULL AUTO_INCREMENT COMMENT '交易ID',
     `status` varchar(32) DEFAULT 'valid' COMMENT '数据状态', 
+    `sequ` int(11) DEFAULT NULL COMMENT '计算顺序', 
     `company_id` varchar(32) DEFAULT NULL COMMENT '目标企业', 
     `first_financing` varchar(32) DEFAULT NULL COMMENT '企业是否首次融资', 
     `company_period` text DEFAULT NULL COMMENT '目标企业阶段', 

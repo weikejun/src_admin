@@ -21,6 +21,7 @@ class Form_SeperatorField extends Form_Field{
 #seperator-index {position:fixed;top:110px;right:31px;background-color:#fff !important;padding:5px 10px;border:1px solid #eee;}
 #seperator-index a {color:black;}
 .seperator-reset {display:none;}
+.
 @media print {
 }
 </style>
