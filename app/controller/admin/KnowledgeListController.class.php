@@ -55,6 +55,17 @@ class KnowledgeListController extends Page_Admin_Base {
         $this->indexAction();
         return ['admin/check.html', $this->_assigned];
     }
+
+    /* 
+     * 自动保存
+     */
+    public function autoSaveAction() {
+        if ($_REQUEST['action'] == 'create'
+            || $_REQUEST['action'] == 'update') {
+            $this->indexAction();
+        }
+        return ['json:', ['json'=>['id'=>$this->model->mId, 'stamp'=>date('H:i:s')]]];
+    }
 }
 
 

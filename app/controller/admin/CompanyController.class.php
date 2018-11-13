@@ -251,7 +251,7 @@ class CompanyController extends Page_Admin_Base {
             $deals = new Model_Project;
             $deals->addWhere('status', 'valid');
             $deals->addWhere('company_id', $_GET['id']);
-            $deals->orderBy('id','ASC');
+            $deals->orderBy('sequ','ASC');
             $deals = $deals->find();
             $vars['deals'] = [];
             foreach($deals as $i => $deal) {

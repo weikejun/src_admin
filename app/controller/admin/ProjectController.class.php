@@ -639,6 +639,7 @@ class ProjectController extends Page_Admin_Base {
                         if (!$model->getData('id')) {
                             return $bookValue;
                         }
+                        $formula['id'][] = $dataItem->getData('id');
                         return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,post_money,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$bookValue);
                     //}
                 }
@@ -808,7 +809,12 @@ class ProjectController extends Page_Admin_Base {
                 }
             }
         }
-        $latestDeal = $dataList[0];
+        foreach($dataList as $i => $dataItem) {
+            if ($dataItem->getData('close_date') > 0) {
+                $latestDeal = $dataItem;
+                break;
+            }
+        }
         $this->assign("dealDataList",$dealDataList);
         $project->setAutoClear(true);
         $this->assign("allDealCount",count($dealDataList));

@@ -36,7 +36,7 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 	<link href="/winphp/metronic/media/css/jqvmap.css" rel="stylesheet" type="text/css" media="screen"/>
 	<link href="/winphp/metronic/media/css/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
 	<!-- END PAGE LEVEL STYLES -->
-	<link rel="shortcut icon" href="http://www.sourcecodecap.com/favicon.ico" />
+	<!--link rel="shortcut icon" href="http://www.sourcecodecap.com/favicon.ico" /-->
     {%/block%}
 </head>
 <!-- END HEAD -->

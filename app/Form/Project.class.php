@@ -466,7 +466,7 @@ class Form_Project extends Form {
                 ['name'=>'_shareholding_turn_sum','label'=>'截止本轮源码合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计数，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $stockNum = 0;
                     foreach($deals as $i => $deal) {
-                        if ($deal->getData('id') > $model->getData('id')) {
+                        if ($deal->getData('sequ') > $model->getData('sequ')) {
                             continue;
                         }
                         if ($deal->getData('deal_type') == '源码退出') {
@@ -481,7 +481,7 @@ class Form_Project extends Form {
                 ['name'=>'_shareholding_ratio_turn_sum','label'=>'截止本轮源码合计持股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $dataList = [];
                     foreach($deals as $i => $dataItem) {
-                        if ($dataItem->getData('id') > $model->getData('id')) {
+                        if ($dataItem->getData('sequ') > $model->getData('sequ')) {
                             continue;
                         }
                         if ($dataItem->getData('close_date')) {
@@ -525,9 +525,7 @@ class Form_Project extends Form {
                 ['name'=>'_shareholding_ratio','label'=>'本主体最新持本轮股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码本主体最新持有本轮股数“除以”最新企业总股数“','field'=>function($model)use(&$deals,&$stockNumNew){
                     $dataList = [];
                     foreach($deals as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('sequ')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $i => $deal) {
@@ -552,9 +550,7 @@ class Form_Project extends Form {
                 ['name'=>'_shareholding_ratio_sum','label'=>'源码各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'源码各轮次各主体的合计比例，扣除了退出的。','field'=>function($model)use(&$deals,&$shareholdingSum){
                     $dataList = [];
                     foreach($deals as $i => $dataItem) {
-                        if ($dataItem->getData('close_date')) {
-                            $dataList[$dataItem->getData('close_date')] = $dataItem;
-                        }
+                        $dataList[$dataItem->getData('sequ')] = $dataItem;
                     }
                     krsort($dataList);
                     foreach($dataList as $i => $deal) {

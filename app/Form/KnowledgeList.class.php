@@ -27,6 +27,7 @@ class Form_KnowledgeList extends Form {
                     }
                     return $output;
                 }],
+                ['name'=>'field-index-create','label'=>'创建信息','type'=>'seperator'],
                 ['name'=>'operator','label'=>'创建人','type'=>'text','default'=>Model_Admin::getCurrentAdmin()->mName,'required'=>true,'readonly'=>true],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','auto_update'=>true,'default'=>time(),'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
