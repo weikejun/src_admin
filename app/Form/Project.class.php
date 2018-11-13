@@ -489,12 +489,7 @@ class Form_Project extends Form {
                         }
                     }
                     krsort($dataList);
-                    foreach($dataList as $i => $deal) {
-                        if ($deal->getData('stocknum_all')) {
-                            return sprintf('%.2f%%', $shareholdingSum / $deal->getData('stocknum_all') * 100);
-                        }
-                        break;
-                    }
+                    return sprintf('%.2f%%', $shareholdingSum / $model->getData('stocknum_all') * 100);
                 }],
                 ['name'=>'field-index-shareholding-latest','label'=>'源码最新持股情况','type'=>'seperator'],
                 ['name'=>'field-seperator-shareholding-our','label'=>'源码所持本轮次股权最新','type'=>'seperator2'],
