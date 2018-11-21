@@ -34,7 +34,7 @@ class ChecklistController extends Page_Admin_Base {
 
         $this->single_actions=[
             ['label'=>'预览','action'=>function($model){
-                return '/admin/fundChecklist/check?id='.$model->mId;
+                return '/admin/Checklist/check?id='.$model->mId;
             }],
             ['label'=>'复制','action'=>function($model){
                 return '/admin/fundChecklist?action=clone&ex=&id='.$model->mId;

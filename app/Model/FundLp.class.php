@@ -1,5 +1,23 @@
 <?php
 class Model_FundLp extends Base_FundLp{
+    public static function getCertTypeChoices() {
+        return [
+            ['营业执照','营业执照'],
+            ['身份证','身份证'],
+            ['备案编码','备案编码'],
+            ['护照','护照'],
+        ];
+    }
+
+    public static function getJoinWayChoices() {
+        return [
+            ['新增份额','新增份额'],
+            ['受让老份额','受让老份额'],
+            ['新增+受让','新增+受让'],
+            ['其他','其他'],
+        ];
+    }
+
     public static function getPartnerTypeChoices() {
         return [
             ['LP','LP'],

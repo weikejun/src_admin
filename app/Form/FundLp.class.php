@@ -9,7 +9,7 @@ class Form_FundLp extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'field-index-base','label'=>'认购人基本情况','type'=>'seperator'],
-                ['name'=>'id','label'=>'认购人ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
+                ['name'=>'id','label'=>'认购ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
                     $entity = new Model_Entity;
                     $entity->addWhere('id', $model->getData('entity_id'));
                     $entity->select();
@@ -18,7 +18,7 @@ class Form_FundLp extends Form {
                     }
                     return $model->getData('id');
                 }],
-                ['name'=>'entity_id','label'=>'募资主体ID','type'=>'choosemodel','model'=>'Model_Entity','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
+                ['name'=>'entity_id','label'=>'募资主体全称','type'=>'choosemodel','model'=>'Model_Entity','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
                     return $entity->getData('name');
                 }],
                 ['name'=>'_entity_cate','label'=>'募资主体类型','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity){
@@ -27,15 +27,43 @@ class Form_FundLp extends Form {
                 ['name'=>'_entity_currency','label'=>'募资主体资金货币','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity){
                     return $entity->getData('currency');
                 }],
-                ['name'=>'subscriber','label'=>'认购人','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'subscriber','label'=>'认购人全称','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'subscriber_code','label'=>'认购人代码','type'=>'text','default'=>null,'required'=>false],
-                ['name'=>'subscriber_controller','label'=>'认购人实际控制人','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'subscriber_controller','label'=>'认购人实际控制人','type'=>'choosemodel','model'=>'Model_ControllerActual','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('subscriber_controller')) {
+                        $ctrl = new Model_ControllerActual;
+                        $ctrl->addWhere('id', $model->getData('subscriber_controller'));
+                        $ctrl->select();
+                        return $ctrl->mName;
+                    }
+                }],
                 ['name'=>'partner_type','label'=>'合伙人类型','type'=>'choice','choices'=>Model_FundLp::getPartnerTypeChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscriber_bg','label'=>'认购人背景','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'subscriber_org','label'=>'认购人组织形式','type'=>'selectInput','choices'=>Model_FundLp::getSubscriberOrgChoices(),'default'=>null,'required'=>false],
-                ['name'=>'cert_type','label'=>'证照类型','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'cert_type','label'=>'证照类型','type'=>'selectInput','choices'=>Model_FundLp::getCertTypeChoices(),'default'=>null,'required'=>false],
                 ['name'=>'cert_no','label'=>'证照文件号码','type'=>'text','default'=>null,'required'=>false],
-                ['name'=>'contact_info','label'=>'联系人信息','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                ['name'=>'top_special','label'=>'上层是否有特殊情况','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'is_gov_capital','label'=>'是否是国资','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'have_for_capital','label'=>'是否有外资','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'top_special_memo','label'=>'上层特殊情况备注','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'_contact_info','label'=>'联系人信息','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('subscriber_controller')) {
+                        $actual = new Model_ControllerActual;
+                        $actual->addWhere('id', $model->getData('subscriber_controller'));
+                        $actual->select();
+                        if ($actual->mId) {
+                            $list = json_decode($actual->getData('contact_info'));
+                            if ($list) {
+                                $output = '';
+                                foreach($list as $li) {
+                                    $output .= $li . "\n";
+                                }
+                            }
+                            return $output;
+                        }
+                    }
+                }],
+                ['name'=>'contact_info','label'=>'联系人信息备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = json_decode($model->getData('contact_info'));
                     if ($list) {
                         $output = '';
@@ -58,22 +86,49 @@ class Form_FundLp extends Form {
                 ['name'=>'communication_memo','label'=>'待沟通事项备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'field-index-date-and-amount','label'=>'认购时间及出资','type'=>'seperator'],
                 ['name'=>'join_turn','label'=>'进入批次','type'=>'text','default'=>null,'required'=>false],
-                ['name'=>'sign_lpa_date','label'=>'签署LPA日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
+                ['name'=>'join_way','label'=>'进入方式','type'=>'choice','choices'=>Model_FundLp::getJoinWayChoices(),'default'=>null,'required'=>false],
+                ['name'=>'sign_lpa_date','label'=>'SA签署日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('sign_lpa_date')) {
                         return date('Ymd', $model->getData('sign_lpa_date'));
                     }
                 }],
-                ['name'=>'subscriber_delivery_date','label'=>'本认购人交割日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
+                ['name'=>'subscriber_delivery_date','label'=>'交割日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('subscriber_delivery_date')) {
                         return date('Ymd', $model->getData('subscriber_delivery_date'));
                     }
                 }],
                 ['name'=>'subscribe_currency','label'=>'认缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_currency_memo','label'=>'认缴货币备注','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'subscribe_amount','label'=>'认缴金额','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'subscribe_amount','label'=>'初始认缴金额','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'_current_subscribe_amount','label'=>'当前认缴金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    $amounts = [];
+                    $data = $model->getData();
+                    foreach(['subscribe' => 1,'share_transfer' => -1,'capital_reduce' => -1] as $fk => $fa) {
+                        $amount = ($fa * $data[$fk.'_amount']);
+                        $amounts[$data[$fk.'_currency']] += $amount;
+                    }
+
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        if (!$amount) continue;
+                        $output .= "$currency".number_format($amount).'<br />';
+                    }
+                    return $output;
+                }],
+                ['name'=>'subscribe_amount_memo','label'=>'认缴金额备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('subscribe_amount_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
                 ['name'=>'paid_currency','label'=>'实缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
-                    $list = json_decode($model->getData('paid_amount'));
+                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'paid_amount_memo','label'=>'实缴金额备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('paid_amount_memo'));
                     if ($list) {
                         $output = '';
                         foreach($list as $li) {
@@ -87,21 +142,10 @@ class Form_FundLp extends Form {
                         return date('Ymd', $model->getData('latest_paid_date'));
                     }
                 }],
-                ['name'=>'field-index-law-files','label'=>'认购及变更法律文件情况','type'=>'seperator'],
-                ['name'=>'subscribe_pdf','label'=>'认购文件PDF','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
-                ['name'=>'subscribe_doc','label'=>'认购文件原件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
-                ['name'=>'subscribe_file_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'gb_sign','label'=>'GP&管理人已章','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
-                ['name'=>'aic_material','label'=>'工商变更资料提供','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
-                ['name'=>'side_letter','label'=>'SideLetter','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
-                ['name'=>'side_letter_detail','label'=>'SideLetter主要内容','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'mfn','label'=>'MFN','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
-                ['name'=>'lpac','label'=>'LPAC','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
-                ['name'=>'lpac_commission','label'=>'LPAC委任书','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
-                ['name'=>'entrust_agreement','label'=>'委托管理协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
-                ['name'=>'bank_entrustment','label'=>'银行托管信息页','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
-                ['name'=>'no_entrustment','label'=>'不托管协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'field-index-transfer-reduce','label'=>'LP份额转让及减资','type'=>'seperator'],
                 ['name'=>'share_transfer','label'=>'有无份额转让','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'share_transfer_currency','label'=>'份额转让货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
+                ['name'=>'share_transfer_amount','label'=>'份额转让额度','type'=>'number','default'=>null,'required'=>false],
                 ['name'=>'share_transfer_memo','label'=>'份额转让备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = json_decode($model->getData('share_transfer_memo'));
                     if ($list) {
@@ -112,6 +156,41 @@ class Form_FundLp extends Form {
                     }
                     return $output;
                 }],
+                ['name'=>'share_transfer_file','label'=>'份额转让文件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'capital_reduce','label'=>'有无减资','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'capital_reduce_currency','label'=>'减资货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
+                ['name'=>'capital_reduce_amount','label'=>'减资额度','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'capital_reduce_memo','label'=>'减资备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('capital_reduce_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
+                ['name'=>'capital_reduce_file','label'=>'减资文件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'change_memo','label'=>'LP变更备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
+                    $list = json_decode($model->getData('change_memo'));
+                    if ($list) {
+                        $output = '';
+                        foreach($list as $li) {
+                            $output .= $li . "\n";
+                        }
+                    }
+                    return $output;
+                }],
+                ['name'=>'field-index-law-files','label'=>'认购及变更法律文件情况','type'=>'seperator'],
+                ['name'=>'subscribe_pdf','label'=>'认购文件PDF','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
+                ['name'=>'subscribe_doc','label'=>'认购文件原件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'subscribe_file_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'gb_sign','label'=>'GP&管理人已章','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'aic_material','label'=>'工商变更资料提供','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'lpac_commission','label'=>'LPAC委任书','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'entrust_agreement','label'=>'委托管理协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'bank_entrustment','label'=>'银行托管信息页','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'no_entrustment','label'=>'不托管协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrustment','label'=>'是否有代持','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrust_agreement','label'=>'代持协议','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrustment_memo','label'=>'代持备注','type'=>'textarea','default'=>null,'required'=>false],
@@ -129,16 +208,13 @@ class Form_FundLp extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'change_memo','label'=>'基金变更备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
-                    $list = json_decode($model->getData('change_memo'));
-                    if ($list) {
-                        $output = '';
-                        foreach($list as $li) {
-                            $output .= $li . "\n";
-                        }
-                    }
-                    return $output;
-                }],
+                ['name'=>'field-index-sideletter','label'=>'Side Letter','type'=>'seperator'],
+                ['name'=>'side_letter','label'=>'SideLetter','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'admin_fee_agreement','label'=>'管理费特别约定','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'other_fee_agreement','label'=>'其他费用特别约定','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'mfn','label'=>'MFN','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'lpac','label'=>'LPAC','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'side_letter_detail','label'=>'SideLetter主要内容','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false],
                 ['name'=>'field-index-program-compliance','label'=>'认购程序性及合规文件','type'=>'seperator'],
                 ['name'=>'kyc_file','label'=>'KYC文件','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'kyc_file_memo','label'=>'KYC文件备注','type'=>'textarea','default'=>null,'required'=>false],

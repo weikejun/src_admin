@@ -26,7 +26,7 @@ class Form_ComplianceMatter extends Form {
                 ['name'=>'scene','label'=>'场景','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'requirement','label'=>'具体要求','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false],
                 ['name'=>'expiry','label'=>'有效期','type'=>'text','default'=>null,'required'=>false],
-                ['name'=>'action','label'=>'动作要求','type'=>'choice','choices'=>Model_ComplianceMatter::getActionChoices(),'default'=>null,'required'=>false],
+                ['name'=>'action_req','label'=>'动作要求','type'=>'choice','choices'=>Model_ComplianceMatter::getActionReqChoices(),'default'=>null,'required'=>false],
                 ['name'=>'action_target','label'=>'动作对象','type'=>'choice','choices'=>Model_ComplianceMatter::getActionTargetChoices(),'default'=>null,'required'=>false],
                 ['name'=>'terms_from','label'=>'条款来源','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false],
                 ['name'=>'terms_raw','label'=>'条款原文','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false],

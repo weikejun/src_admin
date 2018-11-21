@@ -11,6 +11,9 @@ class Form_Entity extends Form {
                 ['name'=>'id','label'=>'主体ID','type'=>'hidden','default'=>null,'required'=>false,],
                 ['name'=>'name','label'=>'名称','type'=>'text','default'=>null,'required'=>true,'help'=>'填入准确全称','validator'=>new Form_UniqueValidator(new Model_Entity, 'name')],
                 ['name'=>'description','label'=>'描述','type'=>'text','default'=>null,'required'=>false,'help'=>'示例“人民币早期一期主基金”，“美元专项基金SPV”'],
+                ['name'=>'_captable','label'=>'认购情况汇总','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
+                    return '<a href="/admin/fundLp/captable?entity_id='.$model->getData('id').'" target="_blank">查看</a>';
+                }],
                 ['name'=>'_hold_company','label'=>'持股企业','type'=>'rawText','field'=>function($model) {
                     $project = new Model_Project;
                     $project->addWhere('entity_id', $model->getData('id'));
@@ -84,7 +87,40 @@ class Form_Entity extends Form {
                     }
                     return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('is_exit=未退伙&entity_id='.$model->mId).'">'.$num.'</a>';
                 }],
+                ['name'=>'_subscribe_amount','label'=>'基金认缴规模','type'=>'rawText','field'=>function($model)use(&$lps) {
+                    $lps = new Model_FundLp;
+                    $lps->addWhere('entity_id', $model->getData('id'));
+                    $lps = $lps->find();
+                    $amounts = [];
+                    foreach($lps as $lp) {
+                        if ($lp->getData('subscribe_currency') && $lp->getData('subscribe_amount'))
+                            $amounts[$lp->getData('subscribe_currency')] += $lp->getData('subscribe_amount');
+                        if ($lp->getData('capital_reduce_currency') && $lp->getData('capital_reduce_amount'))
+                            $amounts[$lp->getData('capital_reduce_currency')] -= $lp->getData('capital_reduce_amount');
+                    }
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        $output .= "$currency ".number_format($amount)."\n";
+                    }
+                    return $output;
+                }],
+                ['name'=>'_paid_amount','label'=>'基金实缴规模','type'=>'rawText','field'=>function($model)use(&$lps) {
+                    $lps = new Model_FundLp;
+                    $lps->addWhere('entity_id', $model->getData('id'));
+                    $lps = $lps->find();
+                    $amounts = [];
+                    foreach($lps as $lp) {
+                        if ($lp->getData('paid_currency') && $lp->getData('paid_amount'))
+                            $amounts[$lp->getData('paid_currency')] += $lp->getData('paid_amount');
+                    }
+                    $output = '';
+                    foreach($amounts as $currency => $amount) {
+                        $output .= "$currency ".number_format($amount)."\n";
+                    }
+                    return $output;
+                }],
                 ['name'=>'register_country','label'=>'注册国/省','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'register_address','label'=>'注册地址','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'cate','label'=>'类型','type'=>'selectInput','choices'=>Model_Entity::getCateChoices(),'required'=>false],
                 ['name'=>'tp','label'=>'类别','type'=>'selectInput','choices'=>Model_Entity::getTpChoices(),'required'=>false,'help'=>'可问财务同事'],
                 ['name'=>'org_type','label'=>'组织形式','type'=>'selectInput','choices'=>Model_Entity::getOrgTypeChoices(),'required'=>false],
@@ -116,7 +152,7 @@ class Form_Entity extends Form {
                 ['name'=>'aic_change','label'=>'工商变更','type'=>'choice','choices'=>Model_Entity::getAicChangeChoices(),'default'=>null,'required'=>false],
                 ['name'=>'aic_change_desc','label'=>'工商变更说明','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
                 ['name'=>'disclosure','label'=>'信息披露','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
-                ['name'=>'key_terms','label'=>'核心条款','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'key_terms','label'=>'核心条款','type'=>'textarea','rows'=>15,'default'=>null,'required'=>false],
                 ['name'=>'duration','label'=>'存续年限','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'invest_deadline','label'=>'投资截止时间','type'=>'date','default'=>null,'required'=>false,'field'=>function($model){
                     if ($model->getData('invest_deadline'))
@@ -156,8 +192,17 @@ class Form_Entity extends Form {
                         return isset($members[$person]) ? $members[$person]->mName : $person;
                     }
                 }],
-                ['name'=>'compliance_list','label'=>'合规要求清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false,'field'=>function($model) {
-                    $list = json_decode($model->getData('filing_list'));
+                ['name'=>'compliance_person','label'=>'合规负责人','type'=>'choosemodel','model'=>'Model_Member','default'=>null,'required'=>false,'field'=>function($model){
+                    $members = Model_Member::listAll();
+                    if ($person = $model->getData('compliance_person')) {
+                        return isset($members[$person]) ? $members[$person]->mName : $person;
+                    }
+                }],
+                ['name'=>'compliance_list','label'=>'合规要求清单','type'=>'choosemodel','model'=>'Model_Checklist','default'=>null,'required'=>false,'show'=>'version','field'=>function($model) {
+                    $cli = new Model_Checklist;
+                    $cli->addWhere('id', $model->getData('compliance_list'));
+                    $cli->select();
+                    $list = json_decode($cli->getData('content'));
                     if ($list) {
                         $output = '';
                         foreach($list as $li) {
@@ -166,8 +211,11 @@ class Form_Entity extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'filing_list','label'=>'filing所需清单','type'=>'message','class'=>'with_date','default'=>null,'required'=>false,'field'=>function($model) {
-                    $list = json_decode($model->getData('filing_list'));
+                ['name'=>'filing_list','label'=>'filing所需清单','type'=>'choosemodel','model'=>'Model_Checklist','default'=>null,'required'=>false,'show'=>'version','field'=>function($model) {
+                    $cli = new Model_Checklist;
+                    $cli->addWhere('id', $model->getData('filing_list'));
+                    $cli->select();
+                    $list = json_decode($cli->getData('content'));
                     if ($list) {
                         $output = '';
                         foreach($list as $li) {

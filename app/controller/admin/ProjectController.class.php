@@ -411,16 +411,27 @@ class ProjectController extends Page_Admin_Base {
                 return $model->getData('new_old_stock');
             }],
             ['label' => '交割日期', 'field' => function($model) {
+                $dateStr = date('Ymd', $model->getData('close_date'));
                 if ($model->getData('close_date') == Model_Project::DEFAULT_CLOSE_DATE) {
-                    return '暂未交割';
+                    $dateStr = '暂未交割';
                 }
-                return date('Ymd', $model->getData('close_date'));
+                return sprintf("<a target='_blank' href='/admin/project?__filter=id%%3D%s'>%s</a>", 
+                    $model->getData('id'),
+                    $dateStr
+                    
+                );
             }],
             ['label' => '企业轮次', 'field' => function($model) {
-                return $model->getData('turn_sub');
+                return sprintf("<a target='_blank' href='/admin/project?__filter=id%%3D%s'>%s</a>", 
+                    $model->getData('id'),
+                    $model->getData('turn_sub')
+                );
             }],
             ['label' => '股权轮次', 'field' => function($model) {
-                return $model->getData('invest_turn');
+                return sprintf("<a target='_blank' href='/admin/project?__filter=id%%3D%s'>%s</a>", 
+                    $model->getData('id'),
+                    $model->getData('invest_turn')
+                );
             }],
             ['label' => '投资金额', 'field' => function($model) {
                 $currency = $model->getData('invest_currency');
@@ -770,6 +781,9 @@ class ProjectController extends Page_Admin_Base {
                         $formula['id'][] = $dataItem->getData('id');
                     }
                 }
+                if (!$stockNum) {
+                    return 0;
+                }
                 $totalExitStocks += $stockNum;
                 $output = number_format($stockNum);
                 return sprintf('<a target=_blank href="/admin/Project?fields=id,exit_stock_number,_company_short,turn_sub,deal_type,close_date,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$output);
@@ -830,7 +844,7 @@ class ProjectController extends Page_Admin_Base {
 
     protected function _initSelect() {
         $this->list_filter = [
-            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','foreignTable'=>'Model_Entity','fusion'=>true,'class'=>'keep-all']),
         ];

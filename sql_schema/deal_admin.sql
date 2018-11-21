@@ -76,6 +76,7 @@ CREATE TABLE `entity` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `name` varchar(64) DEFAULT NULL COMMENT '名称', 
     `register_country` varchar(32) DEFAULT NULL COMMENT '注册国', 
+    `register_address` varchar(64) DEFAULT NULL COMMENT '注册地址', 
     `description` varchar(64) DEFAULT NULL COMMENT '描述', 
     `cate` text DEFAULT NULL COMMENT '类型', 
     `tp` text DEFAULT NULL COMMENT '类别', 
@@ -110,6 +111,7 @@ CREATE TABLE `entity` (
     `ir_person` varchar(16) DEFAULT NULL COMMENT 'IR负责人', 
     `finance_person` varchar(16) DEFAULT NULL COMMENT '财务负责人', 
     `legal_person` varchar(16) DEFAULT NULL COMMENT '法务负责人', 
+    `compliance_person` varchar(16) DEFAULT NULL COMMENT '合规负责人', 
     `deal_manager` text DEFAULT NULL COMMENT '本轮交易负责人', 
     `compliance_list` text DEFAULT NULL COMMENT '合规要求清单', 
     `filing_list` text DEFAULT NULL COMMENT '所需filing清单', 
@@ -135,6 +137,10 @@ CREATE TABLE `fund_lp` (
     `subscriber_org` varchar(8) DEFAULT NULL COMMENT '认购人组织形式',
     `cert_type` varchar(64) DEFAULT NULL COMMENT '证照类型',
     `cert_no` varchar(64) DEFAULT NULL COMMENT '证照文件号码',
+    `top_special` varchar(8) DEFAULT NULL COMMENT '上层是否有特殊情况',
+    `is_gov_capital` varchar(8) DEFAULT NULL COMMENT '是否是国资',
+    `have_for_capital` varchar(8) DEFAULT NULL COMMENT '是否有外资',
+    `top_special_memo` text DEFAULT NULL COMMENT '上层特殊情况备注',
     `contact_info` varchar(256) DEFAULT NULL COMMENT '联系人信息',
     `mail_province` varchar(64) DEFAULT NULL COMMENT '邮寄所在省份',
     `aic_pending` varchar(8) DEFAULT NULL COMMENT '工商待办事项',
@@ -144,18 +150,23 @@ CREATE TABLE `fund_lp` (
     `communication` varchar(8) DEFAULT NULL COMMENT '待沟通事项',
     `communication_memo` text DEFAULT NULL COMMENT '待沟通事项备注',
     `join_turn` varchar(32) DEFAULT NULL COMMENT '进入批次',
+    `join_way` varchar(16) DEFAULT NULL COMMENT '进入方式',
     `sign_lpa_date` varchar(11) DEFAULT NULL COMMENT '签署LPA日期',
     `subscriber_delivery_date` varchar(11) DEFAULT NULL COMMENT '本认购人交割日期',
     `subscribe_currency` varchar(8) DEFAULT NULL COMMENT '认缴货币',
     `subscribe_amount` varchar(16) DEFAULT NULL COMMENT '认缴金额',
+    `subscribe_amount_memo` text DEFAULT NULL COMMENT '认缴金额备注',
     `paid_currency` varchar(8) DEFAULT NULL COMMENT '实缴货币',
     `paid_amount` varchar(16) DEFAULT NULL COMMENT '实缴金额',
+    `paid_amount_memo` text DEFAULT NULL COMMENT '实缴金额备注',
     `latest_paid_date` varchar(11) DEFAULT NULL COMMENT '最新实缴日期',
     `subscribe_pdf` varchar(8) DEFAULT NULL COMMENT '认购文件PDF',
     `subscribe_doc` varchar(16) DEFAULT NULL COMMENT '认购文件原件',
     `gb_sign` varchar(8) DEFAULT NULL COMMENT 'GP&管理人已章',
     `aic_material` varchar(8) DEFAULT NULL COMMENT '工商变更资料提供',
     `side_letter` varchar(8) DEFAULT NULL COMMENT 'SideLetter',
+    `admin_fee_agreement` varchar(8) DEFAULT NULL COMMENT '管理费是否有特别约定',
+    `other_fee_agreement` varchar(8) DEFAULT NULL COMMENT '其它费用是否有特别约定',
     `side_letter_detail` text DEFAULT NULL COMMENT 'SideLetter主要内容',
     `mfn` varchar(8) DEFAULT NULL COMMENT 'MFN',
     `lpac` varchar(8) DEFAULT NULL COMMENT 'LPAC',
@@ -164,7 +175,15 @@ CREATE TABLE `fund_lp` (
     `bank_entrustment` varchar(16) DEFAULT NULL COMMENT '银行托管信息页',
     `no_entrustment` varchar(16) DEFAULT NULL COMMENT '不托管协议',
     `share_transfer` varchar(8) DEFAULT NULL COMMENT '有无份额转让',
+    `share_transfer_currency` varchar(8) DEFAULT NULL COMMENT '份额转让货币',
+    `share_transfer_amount` varchar(16) DEFAULT NULL COMMENT '份额转让额度',
+    `share_transfer_file` varchar(16) DEFAULT NULL COMMENT '份额转让文件',
     `share_transfer_memo` text DEFAULT NULL COMMENT '份额转让备注',
+    `capital_reduce` varchar(8) DEFAULT NULL COMMENT '有无减资',
+    `capital_reduce_currency` varchar(8) DEFAULT NULL COMMENT '减资货币',
+    `capital_reduce_amount` varchar(16) DEFAULT NULL COMMENT '减资额度',
+    `capital_reduce_file` varchar(16) DEFAULT NULL COMMENT '减资文件',
+    `capital_reduce_memo` text DEFAULT NULL COMMENT '减资备注',
     `share_entrustment` varchar(8) DEFAULT NULL COMMENT '是否有代持',
     `share_entrust_agreement` varchar(8) DEFAULT NULL COMMENT '代持协议',
     `share_entrustment_memo` text DEFAULT NULL COMMENT '代持备注',
@@ -549,7 +568,7 @@ CREATE TABLE `compliance_matter` (
     `scene` text DEFAULT NULL COMMENT '场景', 
     `requirement` text DEFAULT NULL COMMENT '具体要求', 
     `expiry` varchar(32) DEFAULT NULL COMMENT '有效期', 
-    `action` varchar(16) DEFAULT NULL COMMENT '动作要求', 
+    `action_req` varchar(16) DEFAULT NULL COMMENT '动作要求', 
     `action_target` varchar(16) DEFAULT NULL COMMENT '动作对象', 
     `terms_from` varchar(256) DEFAULT NULL COMMENT '条款来源', 
     `terms_raw` text DEFAULT NULL COMMENT '条款原文', 
@@ -572,6 +591,24 @@ CREATE TABLE `checklist` (
     `content` text DEFAULT NULL COMMENT '内容', 
     `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
     `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `actual_controller`
+--
+
+DROP TABLE IF EXISTS `controller_actual`; /*实际控制人*/
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `controller_actual` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(256) DEFAULT NULL COMMENT '名称', 
+    `description` text DEFAULT NULL COMMENT '认购人背景简介', 
+    `contact` varchar(64) DEFAULT NULL COMMENT '联系人', 
+    `contact_info` text DEFAULT NULL COMMENT '联系人信息', 
     `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

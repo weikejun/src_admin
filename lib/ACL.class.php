@@ -13,7 +13,8 @@ class ACL{
         ],
         "基金版块" => [
             "基金主体" => ["FundEntity"],
-            "基金LP表" => ["FundLp"],
+            "LP实际控制人" => ["ControllerActual"],
+            "LP认购表" => ["FundLp"],
             "合规审查事项" => ["ComplianceMatter"],
             "Checklist清单" => ["Checklist"],
             "基金LP授权" => ["EntityPermission"],

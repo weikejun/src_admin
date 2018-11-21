@@ -1,0 +1,68 @@
+{%extends file="admin/empty_framework.tpl"%}
+{%block name="head" append%}
+<link href="/winphp/metronic/media/css/DT_bootstrap.css" rel="stylesheet" type="text/css"/>
+{%/block%}
+{%block name="content"%}
+<style>
+table a {color:#000;}
+</style>
+<div class="row-fluid">
+    <div class="span12" style="width:1360px;">
+        <!-- BEGIN EXAMPLE TABLE PORTLET-->
+        <div class="portlet box light-grey">
+            <div class="portlet-title" style="border-top:1px solid #eee;">
+                <div class="caption"><i class="icon-globe"></i>{%$controllerText%}</div>
+            </div>
+            <div class="portlet-body">
+                <div id="sample_1_wrapper" class="dataTables_wrapper form-inline" role="grid">
+                    {%if $captableDataList%}
+                    <p>【认购情况】</p>
+                    <table class="table table-striped table-bordered table-hover dataTable" id="sample_1" aria-describedby="sample_1_info">
+
+                        <thead>
+                            <tr role="row">
+                                {%foreach from=$pageAdmin->captable_display item=list_item%}
+                                <th>
+                                    {%if is_string($list_item)%}
+                                    {%$list_item%}
+                                    {%elseif isset($list_item['label'])%}
+                                    {%$list_item.label%}
+                                    {%else%}
+                                    {%strval($list_item)%}
+                                    {%/if%}
+                                </th>
+                                {%/foreach%}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {%foreach from=$captableDataList item=captableData%}
+                            <tr class="gradeX {%cycle values="odd,even"%}">
+                                {%foreach from=$pageAdmin->captable_display item=list_item%}
+                                <td>
+                                    {%if is_array($list_item)&&isset($list_item.label)%}
+                                    {%$list_item=$list_item.field%}
+                                    {%/if%}
+
+                                    {%if is_string($list_item) %}
+                                    {%$captableData->getData($list_item)%}
+                                    {%elseif is_callable($list_item)%}
+                                    {%call_user_func($list_item,$captableData,$pageAdmin,$captableDataList)%}
+                                    {%else%}
+                                    {%strval($list_item)%}
+                                    {%/if%}
+                                </td>
+                                {%/foreach%}
+                            </tr>
+                            {%/foreach%}
+                        </tbody>
+                    </table>
+                    {%/if%}
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+</div>
+{%/block%}
+

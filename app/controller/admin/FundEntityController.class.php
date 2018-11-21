@@ -50,6 +50,7 @@ class FundEntityController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('name'),'paramName'=>'name','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('currency'),'paramName'=>'currency','choices'=>Model_Project::getCurrencyChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('cate'),'paramName'=>'cate','choices'=>Model_Entity::getCateChoices(),'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('to_do'),'paramName'=>'to_do','choices'=>Model_Entity::getToDoChoices(),'class'=>'keep-all']),
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('id'),'paramName'=>'id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>Form_Entity::getFieldViewName('register_country'),'paramName'=>'register_country','fusion'=>true]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
@@ -57,6 +58,10 @@ class FundEntityController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
             new Page_Admin_TextForeignFilter(['name'=>'子主体','paramName'=>'sub_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'parent_id']),
             new Page_Admin_TextForeignFilter(['name'=>'父主体','paramName'=>'parent_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'sub_id']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('ir_person'),'paramName'=>'name|ir_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('legal_person'),'paramName'=>'name|legal_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('compliance_person'),'paramName'=>'name|compliance_person','foreignTable'=>'Model_Member','fusion'=>true]),
         );
         $this->multi_actions=array(
             ['label'=>'导出csv','required'=>false,'action'=>'/admin/entity/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],

@@ -6,11 +6,12 @@ class Model_ComplianceMatter extends Base_ComplianceMatter{
         ];
     }
 
-    public static function getActionChoices() {
+    public static function getActionReqChoices() {
         return [
             ['批准','批准'],
             ['披露','披露'],
             ['手动','手动'],
+            ['不适用','不适用'],
         ];
     }
 
@@ -20,6 +21,7 @@ class Model_ComplianceMatter extends Base_ComplianceMatter{
             ['LP','LP'],
             ['LP大会','LP大会'],
             ['手动','手动'],
+            ['不适用','不适用'],
         ];
     }
 }

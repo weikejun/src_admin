@@ -12,7 +12,6 @@ class EntityController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText'=>"投资主体",
             '_preview' => true,
-            'tableWrap' => "6400px",
         ));
         //$this->model->on('beforeinsert','beforeinsert',$this);
         //$this->model->on('beforeupdate','beforeupdate',$this);
@@ -28,6 +27,23 @@ class EntityController extends Page_Admin_Base {
                 ];
             }
         }
+
+        $briefFields = [
+            Form_Entity::getFieldViewName('id') => [],
+            Form_Entity::getFieldViewName('name') => [],
+            Form_Entity::getFieldViewName('description') => [],
+            Form_Entity::getFieldViewName('register_country') => [],
+            Form_Entity::getFieldViewName('currency') => [],
+        ];
+
+        $list_display = $this->list_display;
+        $this->list_display = [];
+        for($i = 0; $i < count($list_display); $i++) {
+            if (isset($briefFields[$list_display[$i]['label']])) {
+                $briefFields[$list_display[$i]['label']] = $list_display[$i];
+            }
+        }
+        $this->list_display = array_values($briefFields);
 
         $this->single_actions=[
             ['label'=>'预览','action'=>function($model){

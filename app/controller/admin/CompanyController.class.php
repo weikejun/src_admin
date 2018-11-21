@@ -61,7 +61,7 @@ class CompanyController extends Page_Admin_Base {
             new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Company::getFieldViewName('_company_character'),'paramName'=>'id|id','foreignTable'=>'Model_Project','fusion'=>false,'preSearch'=>function($val){$model = new Model_Project;$model->setCols(['company_id'])->addComputedCol('MAX(id)', 'id')->addWhere('status','valid')->addWhereRaw(' and (`close_date` > 0 or `count_captable` = "计入")')->groupBy('company_id');$ids=array_keys($model->findMap('id'));$model=new Model_Project;$model->addWhere('id',$ids,'IN')->addWhere('company_character',"%$val%",'like');$model=$model->findMap('id');return array_keys($model);},'forSelField'=>'company_id']),
             new Page_Admin_TextForeignFilter(['name'=>'投资主体ID','paramName'=>'entity_id|id','foreignTable'=>'Model_Project','fusion'=>true,'forSelField'=>'company_id']),
-            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','(`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "")'],['founder','最主要创始人空缺','(`main_founders` = "")']]]),
+            new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','and (`partner` = "" or `manager` = "" or `legal_person` = "" or `finance_person` = "")'],['founder','最主要创始人空缺','and (`main_founders` = "")']]]),
         );
     }
 
@@ -76,6 +76,7 @@ class CompanyController extends Page_Admin_Base {
         ));
 
         $this->model=new Model_Company();
+        $this->model->addWhere('id', 0, '>');
         $this->model->orderBy('update_time', 'DESC');
         $this->model->on('after_insert', function($model) {
             if (!$model->getData('id')) {
@@ -134,15 +135,15 @@ class CompanyController extends Page_Admin_Base {
         $this->_initListFilter();
 
         WinRequest::mergeModel(array(
-            'tableWrap' => '3200px',
+            'tableWrap' => '3500px',
         ));
 
         $briefFields = [
             Form_Company::getFieldViewName('id') => [],
-            Form_Company::getFieldViewName('code') => [],
             Form_Company::getFieldViewName('short') => [],
             Form_Company::getFieldViewName('project_type') => [],
             Form_Company::getFieldViewName('_captable') => [],
+            Form_Company::getFieldViewName('_entity_list') => [],
             Form_Company::getFieldViewName('_deal_num') => [],
             Form_Company::getFieldViewName('_latest_invest_turn') => [],
             Form_Company::getFieldViewName('_financing_amount_all') => [],

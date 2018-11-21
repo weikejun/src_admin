@@ -276,7 +276,7 @@ class Form_Company extends Form {
                         $output = '';
                         foreach($stockNums as $id => $num) {
                             if (isset($entitys[$id])) {
-                                $output .= $entitys[$id]->mName."\n";
+                                $output .= $entitys[$id]->mName."<br />";
                                 if ($num <= 0) {
                                     $output .= '[已退出]';
                                 }

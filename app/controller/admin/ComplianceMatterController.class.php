@@ -45,7 +45,7 @@ class ComplianceMatterController extends Page_Admin_Base {
             new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('scene'),'paramName'=>'scene','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('requirement'),'paramName'=>'requirement','fusion'=>true]),
             new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('expiry'),'paramName'=>'expiry','fusion'=>true]),
-            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action'),'paramName'=>'action','choices'=>Model_ComplianceMatter::getActionChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_req'),'paramName'=>'action_req','choices'=>Model_ComplianceMatter::getActionReqChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_target'),'paramName'=>'action_target','choices'=>Model_ComplianceMatter::getActionTargetChoices()]),
         ];
     }
