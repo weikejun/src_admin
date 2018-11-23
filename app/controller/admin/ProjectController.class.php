@@ -645,6 +645,7 @@ class ProjectController extends Page_Admin_Base {
                 }
                 foreach($dataList as $i => $dataItem) {
                     //if (strpos($dataItem->getData('deal_type'), '企业融资') !== false) {
+                    if ($dataItem->getData('close_date')) {
                         $holdValue[$dataItem->getData('value_currency')] = $stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money');
                         $bookValue = $dataItem->getData('value_currency') . ' ' . number_format($holdValue[$dataItem->getData('value_currency')], 2);
                         if (!$model->getData('id')) {
@@ -652,7 +653,7 @@ class ProjectController extends Page_Admin_Base {
                         }
                         $formula['id'][] = $dataItem->getData('id');
                         return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,post_money,_company_short,turn_sub,deal_type,close_date,entity_id,exit_entity_id&__filter=%s">%s</a>', urlencode('id='.implode(',',$formula['id'])),$bookValue);
-                    //}
+                    }
                 }
                 return 0;
             }],
@@ -801,8 +802,12 @@ class ProjectController extends Page_Admin_Base {
                 $output = '';
                 foreach($currencys as $currency) {
                     if (isset($holdValue[$currency]) 
-                        && isset($curInvestValues[$currency])) {
+                        && isset($curInvestValues[$currency])
+                        && (count($curExitValues) === 0 || isset($curExitValues[$currency]))) {
                         $output .= "$currency 投资：".number_format(($holdValue[$currency] + $curExitValues[$currency])/$curInvestValues[$currency], 2) . "\n";
+                    } else {
+                        $output = "多币种项目";
+                        break;
                     }
                 }
                 return $output;
