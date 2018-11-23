@@ -40,7 +40,8 @@ class Form_Company extends Form {
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         if ($dataItem->getData('stocknum_all')) {
-                            return number_format($dataItem->getData('stocknum_all'));
+                            $output = number_format($dataItem->getData('stocknum_all'));
+                            return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.$dataItem->getData('id')), $output);
                         }
                     }
                 }],
@@ -107,7 +108,8 @@ class Form_Company extends Form {
                     ksort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         if (!$dataItem->getData('post_money')) return;
-                        return $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
+                        $output = $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,value_currency,post_money,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.$dataItem->getData('id')), $output);
                     }
                 }],
                 ['name'=>'_latest_post_moeny','label'=>'最新估值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -120,10 +122,11 @@ class Form_Company extends Form {
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         if (!$dataItem->getData('post_money')) continue;
-                        return $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
+                        $output = $dataItem->getData('value_currency'). ' ' . number_format($dataItem->getData('post_money'), 2);
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,value_currency,post_money,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.$dataItem->getData('id')), $output);
                     }
                 }],
-                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'help'=>'倍数<1 downround；=1 持平；>1 上涨','field'=>function($model)use(&$project) {
+                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'help'=>'倍数<1 downround；=1 持平；>1 上涨；多币种时分别列出价格','field'=>function($model)use(&$project) {
                     // TODO:以源码首次融资为分母 
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -141,7 +144,13 @@ class Form_Company extends Form {
                     $dataList = array_values($dataList);
                     $num = count($dataList);
                     if ($num && $dataList[$num - 1]->getData('post_money') && $firstDeal) {
-                        return sprintf('%.2f', ($dataList[0]->getData('post_money') / $dataList[0]->getData('stocknum_all') / ($firstDeal->getData('post_money') / $firstDeal->getData('stocknum_all')) - 0));
+                        if ($dataList[0]->getData('value_currency') == $firstDeal->getData('value_currency')) {
+                            $output = sprintf('%.2f', ($dataList[0]->getData('post_money') / $dataList[0]->getData('stocknum_all') / ($firstDeal->getData('post_money') / $firstDeal->getData('stocknum_all')) - 0));
+                        } else {
+                            $output = "初投股价：".$firstDeal->getData('value_currency').number_format($firstDeal->getData('post_money')/$firstDeal->getData('stocknum_all'), 2)."<br />"
+                                ."最新股价：".$dataList[0]->getData('value_currency').number_format($dataList[0]->getData('post_money')/$dataList[0]->getData('stocknum_all'), 2);
+                        }
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,value_currency,post_money,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', [$dataList[0]->getData('id'), $firstDeal->getData('id')])), $output);
                     }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -221,6 +230,7 @@ class Form_Company extends Form {
                 }],
                 ['name'=>'_financing_amount_all','label'=>'企业融资总金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];
+                    $formula = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             if (strpos($dataItem->getData('deal_type'), '企业融资') !== false
@@ -231,11 +241,13 @@ class Form_Company extends Form {
                                     continue;
                                 }
                                 $dataList[$turn][$currency] += $dataItem->getData('financing_amount');
+                                $formula['id'][] = $dataItem->getData('id');
                             } elseif (strpos($dataItem->getData('deal_type'), '独立CB') !== false
                                 && $dataItem->getData('loan_amount')) { 
                                 $turn = $dataItem->getData('turn_sub');
                                 $currency = $dataItem->getData('loan_currency');
                                 $dataList[$turn][$currency] += $dataItem->getData('loan_amount');
+                                $formula['id'][] = $dataItem->getData('id');
                             }
                         }
                     }
@@ -249,7 +261,7 @@ class Form_Company extends Form {
                     foreach($amounts as $currency => $amount) {
                         $output .= "$currency ".number_format($amount,2)."<br />";
                     }
-                    return $output;
+                    return sprintf('<a target=_blank href="/admin/Project?fields=id,financing_amount,loan_amount,loan_process,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                 }],
                 ['name'=>'field-index-enterexit','label'=>'源码投退信息','type'=>'seperator'],
                 ['name'=>'_captable','label'=>'投退CapTable','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
@@ -296,39 +308,49 @@ class Form_Company extends Form {
                     }
                     return $dataList ? '是' : '否';
                 }],
-                ['name'=>'_latest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_latest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$totalStockNew) {
                     $dataList = [];
                     $stockNum = 0;
+                    $formula = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
                             if ($dataItem->getData('deal_type') == '源码退出') {
                                 $stockNum -= $dataItem->getData('exit_stock_number');
+                                $formula['id'][] = $dataItem->getData('id');
                             } elseif (strpos($dataItem->getData('deal_type'),'源码投') !== false) {
                                 $stockNum += $dataItem->getData('stocknum_get');
+                                $formula['id'][] = $dataItem->getData('id');
                             }
                         }
                     }
-                    return number_format($stockNum);
+                    $totalStockNew = $stockNum;
+                    $output = number_format($stockNum);
+                    return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                 }],
                 ['name'=>'_latest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     // TODO 可以化简
                     $dataList = [];
                     $stockNum = 0;
+                    $formula = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
                             if ($dataItem->getData('deal_type') == '源码退出') {
                                 $stockNum -= $dataItem->getData('exit_stock_number');
+                                $formula['id'][] = $dataItem->getData('id');
                             } elseif (strpos($dataItem->getData('deal_type'),'源码投') !== false) {
                                 $stockNum += $dataItem->getData('stocknum_get');
+                                $formula['id'][] = $dataItem->getData('id');
                             }
                         }
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
                         if ($dataItem->getData('stocknum_all')) {
-                            return sprintf("%.2f%%", $stockNum / $dataItem->getData('stocknum_all') * 100);
+                            $formula['id'][] = $dataItem->getData('id');
+                            $output = sprintf("%.2f%%", $stockNum / $dataItem->getData('stocknum_all') * 100);
+                            return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                         }
                     }
                 }],
@@ -493,20 +515,24 @@ class Form_Company extends Form {
                     }
                 }],
                 ['name'=>'field-index-return','label'=>'源码投资回报','type'=>'seperator'],
-                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$cbAmounts){
+                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$cbAmounts,&$formula){
                     $dataList = [];
                     $investExitAmounts = [];
+                    $formula = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             if (strpos($dataItem->getData('deal_type'), '源码退出') !== false) {
                                 $investExitAmounts['exit'][$dataItem->getData('exit_turn')][$dataItem->getData('exit_currency')] += $dataItem->getData('exit_amount');
                                 $investExitStocks['exit'][$dataItem->getData('exit_turn')][$dataItem->getData('exit_currency')] += $dataItem->getData('exit_stock_number');
+                                $formula['id']['exit'][] = $dataItem->getData('id');
                             } elseif (strpos($dataItem->getData('deal_type'), '源码投') !== false) {
                                 $investExitAmounts['invest'][$dataItem->getData('invest_turn')][$dataItem->getData('invest_currency')] += $dataItem->getData('our_amount');
                                 $investExitStocks['invest'][$dataItem->getData('invest_turn')][$dataItem->getData('invest_currency')] += $dataItem->getData('stocknum_get');
+                                $formula['id']['invest'][] = $dataItem->getData('id');
                             } elseif (stripos($dataItem->getData('deal_type'), '源码独立CB') !== false
                                 && $dataItem->getData('loan_process') == '待处理') {
                                 $cbAmounts[$dataItem->getData('loan_currency')] += $dataItem->getData('loan_amount');
+                                $formula['id']['loan'][] = $dataItem->getData('id');
                             }
                         }
                     }
@@ -520,9 +546,9 @@ class Form_Company extends Form {
                     foreach($amounts as $currency => $amount) {
                         $output .= "$currency " . number_format($amount, 2) . '<br />';
                     }
-                    return $output;
+                    return sprintf('<a target=_blank href="/admin/Project?fields=id,our_amount,invest_turn,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id']['invest'])), $output);
                 }],
-                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$exitAmount){
+                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$exitAmount,&$formula){
                     $amounts = [];
                     foreach($investExitAmounts['exit'] as $turn => $turnAmounts) {
                         foreach($turnAmounts as $currency => $amount) {
@@ -534,7 +560,7 @@ class Form_Company extends Form {
                     foreach($amounts as $currency => $amount) {
                         $output .= "$currency " . number_format($amount, 2) . '<br />';
                     }
-                    return $output;
+                    return sprintf('<a target=_blank href="/admin/Project?fields=id,exit_amount,exit_turn,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id']['exit'])), $output);
                 }],
                 ['name'=>'_exit_amount_cost','label'=>'已退出金额对应成本','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$exitAmountCost){
                     // TODO: 有bug
@@ -566,6 +592,7 @@ class Form_Company extends Form {
                 ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$holdValue) {
                     $dataList = [];
                     $stockNum = 0;
+                    $formula = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
@@ -578,10 +605,12 @@ class Form_Company extends Form {
                     }
                     krsort($dataList);
                     foreach($dataList as $date => $dataItem) {
-                        if ($dataItem->getData('stocknum_all')&& $stockNum > 0) {
+                        if ($dataItem->getData('stocknum_all') && $stockNum > 0 && $dataItem->getData('close_date')) {
+                            $formula['id'][] = $dataItem->getData('id');
                             $currency = $dataItem->getData('value_currency');
                             $holdValue[$currency] = $stockNum/$dataItem->getData('stocknum_all')*$dataItem->getData('post_money');
-                            return "$currency " . number_format($holdValue[$currency], 2);
+                            $output = "$currency " . number_format($holdValue[$currency], 2);
+                            return sprintf('<a target=_blank href="/admin/Project?fields=id,_stock_price,_shareholding_turn_sum,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                         }
                     }
                 }],
