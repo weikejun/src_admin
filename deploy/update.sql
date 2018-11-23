@@ -30,6 +30,15 @@ alter table `fund_lp` add `admin_fee_agreement` varchar(8) DEFAULT NULL COMMENT 
 alter table `fund_lp` add `other_fee_agreement` varchar(8) DEFAULT NULL COMMENT '其它费用是否有特别约定' after `side_letter`;
 alter table `entity` add `compliance_person` varchar(16) DEFAULT NULL COMMENT '合规负责人' after `legal_person`;
 alter table `compliance_matter` add `action_req` varchar(16) DEFAULT NULL COMMENT '动作要求' after `action`;
+alter table `fund_lp` add `gb_sign_memo` text DEFAULT NULL COMMENT 'GP&管理人已章备注';
+alter table `fund_lp` add `aic_material_memo` text DEFAULT NULL COMMENT '工商变更资料提供备注';
+alter table `fund_lp` add `lpac_commission_memo` text DEFAULT NULL COMMENT 'LPAC委任书备注';
+alter table `fund_lp` add `entrust_agreement_memo` text DEFAULT NULL COMMENT '委托管理协议备注';
+alter table `fund_lp` add `bank_entrustment_memo` text DEFAULT NULL COMMENT '银行托管信息页备注';
+alter table `fund_lp` add `no_entrustment_memo` text DEFAULT NULL COMMENT '不托管协议备注';
+alter table `fund_lp` add `investor_type_memo` text DEFAULT NULL COMMENT '投资者类型确认备注';
+alter table `fund_lp` add `review` varchar(8) DEFAULT NULL COMMENT '回访';
+alter table `fund_lp` add `review_memo` text DEFAULT NULL COMMENT '回访备注';
 
 /******************** insert ********************/
 

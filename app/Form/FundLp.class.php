@@ -186,11 +186,17 @@ class Form_FundLp extends Form {
                 ['name'=>'subscribe_doc','label'=>'认购文件原件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_file_memo','label'=>'认购文件原件备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'gb_sign','label'=>'GP&管理人已章','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'gb_sign_memo','label'=>'GP&管理人已章备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'aic_material','label'=>'工商变更资料提供','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
+                ['name'=>'aic_material_memo','label'=>'工商变更资料提供备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'lpac_commission','label'=>'LPAC委任书','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
+                ['name'=>'lpac_commission_memo','label'=>'LPAC委任书备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'entrust_agreement','label'=>'委托管理协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'entrust_agreement_memo','label'=>'委托管理协议备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'bank_entrustment','label'=>'银行托管信息页','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'bank_entrustment_memo','label'=>'银行托管信息页备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'no_entrustment','label'=>'不托管协议','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
+                ['name'=>'no_entrustment_memo','label'=>'不托管协议备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'share_entrustment','label'=>'是否有代持','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrust_agreement','label'=>'代持协议','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_entrustment_memo','label'=>'代持备注','type'=>'textarea','default'=>null,'required'=>false],
@@ -228,6 +234,7 @@ class Form_FundLp extends Form {
                     }
                 }],
                 ['name'=>'investor_type','label'=>'投资者类型确认','type'=>'choice','choices'=>Model_FundLp::getInvestorTypeChoices(),'default'=>null,'required'=>false],
+                ['name'=>'investor_type_memo','label'=>'投资者类型确认备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'investor_through','label'=>'投资者穿透特殊情况','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'investor_through_memo','label'=>'投资者穿透特殊情况备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'through_num','label'=>'在本募资主体中穿透人数','type'=>'number','default'=>null,'required'=>false],
@@ -241,7 +248,10 @@ class Form_FundLp extends Form {
                 ['name'=>'investor_appropriateness','label'=>'投资者适当性匹配','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_fillin','label'=>'认购册填写','type'=>'choice','choices'=>Model_FundLp::getDocOptionChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_memo','label'=>'认购册备注','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'coolingoff_period','label'=>'冷静期及回访','type'=>'choice','choices'=>Model_FundLp::getCoolingoffPeriodChoices(),'default'=>null,'required'=>false],
+                ['name'=>'coolingoff_period','label'=>'冷静期','type'=>'choice','choices'=>Model_FundLp::getCoolingoffPeriodChoices(),'default'=>null,'required'=>false],
+                ['name'=>'review','label'=>'回访','type'=>'choice','choices'=>Model_FundLp::getCoolingoffPeriodChoices(),'default'=>null,'required'=>false],
+                ['name'=>'review_memo','label'=>'回访备注','type'=>'textarea','default'=>null,'required'=>false],
+                ['name'=>'subscribe_memo','label'=>'认购册备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'compliance_checklist','label'=>'合规要求清单','type'=>'choosemodel','model'=>'Model_Checklist','default'=>null,'required'=>false,'show'=>'version','field'=>function($model) {
                     $cli = new Model_Checklist;
                     $cli->addWhere('id', $model->getData('compliance_checklist'));

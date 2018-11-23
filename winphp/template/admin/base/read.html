@@ -17,6 +17,7 @@
         .breadcrumb a.not-selected {color:gray;}
         .breadcrumb a.not-selected:hover {color:black;}
         #save-tip {color: gray;}
+        #btn_submit {z-index:999;}
         @media print {
             #btn_submit {display:none;}
         }
@@ -191,7 +192,7 @@
             var docScrTop = $(this).scrollTop();
             if (docScrTop + $(window).height() <= subBtnInitOff.top) {
                 saveTip.css({'position':'fixed','right':'130px','bottom':'45px'});
-                subBtn.css({'position':'fixed','right':'31px','bottom':'0px'});
+                subBtn.css({'position':'fixed','right':'31px','bottom':'40px'});
             } else {
                 subBtn.css({'position':'static'});
                 saveTip.css({'position':'static'})

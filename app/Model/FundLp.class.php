@@ -68,8 +68,9 @@ class Model_FundLp extends Base_FundLp{
     public static function getInvestorTypeChoices() {
         return [
             ['专业','专业'],
-            ['非专业','非专业'],
-            ['不适用','不适用'],
+            ['普通','普通'],
+            ['当然合格投资者','当然合格投资者'],
+            ['其他','其他'],
         ];
     }
 

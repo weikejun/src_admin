@@ -156,11 +156,8 @@ class ActiveDealController extends Page_Admin_Base {
         $briefFields = [
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
-            Form_Project::getFieldViewName('invest_currency') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
-            Form_Project::getFieldViewName('entity_id') => [],
-            Form_Project::getFieldViewName('exit_entity_id') => [],
             Form_Project::getFieldViewName('new_follow') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('expect_sign_date') => [],
