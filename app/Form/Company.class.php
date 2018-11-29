@@ -59,8 +59,8 @@ class Form_Company extends Form {
                 }],
                 ['name'=>'bussiness','label'=>'所属行业','type'=>'selectInput','choices'=>Model_Company::getBussinessChoices(),'required'=>true,],
                 ['name'=>'bussiness_change','label'=>'主营行业变化','type'=>'selectInput','choices'=>[['未变化','未变化']],'required'=>false],
-                ['name'=>'region','label'=>'主营地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true],
-                ['name'=>'register_region','label'=>'注册地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true,'help'=>'精确到国家（国外）/省（国内）'],
+                ['name'=>'region','label'=>'主营地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true,'help'=>'精确到国家（国外）/省市简写（国内）'],
+                ['name'=>'register_region','label'=>'注册地','type'=>'selectInput','choices'=>Model_Company::getRegionChoices(),'required'=>true,'help'=>'精确到国家（国外）/省市简写（国内）'],
                 ['name'=>'field-index-financing','label'=>'融资信息','type'=>'seperator'],
                 ['name'=>'_first_close_date','label'=>'源码首次投资时间','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
                     $dataList = [];

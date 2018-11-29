@@ -588,6 +588,7 @@ CREATE TABLE `compliance_matter` (
     `action_freq` varchar(16) DEFAULT NULL COMMENT '动作频率', 
     `terms_from` varchar(256) DEFAULT NULL COMMENT '条款来源', 
     `terms_raw` text DEFAULT NULL COMMENT '条款原文', 
+    `constrained_entitys` text DEFAULT NULL COMMENT '相关受限实体', 
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

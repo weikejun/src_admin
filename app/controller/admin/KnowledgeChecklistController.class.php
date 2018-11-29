@@ -1,5 +1,5 @@
 <?php
-class ChecklistController extends Page_Admin_Base {
+class KnowledgeChecklistController extends Page_Admin_Base {
     use ControllerPreproc;
     use ExportActions;
 
@@ -7,15 +7,15 @@ class ChecklistController extends Page_Admin_Base {
         parent::__construct();
         $this->addInterceptor(new AdminLoginInterceptor());
         $this->addInterceptor(new AdminAuthInterceptor());
-        $this->model=new Model_Checklist();
+        $this->model=new Model_KnowledgeChecklist();
         $this->model->orderBy('id', 'DESC');
         WinRequest::mergeModel(array(
-            'controllerText'=>"基金Checklist",
+            'controllerText'=>"知识经验Checklist",
         ));
 
-        $this->form=new Form_Checklist();
+        $this->form=new Form_KnowledgeChecklist();
         $this->list_display = [];
-        foreach(Form_Checklist::getFieldsMap() as $field) {
+        foreach(Form_KnowledgeChecklist::getFieldsMap() as $field) {
             if ($field['type'] != 'seperator') {
                 $this->list_display[] = [
                     'name' => $field['name'],
@@ -31,20 +31,22 @@ class ChecklistController extends Page_Admin_Base {
         ];
 
         $this->list_filter=array(
-            new Page_Admin_ChoiceFilter(['name'=>Form_Checklist::getFieldViewName('field'),'paramName'=>'field','choices'=>Model_Checklist::getFieldChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_KnowledgeChecklist::getFieldViewName('version'),'paramName'=>'version','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_KnowledgeChecklist::getFieldViewName('id'),'paramName'=>'id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>Form_KnowledgeChecklist::getFieldViewName('list_info'),'paramName'=>'list_info','fusion'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_KnowledgeChecklist::getFieldViewName('operator'),'paramName'=>'operator','fusion'=>true]),
         );
 
         $this->single_actions=[
             ['label'=>'预览','action'=>function($model){
-                return '/admin/Checklist/check?id='.$model->mId;
+                return '/admin/KnowledgeChecklist/check?id='.$model->mId;
             }],
             ['label'=>'复制','action'=>function($model){
-                return '/admin/Checklist?action=clone&ex=version,operator,create_time,update_time&id='.$model->mId;
+                return '/admin/KnowledgeChecklist?action=clone&ex=version,operator,create_time,update_time&id='.$model->mId;
             }],
         ];
-
         $this->multi_actions = [
-            ['label'=>'导出csv','required'=>false,'action'=>'/admin/Checklist/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/KnowledgeChecklist/exportToCsv?method=full&__filter='.urlencode($this->_GET("__filter"))],
         ];
 
     }

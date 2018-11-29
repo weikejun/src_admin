@@ -1,6 +1,6 @@
 <?php
 
-class Form_Checklist extends Form {
+class Form_KnowledgeChecklist extends Form {
     use Form_Traits;
 
     protected static $fieldsMap;
@@ -9,8 +9,8 @@ class Form_Checklist extends Form {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
                 ['name'=>'id','label'=>'ID','type'=>'hidden','default'=>null,'required'=>false,],
-                ['name'=>'version','label'=>'版本','type'=>'text','default'=>null,'required'=>true,'placeholder'=>'唯一标识，比如“合规要求v20181025”，不可修改','validator'=>new Form_UniqueValidator(new Model_Checklist, 'version'),'readonly'=>true],
-                ['name'=>'field','label'=>'字段类型','type'=>'choice','choices'=>Model_Checklist::getFieldChoices(),'required'=>true],
+                ['name'=>'version','label'=>'版本','type'=>'text','default'=>null,'required'=>true,'placeholder'=>'唯一标识，比如“交易文件审阅要求v20181025”，可修改','validator'=>new Form_UniqueValidator(new Model_KnowledgeChecklist, 'version')],
+                ['name'=>'list_info','label'=>'清单说明','type'=>'textarea','required'=>false],
                 ['name'=>'content','label'=>'清单内容','type'=>'textarea','rows'=>10,'default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('content')) {
                         return "<pre class='no_trim'>".$model->getData('content')."</pre>";

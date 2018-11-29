@@ -58,3 +58,15 @@ CREATE TABLE `contract_term` (
     `create_time` int(11) DEFAULT NULL COMMENT '创建时间', 
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `knowledge_checklist`; /*知识经验checklist*/
+CREATE TABLE `knowledge_checklist` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `version` varchar(32) DEFAULT NULL COMMENT '版本', 
+    `list_info` text DEFAULT NULL COMMENT '清单说明', 
+    `content` text DEFAULT NULL COMMENT '内容', 
+    `operator` varchar(32) DEFAULT NULL COMMENT '添加人', 
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    `create_time` int(11) DEFAULT NULL COMMENT '更新时间', 
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

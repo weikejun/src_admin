@@ -1,5 +1,15 @@
 <?php
 class Model_ComplianceMatter extends Base_ComplianceMatter{
+    public static function getContrainedEntitysChoices() {
+        return [
+            ['仅本基金','仅本基金'],
+            ['全部基金','全部基金'],
+            ['全部美元基金','全部美元基金'],
+            ['全部人民币基金','全部人民币基金'],
+            ['管理公司及其关联方','管理公司及其关联方'],
+        ];
+    }
+
     public static function getPotenceChoices() {
         return [
             ['有效','有效'],
