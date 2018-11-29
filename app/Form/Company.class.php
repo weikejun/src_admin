@@ -270,11 +270,13 @@ class Form_Company extends Form {
                 ['name'=>'_entity_list','label'=>'源码投资主体','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$stockNums) {
                     $dataList = [];
                     $stockNums = [];
+                    $exitMap = [];
                     foreach($project as $i => $dataItem) {
                         if ($dataItem->getData('close_date')) {
                             $dataList[$dataItem->getData('close_date')] = $dataItem;
                             if ($dataItem->getData('deal_type') == '源码退出') {
                                 $stockNums[$dataItem->getData('exit_entity_id')] -= $dataItem->getData('exit_stock_number');
+                                $exitMap[$dataItem->getData('exit_entity_id')] = true;
                             } else {
                                 $stockNums[$dataItem->getData('entity_id')] += $dataItem->getData('stocknum_get');
                             }
@@ -289,7 +291,7 @@ class Form_Company extends Form {
                         foreach($stockNums as $id => $num) {
                             if (isset($entitys[$id])) {
                                 $output .= $entitys[$id]->mName."\n";
-                                if ($num <= 0) {
+                                if ($num <= 0 && isset($exitMap[$id])) {
                                     $output .= '[已退出]';
                                 }
                             }
