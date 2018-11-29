@@ -39,7 +39,17 @@ alter table `fund_lp` add `no_entrustment_memo` text DEFAULT NULL COMMENT '不�
 alter table `fund_lp` add `investor_type_memo` text DEFAULT NULL COMMENT '投资者类型确认备注';
 alter table `fund_lp` add `review` varchar(8) DEFAULT NULL COMMENT '回访';
 alter table `fund_lp` add `review_memo` text DEFAULT NULL COMMENT '回访备注';
+alter table `project` add `pay_currency` varchar(16) DEFAULT NULL COMMENT '源码实际支付币种' after `pay_amount`;
+alter table `compliance_matter` add `expiry_memo` text DEFAULT NULL COMMENT '有效期备注' after `expiry`;
+alter table `compliance_matter` add `action_freq` varchar(16) DEFAULT NULL COMMENT '动作频率' after `action_req`;
+alter table `compliance_matter` add `limit_source_memo` text DEFAULT NULL COMMENT '限制来源备注';
+alter table `compliance_matter` add `limit_source_type` text DEFAULT NULL COMMENT '限制来源类型';
+alter table `compliance_matter` add `potence` varchar(8) DEFAULT NULL COMMENT '效力情况' after `requirement`;
+alter table `fund_lp` add `status` varchar(32) DEFAULT 'valid' COMMENT '数据状态' after `id`;
 
 /******************** insert ********************/
+insert into `action` (`name`,`description`,`update_time`,`create_time`) values('fundlp_full_index','LP认购表（全部字段）：首页',unix_timestamp(),unix_timestamp()),('fundlp_full_read','LP认购表（全部字段）：查看',unix_timestamp(),unix_timestamp()),('fundlp_full_create','LP认购表（全部字段）：新增',unix_timestamp(),unix_timestamp()),('fundlp_full_update','LP认购表（全部字段）：更新',unix_timestamp(),unix_timestamp()),('fundlp_full_delete','LP认购表（全部字段）：删除',unix_timestamp(),unix_timestamp()),('fundlp_full_search','LP认购表（全部字段）：搜索',unix_timestamp(),unix_timestamp()),('fundlp_full_select','LP认购表（全部字段）：选择页',unix_timestamp(),unix_timestamp()),('fundlp_full_select_search','LP认购表（全部字段）：选择页搜索',unix_timestamp(),unix_timestamp()),('fundlp_recovery_index','LP认购表（全部字段）：回收站',unix_timestamp(),unix_timestamp()),('fundlp_captable_index','LP认购表（全部字段）：Captable',unix_timestamp(),unix_timestamp()),('fundlp_autosave_update','LP认购表：自动更新',unix_timestamp(),unix_timestamp()),('fundlp_autosave_create','LP认购表：自动新增',unix_timestamp(),unix_timestamp()) on duplicate key update `name`=`name`;
+insert into `action` (`name`,`description`,`update_time`,`create_time`) values('controlleractual_index','LP实际控制人：首页',unix_timestamp(),unix_timestamp()),('controlleractual_read','LP实际控制人：查看',unix_timestamp(),unix_timestamp()),('controlleractual_create','LP实际控制人：新增',unix_timestamp(),unix_timestamp()),('controlleractual_update','LP实际控制人：更新',unix_timestamp(),unix_timestamp()),('controlleractual_delete','LP实际控制人：删除',unix_timestamp(),unix_timestamp()),('controlleractual_search','LP实际控制人：搜索',unix_timestamp(),unix_timestamp()),('controlleractual_select','LP实际控制人：选择页',unix_timestamp(),unix_timestamp()),('controlleractual_select_search','LP实际控制人：选择页搜索',unix_timestamp(),unix_timestamp()) on duplicate key update `name`=`name`;
 
 /******************** update ********************/
+update `project` set `pay_currency` = `invest_currency`;

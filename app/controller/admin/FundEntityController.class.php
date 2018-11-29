@@ -56,12 +56,15 @@ class FundEntityController extends Page_Admin_Base {
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('tp'),'paramName'=>'tp','choices'=>Model_Entity::getTpChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('org_type'),'paramName'=>'org_type','choices'=>Model_Entity::getOrgTypeChoices()]),
             new Page_Admin_ChoiceFilter(['name'=>Form_Entity::getFieldViewName('co_investment'),'paramName'=>'co_investment','choices'=>Model_Entity::getCoInvestmentChoices()]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('fund_manager_entity'),'paramName'=>'name|fund_manager_entity','foreignTable'=>'Model_Entity','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>'子主体','paramName'=>'sub_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'parent_id']),
             new Page_Admin_TextForeignFilter(['name'=>'父主体','paramName'=>'parent_id|id','foreignTable'=>'Model_EntityRel','fusion'=>false,'forSelField'=>'sub_id']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('ir_person'),'paramName'=>'name|ir_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('legal_person'),'paramName'=>'name|legal_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Entity::getFieldViewName('compliance_person'),'paramName'=>'name|compliance_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_Entity::getFieldViewName('duration_deadline'),'paramName'=>'duration_deadline']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_Entity::getFieldViewName('duration_delay_deadline'),'paramName'=>'duration_delay_deadline']),
         );
         $this->multi_actions=array(
             ['label'=>'导出csv','required'=>false,'action'=>'/admin/entity/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],

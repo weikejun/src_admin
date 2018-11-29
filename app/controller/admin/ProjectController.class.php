@@ -886,6 +886,7 @@ class ProjectController extends Page_Admin_Base {
                     $csvLine = mb_convert_encoding($csvLine, 'UTF-8', 'gbk');
                 }
                 $colums = str_getcsv($csvLine);
+                if (empty($colums[0])) continue;
                 $csvHeader[] = $colums[0];
                 for($i = 1; $i < count($colums); $i++) {
                     $csvLines[$i][] = $colums[$i];
@@ -949,6 +950,9 @@ class ProjectController extends Page_Admin_Base {
                             $csvLine[$i] = $mId[0];
                         }
                         $saveData[$fieldName] = $csvLine[$i];
+                    }
+                    if (empty($saveData['id'])) {
+                        unset($saveData['id']);
                     }
                     if (isset($saveData['id'])
                         && !Model_AdminGroup::isCurrentAdminRoot()

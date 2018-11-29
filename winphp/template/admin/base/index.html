@@ -102,6 +102,7 @@
         }
         {%if !$no_truncate%}
         $('td').each(function(){
+            if ($(this).find('.no_trim').length) return;
             var txt = $(this).text().replace(/\s*/g, '');
             if (txt.length > 60) {
                 $(this).html('<span style="cursor:pointer" title='+txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'>'+txt.substring(0, 60)+'...</span>');

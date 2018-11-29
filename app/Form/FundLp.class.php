@@ -8,7 +8,6 @@ class Form_FundLp extends Form {
     public static function getFieldsMap() {
         if (!self::$fieldsMap) {
             self::$fieldsMap = [
-                ['name'=>'field-index-base','label'=>'认购人基本情况','type'=>'seperator'],
                 ['name'=>'id','label'=>'认购ID','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
                     $entity = new Model_Entity;
                     $entity->addWhere('id', $model->getData('entity_id'));
@@ -18,6 +17,9 @@ class Form_FundLp extends Form {
                     }
                     return $model->getData('id');
                 }],
+                ['name'=>'status','label'=>'数据状态','type'=>'hidden','default'=>'valid','required'=>true,],
+                ['name'=>'field-index-base','label'=>'认购人基本情况','type'=>'seperator'],
+                ['name'=>'subscriber','label'=>'认购人全称','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'entity_id','label'=>'募资主体全称','type'=>'choosemodel','model'=>'Model_Entity','default'=>null,'required'=>false,'field'=>function($model)use(&$entity) {
                     return $entity->getData('name');
                 }],
@@ -27,7 +29,6 @@ class Form_FundLp extends Form {
                 ['name'=>'_entity_currency','label'=>'募资主体资金货币','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$entity){
                     return $entity->getData('currency');
                 }],
-                ['name'=>'subscriber','label'=>'认购人全称','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'subscriber_code','label'=>'认购人代码','type'=>'text','default'=>null,'required'=>false],
                 ['name'=>'subscriber_controller','label'=>'认购人实际控制人','type'=>'choosemodel','model'=>'Model_ControllerActual','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('subscriber_controller')) {
@@ -85,7 +86,7 @@ class Form_FundLp extends Form {
                 ['name'=>'communication','label'=>'待沟通事项','type'=>'choice','choices'=>Model_FundLp::getYesNoChoices(),'default'=>null,'required'=>false],
                 ['name'=>'communication_memo','label'=>'待沟通事项备注','type'=>'textarea','default'=>null,'required'=>false],
                 ['name'=>'field-index-date-and-amount','label'=>'认购时间及出资','type'=>'seperator'],
-                ['name'=>'join_turn','label'=>'进入批次','type'=>'text','default'=>null,'required'=>false],
+                ['name'=>'join_turn','label'=>'进入批次','type'=>'selectInput','choices'=>Model_FundLp::getJoinTurnChoices(),'default'=>null,'required'=>false],
                 ['name'=>'join_way','label'=>'进入方式','type'=>'choice','choices'=>Model_FundLp::getJoinWayChoices(),'default'=>null,'required'=>false],
                 ['name'=>'sign_lpa_date','label'=>'SA签署日期','type'=>'date','default'=>null,'required'=>false,'field'=>function($model) {
                     if ($model->getData('sign_lpa_date')) {
@@ -99,7 +100,11 @@ class Form_FundLp extends Form {
                 }],
                 ['name'=>'subscribe_currency','label'=>'认缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
                 ['name'=>'subscribe_currency_memo','label'=>'认缴货币备注','type'=>'textarea','default'=>null,'required'=>false],
-                ['name'=>'subscribe_amount','label'=>'初始认缴金额','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'subscribe_amount','label'=>'初始认缴金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('subscribe_amount')) {
+                        return $model->getData('subscribe_currency') . ' ' . number_format($model->getData('subscribe_amount'));
+                    }
+                }],
                 ['name'=>'_current_subscribe_amount','label'=>'当前认缴金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     $amounts = [];
                     $data = $model->getData();
@@ -111,7 +116,7 @@ class Form_FundLp extends Form {
                     $output = '';
                     foreach($amounts as $currency => $amount) {
                         if (!$amount) continue;
-                        $output .= "$currency".number_format($amount).'<br />';
+                        $output .= "$currency ".number_format($amount).'<br />';
                     }
                     return $output;
                 }],
@@ -126,7 +131,11 @@ class Form_FundLp extends Form {
                     return $output;
                 }],
                 ['name'=>'paid_currency','label'=>'实缴货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'paid_amount','label'=>'实缴金额','type'=>'number','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('paid_amount')) {
+                        return $model->getData('paid_currency') . ' ' . number_format($model->getData('paid_amount'));
+                    }
+                }],
                 ['name'=>'paid_amount_memo','label'=>'实缴金额备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = json_decode($model->getData('paid_amount_memo'));
                     if ($list) {
@@ -145,7 +154,11 @@ class Form_FundLp extends Form {
                 ['name'=>'field-index-transfer-reduce','label'=>'LP份额转让及减资','type'=>'seperator'],
                 ['name'=>'share_transfer','label'=>'有无份额转让','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'share_transfer_currency','label'=>'份额转让货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'share_transfer_amount','label'=>'份额转让额度','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'share_transfer_amount','label'=>'份额转让额度','type'=>'number','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('share_transfer_amount')) {
+                        return $model->getData('share_transfer_currency') . ' ' . number_format($model->getData('share_transfer_amount'));
+                    }
+                }],
                 ['name'=>'share_transfer_memo','label'=>'份额转让备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = json_decode($model->getData('share_transfer_memo'));
                     if ($list) {
@@ -159,7 +172,11 @@ class Form_FundLp extends Form {
                 ['name'=>'share_transfer_file','label'=>'份额转让文件','type'=>'choice','choices'=>Model_FundLp::getCompleteChoices(),'default'=>null,'required'=>false],
                 ['name'=>'capital_reduce','label'=>'有无减资','type'=>'choice','choices'=>Model_FundLp::getHaveNotChoices(),'default'=>null,'required'=>false],
                 ['name'=>'capital_reduce_currency','label'=>'减资货币','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'default'=>null,'required'=>false],
-                ['name'=>'capital_reduce_amount','label'=>'减资额度','type'=>'number','default'=>null,'required'=>false],
+                ['name'=>'capital_reduce_amount','label'=>'减资额度','type'=>'number','default'=>null,'required'=>false,'field'=>function($model) {
+                    if ($model->getData('capital_reduce_amount')) {
+                        return $model->getData('capital_reduce_currency') . ' ' . number_format($model->getData('capital_reduce_amount'));
+                    }
+                }],
                 ['name'=>'capital_reduce_memo','label'=>'减资备注','type'=>'message','default'=>null,'required'=>false,'field'=>function($model) {
                     $list = json_decode($model->getData('capital_reduce_memo'));
                     if ($list) {

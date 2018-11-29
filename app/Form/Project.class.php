@@ -316,6 +316,7 @@ class Form_Project extends Form {
                         return $model->getData('invest_currency') . ' ' . sprintf('%.2f', $model->getData('our_amount') / $model->getData('stocknum_get'));
                     }
                 }],
+                ['name'=>'pay_currency','label'=>'源码实际支付币种','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'pay_amount','label'=>'源码实际支付投资金额','type'=>'number','default'=>'','required'=>false,'field'=>function($model){
                     if (is_numeric($model->getData('pay_amount'))) {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('pay_amount'), 2);

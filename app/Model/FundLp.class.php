@@ -1,5 +1,14 @@
 <?php
 class Model_FundLp extends Base_FundLp{
+    public static function getJoinTurnChoices() {
+        return [
+            ['首次交割','首次交割'],
+            ['二次交割','二次交割'],
+            ['三次交割','三次交割'],
+            ['最终交割','最终交割'],
+        ];
+    }
+
     public static function getCertTypeChoices() {
         return [
             ['营业执照','营业执照'],

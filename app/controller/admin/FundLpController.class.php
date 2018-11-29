@@ -28,6 +28,9 @@ class FundLpController extends Page_Admin_Base {
             ['label'=>'复制','action'=>function($model){
                 return '/admin/fundLp?action=clone&ex=gp_mailed,gp_mailed_detail,lp_mailed,lp_mailed_detail,gp_received,mail_receive_date,mailing_memo,create_time&id='.$model->mId;
             }],
+            ['label'=>'失效','action'=>function($model){
+                return '/admin/fundLp?action=delete&id='.$model->mId;
+            }],
         ];
 
         $this->single_actions_default = [
@@ -37,15 +40,17 @@ class FundLpController extends Page_Admin_Base {
     }
 
     private function _initMultiActions() {
-        $this->multi_actions=array(
-            array('label'=>'导出csv','required'=>false,'action'=>'/admin/fundLp/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),
-        );
+        $this->multi_actions = [
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/fundLp/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],
+            ['label'=>'回收站', 'required'=>false, 'action'=>'/admin/fundLp/recovery'],
+        ];
     }
 
     private function _initListFilter() {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_FundLp::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_FundLp::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','fusion'=>true,'foreignTable'=>'Model_Entity','class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>'募资主体ID','paramName'=>'entity_id','fusion'=>false]),
             new Page_Admin_TextFilter(['name'=>Form_FundLp::getFieldViewName('subscriber'),'paramName'=>'subscriber','fusion'=>true,'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('subscribe_currency'),'paramName'=>'subscribe_currency','choices'=>Model_Project::getCurrencyChoices(),'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_FundLp::getFieldViewName('subscriber_controller'),'paramName'=>'name|subscriber_controller','fusion'=>true,'foreignTable'=>'Model_ControllerActual']),
@@ -85,6 +90,7 @@ class FundLpController extends Page_Admin_Base {
         ));
 
         $this->model=new Model_FundLp();
+        $this->model->orderBy('id', 'DESC');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_EntityPermission::getAdminPerm();
             if (!isset($persIds['all'])) {
@@ -99,6 +105,7 @@ class FundLpController extends Page_Admin_Base {
         $this->_initSingleActions();
         $this->_initMultiActions();
         $this->_initListFilter();
+        $this->model->addWhere('status', 'valid');
 
         WinRequest::mergeModel(array(
             'tableWrap' => '7000px',
@@ -118,17 +125,16 @@ class FundLpController extends Page_Admin_Base {
         $this->_initSingleActions();
         $this->_initMultiActions();
         $this->_initListFilter();
+        $this->model->addWhere('status', 'valid');
 
         WinRequest::mergeModel(array(
-            'tableWrap' => '3072px',
+            'tableWrap' => '2560px',
         ));
 
         $briefFields = [
             Form_FundLp::getFieldViewName('id') => [],
-            Form_FundLp::getFieldViewName('entity_id') => [],
-            Form_FundLp::getFieldViewName('_entity_cate') => [],
-            Form_FundLp::getFieldViewName('_entity_currency') => [],
             Form_FundLp::getFieldViewName('subscriber') => [],
+            Form_FundLp::getFieldViewName('entity_id') => [],
             Form_FundLp::getFieldViewName('subscribe_amount') => [],
             Form_FundLp::getFieldViewName('_current_subscribe_amount') => [],
             Form_FundLp::getFieldViewName('investor_type') => [],
@@ -238,12 +244,14 @@ class FundLpController extends Page_Admin_Base {
         
         $lp = new Model_FundLp;
         $lp->addWhere('entity_id', $_GET['entity_id']);
+        $lp->addWhere('status', 'valid');
         $dataList = $lp->find();
 
         $captableList = [];
         $summary = [
             'subscriber' => '合计',
             'subscriber_controller' => '',
+            'join_way' => '',
             'subscriber_delivery_date' => '',
             'subscribe_amount' => [],
             'share_transfer_amount' => [],
@@ -254,9 +262,10 @@ class FundLpController extends Page_Admin_Base {
         foreach($dataList as $i => $dataItem) {
             if ($dataItem->getData('subscriber')) {
                 $data = $dataItem->getData();
-                if(!isset($captableList[$data['subscriber']])) {
-                    $captableList[$data['subscriber']] = [
+                if(!isset($captableList[$data['id']])) {
+                    $captableList[$data['id']] = [
                         'subscriber' => $data['subscriber'],
+                        'join_way' => $data['join_way'],
                         'subscriber_controller' => $data['subscriber_controller'],
                         'subscriber_delivery_date' => $data['subscriber_delivery_date'],
                         'subscribe_amount' => [],
@@ -268,12 +277,12 @@ class FundLpController extends Page_Admin_Base {
                 }
                 foreach(['subscribe' => 1,'share_transfer' => -1,'capital_reduce' => -1] as $fk => $fa) {
                     $amount = ($fa * $data[$fk.'_amount']);
-                    $captableList[$data['subscriber']][$fk.'_amount'][$data[$fk.'_currency']] += $amount;
-                    $captableList[$data['subscriber']]['current_amount'][$data[$fk.'_currency']] += $amount;
+                    $captableList[$data['id']][$fk.'_amount'][$data[$fk.'_currency']] += $amount;
+                    $captableList[$data['id']]['current_amount'][$data[$fk.'_currency']] += $amount;
                     $summary[$fk.'_amount'][$data[$fk.'_currency']] += $amount;
                     $summary['current_amount'][$data[$fk.'_currency']] += $amount;
                 }
-                $captableList[$data['subscriber']]['paid_amount'][$data['paid_currency']] += $data['paid_amount'];
+                $captableList[$data['id']]['paid_amount'][$data['paid_currency']] += $data['paid_amount'];
                 $summary['paid_amount'][$data['paid_currency']] += $data['paid_amount'];
             }
         }
@@ -296,6 +305,9 @@ class FundLpController extends Page_Admin_Base {
                 if ($model['subscriber_delivery_date']) {
                     return date('Ymd', $model['subscriber_delivery_date']);
                 }
+            }],
+            ['label' => '进入方式', 'field' => function($model) {
+                return $model['join_way'];
             }],
             ['label' => '初始认缴金额', 'field' => function($model)use(&$summary) {
                 $output = '';
@@ -360,6 +372,47 @@ class FundLpController extends Page_Admin_Base {
         $this->assign('pageAdmin',$this);
 
         return ['admin/fund_lp/captable.html', $this->_assigned];
+    }
+
+    /*
+     * 重载_delete()方法，支持失效操作
+     */
+    public function _delete() {
+        $this->model
+            ->addWhere('id', $_REQUEST['id'])
+            ->setCols(['id','status'])
+            ->select()
+            ->setDataMerge(['status'=>'invalid'])
+            ->save();
+    }
+
+    public function recoveryAction() {
+        if (isset($_GET['id']) && !empty($_GET['id'])) {
+            $this->preMethod('index');
+            $this->model
+                ->addWhere('id', $_REQUEST['id'])
+                ->setCols(['id','status'])
+                ->select()
+                ->setDataMerge(['status'=>'valid'])
+                ->save();
+            return ['redirect: ' . dirname($_SERVER['SCRIPT_NAME'])];
+        }
+        $this->_initListDisplay();
+        $this->model->addWhere('status', 'invalid');
+        $this->hide_action_new = true;
+        $this->single_actions_default = ['edit'=>false,'delete'=>false];
+        $this->single_actions=[
+            ['label'=>'恢复','action'=>function($model){
+                return '/admin/fundLp/recovery?id='.$model->mId;
+            }],
+        ];
+        WinRequest::mergeModel(array(
+            'tableWrap' => '7000px',
+        ));
+        $reqModel = WinRequest::getModel();
+        $reqModel['controllerText'] = '交易记录 回收站';
+        WinRequest::setModel($reqModel);
+        return parent::indexAction();
     }
 }
 

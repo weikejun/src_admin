@@ -34,6 +34,10 @@ class EntityController extends Page_Admin_Base {
             Form_Entity::getFieldViewName('description') => [],
             Form_Entity::getFieldViewName('register_country') => [],
             Form_Entity::getFieldViewName('currency') => [],
+            Form_Entity::getFieldViewName('_hold_company') => [],
+            Form_Entity::getFieldViewName('_indrect_hold_company') => [],
+            Form_Entity::getFieldViewName('_invest_num') => [],
+            Form_Entity::getFieldViewName('_exit_num') => [],
         ];
 
         $list_display = $this->list_display;

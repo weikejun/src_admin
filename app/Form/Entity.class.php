@@ -14,83 +14,45 @@ class Form_Entity extends Form {
                 ['name'=>'_captable','label'=>'认购情况汇总','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model) {
                     return '<a href="/admin/fundLp/captable?entity_id='.$model->getData('id').'" target="_blank">查看</a>';
                 }],
-                ['name'=>'_hold_company','label'=>'持股企业','type'=>'rawText','field'=>function($model) {
-                    $project = new Model_Project;
-                    $project->addWhere('entity_id', $model->getData('id'));
-                    $project->addWhere('status', 'valid');
-                    $project->setCols('company_id');
-                    $project->groupBy('company_id');
-                    $deals = $project->find();
-                    $companyIds = [];
-                    foreach($deals as $i => $deal) {
-                        $companyIds[] = $deal->getData('company_id');
-                    }
-                    return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
-                }],
-                ['name'=>'_indrect_hold_company','label'=>'间接持股企业','type'=>'rawText','field'=>function($model) {
-                    $subIds = Model_EntityRel::getAllSubs($model->getData('id'), 0);
-                    $project = new Model_Project;
-                    $project->addWhere('entity_id', $subIds, 'IN');
-                    $project->addWhere('status', 'valid');
-                    $project->setCols('company_id');
-                    $project->groupBy('company_id');
-                    $deals = $project->find();
-                    $companyIds = [];
-                    foreach($deals as $i => $deal) {
-                        $companyIds[] = $deal->getData('company_id');
-                    }
-                    return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
-                }],
-                ['name'=>'_invest_num','label'=>'投资记录','type'=>'rawText','field'=>function($model) {
-                    $project = new Model_Project;
-                    $project->addWhere('entity_id', $model->getData('id'));
-                    $project->addWhere('status', 'valid');
-                    return '<a href="/admin/project?__filter='.urlencode('entity_id='.$model->getData('id')).'">'.$project->count().'</a>';
-                }],
-                ['name'=>'_exit_num','label'=>'退出记录','type'=>'rawText','field'=>function($model) {
-                    $project = new Model_Project;
-                    $project->addWhere('exit_entity_id', $model->getData('id'));
-                    $project->addWhere('status', 'valid');
-                    return '<a href="/admin/project?__filter='.urlencode('exit_entity_id='.$model->getData('id')).'">'.$project->count().'</a>';
-                }],
-                ['name'=>'_parent_entity','label'=>'父主体','type'=>'rawText','field'=>function($model) {
-                    $rels = Model_EntityRel::listAll();
-                    $count = 0;
-                    foreach($rels as $id => $rel) {
-                        if ($rel->getData('sub_id') == $model->getData('id')) {
-                            $count++;
-                        }
-                    }
-                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('sub_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&sub_id='.$model->mId.'"> +新增 </a></span>';
-                }],
-                ['name'=>'_sub_entity','label'=>'子主体','type'=>'rawText','field'=>function($model) {
-                    $rels = Model_EntityRel::listAll();
-                    $count = 0;
-                    foreach($rels as $id => $rel) {
-                        if ($rel->getData('parent_id') == $model->getData('id')) {
-                            $count++;
-                        }
-                    }
-                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('parent_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&parent_id='.$model->mId.'"> +新增 </a></span>';
-                }],
-                ['name'=>'_lp_direct_num','label'=>'LP直接人数','type'=>'rawText','field'=>function($model)use(&$lps) {
+                ['name'=>'_lp_direct_num','label'=>'LP直接人数','type'=>'rawText','field'=>function($model)use(&$lps,&$lpsActive) {
                     $lps = new Model_FundLp;
+                    $lps->addWhere('status', 'valid');
                     $lps->addWhere('entity_id', $model->getData('id'));
-                    $lps->addWhere('is_exit', '未退伙');
                     $lps = $lps->find();
-                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('is_exit=未退伙&entity_id='.$model->mId).'">'.count($lps).'</a>';
-                }],
-                ['name'=>'_lp_through_num','label'=>'LP穿透人数','type'=>'rawText','field'=>function($model)use(&$lps) {
-                    $num = 0;
+                    $lpsActive = [];
+                    $ids = [];
+                    $lpCount = [];
                     foreach($lps as $lp) {
+                        $amounts = [];
+                        $data = $lp->getData();
+                        foreach(['subscribe' => 1,'share_transfer' => -1,'capital_reduce' => -1] as $fk => $fa) {
+                            $amount = ($fa * $data[$fk.'_amount']);
+                            $amounts[$data[$fk.'_currency']] += $amount;
+                        }
+                        foreach($amounts as $currency => $amount) {
+                            if ($amount > 0) {
+                                $ids[] = $data['id'];
+                                $lpCount[$data['subscriber']] = 1;
+                                $lpsActive[] = $lp;
+                                break;
+                            }
+                        }
+                    }
+                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('id='.implode(',', $ids)).'">'.count($lpCount).'</a>';
+                }],
+                ['name'=>'_lp_through_num','label'=>'LP穿透人数','type'=>'rawText','field'=>function($model)use(&$lpsActive) {
+                    $num = 0;
+                    $lpUni = [];
+                    foreach($lpsActive as $lp) {
+                        if (isset($lpUni[$lp->getData('subscriber')])) {
+                            continue;
+                        }
+                        $lpUni[$lp->getData('subscriber')] = 1;
                         $num += $lp->getData('through_num');
                     }
-                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('is_exit=未退伙&entity_id='.$model->mId).'">'.$num.'</a>';
+                    return '<a target="_blank" href="/admin/fundLp?__filter='.urlencode('id='.implode(',',$ids)).'">'.$num.'</a>';
                 }],
                 ['name'=>'_subscribe_amount','label'=>'基金认缴规模','type'=>'rawText','field'=>function($model)use(&$lps) {
-                    $lps = new Model_FundLp;
-                    $lps->addWhere('entity_id', $model->getData('id'));
-                    $lps = $lps->find();
                     $amounts = [];
                     foreach($lps as $lp) {
                         if ($lp->getData('subscribe_currency') && $lp->getData('subscribe_amount'))
@@ -105,9 +67,6 @@ class Form_Entity extends Form {
                     return $output;
                 }],
                 ['name'=>'_paid_amount','label'=>'基金实缴规模','type'=>'rawText','field'=>function($model)use(&$lps) {
-                    $lps = new Model_FundLp;
-                    $lps->addWhere('entity_id', $model->getData('id'));
-                    $lps = $lps->find();
                     $amounts = [];
                     foreach($lps as $lp) {
                         if ($lp->getData('paid_currency') && $lp->getData('paid_amount'))
@@ -225,6 +184,65 @@ class Form_Entity extends Form {
                     return $output;
                 }],
                 ['name'=>'memo','label'=>'备注','type'=>'message','class'=>'with_date','default'=>null,'required'=>false],
+                ['name'=>'_hold_company','label'=>'持股企业','type'=>'rawText','field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('entity_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    $project->setCols('company_id');
+                    $project->groupBy('company_id');
+                    $deals = $project->find();
+                    $companyIds = [];
+                    foreach($deals as $i => $deal) {
+                        $companyIds[] = $deal->getData('company_id');
+                    }
+                    return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
+                }],
+                ['name'=>'_indrect_hold_company','label'=>'间接持股企业','type'=>'rawText','field'=>function($model) {
+                    $subIds = Model_EntityRel::getAllSubs($model->getData('id'), 0);
+                    $project = new Model_Project;
+                    $project->addWhere('entity_id', $subIds, 'IN');
+                    $project->addWhere('status', 'valid');
+                    $project->setCols('company_id');
+                    $project->groupBy('company_id');
+                    $deals = $project->find();
+                    $companyIds = [];
+                    foreach($deals as $i => $deal) {
+                        $companyIds[] = $deal->getData('company_id');
+                    }
+                    return '<a target="_blank" href="/admin/company?__filter='.urlencode('id='.implode($companyIds, ',')).'">'.count($companyIds).'</a>';
+                }],
+                ['name'=>'_invest_num','label'=>'投资记录','type'=>'rawText','field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('entity_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    return '<a href="/admin/project?__filter='.urlencode('entity_id='.$model->getData('id')).'">'.$project->count().'</a>';
+                }],
+                ['name'=>'_exit_num','label'=>'退出记录','type'=>'rawText','field'=>function($model) {
+                    $project = new Model_Project;
+                    $project->addWhere('exit_entity_id', $model->getData('id'));
+                    $project->addWhere('status', 'valid');
+                    return '<a href="/admin/project?__filter='.urlencode('exit_entity_id='.$model->getData('id')).'">'.$project->count().'</a>';
+                }],
+                ['name'=>'_parent_entity','label'=>'父主体','type'=>'rawText','field'=>function($model) {
+                    $rels = Model_EntityRel::listAll();
+                    $count = 0;
+                    foreach($rels as $id => $rel) {
+                        if ($rel->getData('sub_id') == $model->getData('id')) {
+                            $count++;
+                        }
+                    }
+                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('sub_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&sub_id='.$model->mId.'"> +新增 </a></span>';
+                }],
+                ['name'=>'_sub_entity','label'=>'子主体','type'=>'rawText','field'=>function($model) {
+                    $rels = Model_EntityRel::listAll();
+                    $count = 0;
+                    foreach($rels as $id => $rel) {
+                        if ($rel->getData('parent_id') == $model->getData('id')) {
+                            $count++;
+                        }
+                    }
+                    return '<span class="data_item"><a href="/admin/entity?__filter='.urlencode('parent_id|id='.$model->getData('id')).'">'.$count.'</a><a class=item_op href="/admin/entityRel?action=read&parent_id='.$model->mId.'"> +新增 </a></span>';
+                }],
                 ['name'=>'update_time','label'=>'更新时间','type'=>'datetime','readonly'=>'true','default'=>time(),'null'=>false,'auto_update'=>true,'field'=>function($model){
                     return date('Ymd H:i:s', $model->getData('update_time'));
                 }],

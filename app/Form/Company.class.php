@@ -126,7 +126,7 @@ class Form_Company extends Form {
                         return sprintf('<a target=_blank href="/admin/Project?fields=id,value_currency,post_money,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.$dataItem->getData('id')), $output);
                     }
                 }],
-                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'help'=>'倍数<1 downround；=1 持平；>1 上涨；多币种时分别列出价格','field'=>function($model)use(&$project) {
+                ['name'=>'_value_increase','label'=>'企业估值倍数(vs初投)','type'=>'rawText','default'=>null,'required'=>false,'help'=>'每股单价倍数，<1 downround；=1 持平；>1 上涨；多币种时分别列出价格','field'=>function($model)use(&$project) {
                     // TODO:以源码首次融资为分母 
                     $dataList = [];
                     foreach($project as $i => $dataItem) {
@@ -150,7 +150,7 @@ class Form_Company extends Form {
                             $output = "初投股价：".$firstDeal->getData('value_currency').number_format($firstDeal->getData('post_money')/$firstDeal->getData('stocknum_all'), 2)."<br />"
                                 ."最新股价：".$dataList[0]->getData('value_currency').number_format($dataList[0]->getData('post_money')/$dataList[0]->getData('stocknum_all'), 2);
                         }
-                        return sprintf('<a target=_blank href="/admin/Project?fields=id,value_currency,post_money,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', [$dataList[0]->getData('id'), $firstDeal->getData('id')])), $output);
+                        return sprintf('<a target=_blank href="/admin/Project?fields=id,_stock_price,post_money,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', [$dataList[0]->getData('id'), $firstDeal->getData('id')])), $output);
                     }
                 }],
                 ['name'=>'_first_invest_turn','label'=>'首次投时轮次归类','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
@@ -228,7 +228,7 @@ class Form_Company extends Form {
                         return $dataItem->getData('company_period');
                     }
                 }],
-                ['name'=>'_financing_amount_all','label'=>'企业融资总金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_financing_amount_all','label'=>'企业融资总金额','type'=>'rawText','default'=>null,'required'=>false,'help'=>'每轮只取一条交易，∑'.Form_Project::getFieldViewName('financing_amount'),'field'=>function($model)use(&$project) {
                     $dataList = [];
                     $formula = [];
                     foreach($project as $i => $dataItem) {
@@ -308,7 +308,7 @@ class Form_Company extends Form {
                     }
                     return $dataList ? '是' : '否';
                 }],
-                ['name'=>'_latest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$totalStockNew) {
+                ['name'=>'_latest_shareholding_sum','label'=>'最新各主体合计持股数','type'=>'rawText','default'=>null,'required'=>false,'help'=>'对于所有计入captable的交易，∑('.Form_Project::getFieldViewName('stocknum_get').'-'.Form_Project::getFieldViewName('exit_stock_number').')','field'=>function($model)use(&$project,&$totalStockNew) {
                     $dataList = [];
                     $stockNum = 0;
                     $formula = [];
@@ -326,9 +326,9 @@ class Form_Company extends Form {
                     }
                     $totalStockNew = $stockNum;
                     $output = number_format($stockNum);
-                    return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
+                    return sprintf('<a target=_blank href="/admin/Project?fields=id,_shareholding_turn_sum,stocknum_get,exit_stock_number,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                 }],
-                ['name'=>'_latest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project) {
+                ['name'=>'_latest_shareholding_ratio_sum','label'=>'最新各主体合计股比','type'=>'rawText','default'=>null,'required'=>false,'help'=>'对于所有计入captable的交易，∑('.Form_Project::getFieldViewName('stocknum_get').'-'.Form_Project::getFieldViewName('exit_stock_number').')/最新一轮'.Form_Project::getFieldViewName('stocknum_all'),'field'=>function($model)use(&$project) {
                     // TODO 可以化简
                     $dataList = [];
                     $stockNum = 0;
@@ -350,7 +350,7 @@ class Form_Company extends Form {
                         if ($dataItem->getData('stocknum_all')) {
                             $formula['id'][] = $dataItem->getData('id');
                             $output = sprintf("%.2f%%", $stockNum / $dataItem->getData('stocknum_all') * 100);
-                            return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,stocknum_all,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
+                            return sprintf('<a target=_blank href="/admin/Project?fields=id,stocknum_get,exit_stock_number,_shareholding_turn_sum,stocknum_all,_shareholding_ratio_turn_sum,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id'])), $output);
                         }
                     }
                 }],
@@ -515,7 +515,7 @@ class Form_Company extends Form {
                     }
                 }],
                 ['name'=>'field-index-return','label'=>'源码投资回报','type'=>'seperator'],
-                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$cbAmounts,&$formula){
+                ['name'=>'_invest_amount','label'=>'历史总投资金额','type'=>'rawText','default'=>null,'required'=>false,'help'=>'当交易类型=企业融资（源码投, 包含买老股）或者计入Captable时，∑'.Form_Project::getFieldViewName('our_amount'),'field'=>function($model)use(&$project,&$investExitAmounts,&$investExitStocks,&$cbAmounts,&$formula){
                     $dataList = [];
                     $investExitAmounts = [];
                     $formula = [];
@@ -548,7 +548,7 @@ class Form_Company extends Form {
                     }
                     return sprintf('<a target=_blank href="/admin/Project?fields=id,our_amount,invest_turn,_company_short,turn_sub,deal_type,close_date&__filter=%s">%s</a>', urlencode('id='.implode(',', $formula['id']['invest'])), $output);
                 }],
-                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$investExitAmounts,&$exitAmount,&$formula){
+                ['name'=>'_exit_amount','label'=>'已退出合同金额','type'=>'rawText','default'=>null,'required'=>false,'help'=>'当交易类型=源码退出或者计入Captable时，∑'.Form_Project::getFieldViewName('exit_amount'),'field'=>function($model)use(&$project,&$investExitAmounts,&$exitAmount,&$formula){
                     $amounts = [];
                     foreach($investExitAmounts['exit'] as $turn => $turnAmounts) {
                         foreach($turnAmounts as $currency => $amount) {
@@ -581,7 +581,7 @@ class Form_Company extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'_exit_return_rate','label'=>'已退出部分回报率','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$exitAmountCost,&$exitAmount){
+                ['name'=>'_exit_return_rate','label'=>'已退出部分回报率','type'=>'rawText','default'=>null,'required'=>false,'help'=>'目标企业已退出合同金额/已退出金额对应成本','field'=>function($model)use(&$exitAmountCost,&$exitAmount){
                     foreach($exitAmount as $currency => $amount) {
                         if ($exitAmountCost[$currency]) {
                             $output .= "$currency " . sprintf('%.2f%%', ($amount/$exitAmountCost[$currency] - 1)*100) . '<br />';
@@ -589,7 +589,7 @@ class Form_Company extends Form {
                     }
                     return $output;
                 }],
-                ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'field'=>function($model)use(&$project,&$holdValue) {
+                ['name'=>'_hold_value','label'=>'当前持股账面价值','type'=>'rawText','default'=>null,'required'=>false,'help'=>'对于所有计入captable的交易，最新一轮∑'.Form_Project::getFieldViewName('_shareholding_turn_sum').'×'.Form_Project::getFieldViewName('_stock_price'),'field'=>function($model)use(&$project,&$holdValue) {
                     $dataList = [];
                     $stockNum = 0;
                     $formula = [];
