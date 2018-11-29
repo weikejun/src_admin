@@ -127,7 +127,7 @@ $(document).ready(function() {
                 }
             }
         });
-    }, 180000);
+    }, 60000);
 });
 </script>
 EOF;
