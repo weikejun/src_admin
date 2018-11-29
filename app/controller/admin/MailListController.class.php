@@ -57,7 +57,7 @@ class MailListController extends Page_Admin_Base {
             $mail->select();
             if ($mail->mId) {
                 $mail->mStatus = '发送中';
-                $mail->mExpectTime = time();
+                $mail->mSendTime = time();
                 $mail->save();
                 $error = EMail::send([
                     'to' => explode(';', $mail->mMailTo),

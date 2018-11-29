@@ -20,10 +20,9 @@ class Form_SeperatorField extends Form_Field{
 .control-seperator {font-size:14px;background-color:#eee;padding:5px;margin-bottom:10px;border:1px solid #eee;}
 #seperator-index {position:fixed;top:110px;right:31px;background-color:#fff !important;padding:5px 10px;border:1px solid #eee;}
 #seperator-index a {color:black;}
+#seperator-index .list-toggle {text-align:center;}
 .seperator-reset {display:none;}
-.
 @media print {
-}
 </style>
 EOF;
         return $css;
@@ -31,7 +30,7 @@ EOF;
 
     public function foot_js() {
         $js = <<<EOF
-<div id='seperator-index'></div>
+<div id='seperator-index'><div id="seperator-list"></div><div class="list-toggle"><span class="icon-chevron-down"></span</div></div>
 <script>
 $(document).ready(function() {
     $('.control-seperator').hover(function() {
@@ -63,19 +62,22 @@ $(document).ready(function() {
             $('#seperator-index').css('top', '10px');
         }
     });
+    $('#seperator-index .list-toggle').click(function() {
+        $('#seperator-list').toggle();
+    });
     $('.control-seperator').each(function() {
         var lkElem = $(this).find('a');
         var liElem = $(this).find('li').clone();
         $(liElem).html('<a href="#'+$(lkElem).prop('name')+'">'+liElem.html().replace(/<[^>]+>.+<\/[^>]+>/,'')+'</a>');
-        $('#seperator-index').append(liElem);
+        $('#seperator-list').append(liElem);
     });
     // 修正safari标红时像素变化导致折行问题
-    $('#seperator-index').css('width', Number($('#seperator-index').css('width').replace('px',''))+2);
+    $('#seperator-list').css('width', Number($('#seperator-list').css('width').replace('px',''))+2);
     setInterval(function() {
-        $('#seperator-index').find('li').css('color','');
+        $('#seperator-list').find('li').css('color','');
         var markPending = function(elem) {
             var sepElem = $(elem).prevAll('.control-seperator').eq(0);
-            $('#seperator-index').find('li[name='+$(sepElem).find('li').attr('name')+']').css('color', 'red');
+            $('#seperator-list').find('li[name='+$(sepElem).find('li').attr('name')+']').css('color', 'red');
         }
         $('.control-group').each(function() {
             var ipElem = $(this).find(':text');

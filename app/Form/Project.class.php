@@ -316,6 +316,7 @@ class Form_Project extends Form {
                         return $model->getData('invest_currency') . ' ' . sprintf('%.2f', $model->getData('our_amount') / $model->getData('stocknum_get'));
                     }
                 }],
+                ['name'=>'pay_currency','label'=>'源码实际支付币种','type'=>'choice','choices'=>Model_Project::getCurrencyChoices(),'required'=>false,],
                 ['name'=>'pay_amount','label'=>'源码实际支付投资金额','type'=>'number','default'=>'','required'=>false,'field'=>function($model){
                     if (is_numeric($model->getData('pay_amount'))) {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('pay_amount'), 2);
@@ -429,7 +430,7 @@ class Form_Project extends Form {
                 ['name'=>'entrustment','label'=>'是否存在代持情况','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false],
                 ['name'=>'entrustment_entity_id','label'=>'（被）代持主体','type'=>'choosemodel','model'=>'Model_Entity','default'=>0,'required'=>false,'help'=>'选择填入（被）代持主体全称，如有'],
                 ['name'=>'field-index-shareholding','label'=>'本轮Post企业股权结构','type'=>'seperator'],
-                ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
+                ['name'=>'captable_memo','label'=>'Captable备注','type'=>'selectInput','rows'=>10,'choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-seperator-shareholding-team','label'=>'创始人及团队本轮','type'=>'seperator2'],
                 ['name'=>'_main_founders','label'=>'最主要创始人','type'=>'rawText','required'=>false,'field'=>function($model)use(&$company){
                     if ($model->getData('company_id')) {

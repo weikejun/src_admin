@@ -10,6 +10,7 @@ class MailStrategyController extends Page_Admin_Base {
         WinRequest::mergeModel(array(
             'controllerText' => "提醒邮件策略",
             'tableWrap' => '3096px',
+            '_preview' => true,
         ));
 
         $this->form=new Form_MailStrategy();

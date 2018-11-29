@@ -32,21 +32,23 @@ class ComplianceMatterController extends Page_Admin_Base {
 
         $this->single_actions = [
             ['label'=>'预览','action'=>function($model){
-                return '/admin/contractTerm/check?id='.$model->mId;
+                return '/admin/ComplianceMatter/check?id='.$model->mId;
             }],
         ];
 
         $this->list_filter = [
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_ComplianceMatter::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','foreignTable'=>'Model_Entity','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('limit_source'),'paramName'=>'limit_source','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('category'),'paramName'=>'category','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('sub_cate'),'paramName'=>'sub_cate','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('scene'),'paramName'=>'scene','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('requirement'),'paramName'=>'requirement','fusion'=>true]),
-            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('expiry'),'paramName'=>'expiry','fusion'=>true]),
-            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action'),'paramName'=>'action','choices'=>Model_ComplianceMatter::getActionChoices()]),
-            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_target'),'paramName'=>'action_target','choices'=>Model_ComplianceMatter::getActionTargetChoices()]),
+            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('category'),'paramName'=>'category','choices'=>Model_ComplianceMatter::getCategoryChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('sub_cate'),'paramName'=>'sub_cate','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_freq'),'paramName'=>'action_freq','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_ComplianceMatter::getFieldViewName('potence'),'paramName'=>'potence','choices'=>Model_ComplianceMatter::getPotenceChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true]),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_req'),'paramName'=>'action_req']),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('action_target'),'paramName'=>'action_target']),
+            new Page_Admin_TextFilter(['name'=>Form_ComplianceMatter::getFieldViewName('limit_source_type'),'paramName'=>'limit_source_type']),
+            new Page_Admin_TimeRangeFilter(['name'=>Form_ComplianceMatter::getFieldViewName('expiry'),'paramName'=>'expiry']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_ComplianceMatter::getFieldViewName('_legal_person'),'paramName'=>'legal_person|entity_id','foreignTable'=>'Model_Entity','fusion'=>false,'preSearch'=>function($val) {return Model_Member::getIdsByName($val);}]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_ComplianceMatter::getFieldViewName('_finance_person'),'paramName'=>'finance_person|entity_id','foreignTable'=>'Model_Entity','fusion'=>false,'preSearch'=>function($val) {return Model_Member::getIdsByName($val);}]),
         ];
     }
 

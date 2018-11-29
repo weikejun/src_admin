@@ -11,7 +11,7 @@ Trait Form_FieldTraits {
                 $value = '无记录';
             }
         }
-        return "<pre>".htmlspecialchars($value)."</pre>";
+        return "<pre>".$value."</pre>";
     }
 
     public function to_text(){

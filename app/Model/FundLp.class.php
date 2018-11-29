@@ -1,5 +1,32 @@
 <?php
 class Model_FundLp extends Base_FundLp{
+    public static function getJoinTurnChoices() {
+        return [
+            ['首次交割','首次交割'],
+            ['二次交割','二次交割'],
+            ['三次交割','三次交割'],
+            ['最终交割','最终交割'],
+        ];
+    }
+
+    public static function getCertTypeChoices() {
+        return [
+            ['营业执照','营业执照'],
+            ['身份证','身份证'],
+            ['备案编码','备案编码'],
+            ['护照','护照'],
+        ];
+    }
+
+    public static function getJoinWayChoices() {
+        return [
+            ['新增份额','新增份额'],
+            ['受让老份额','受让老份额'],
+            ['新增+受让','新增+受让'],
+            ['其他','其他'],
+        ];
+    }
+
     public static function getPartnerTypeChoices() {
         return [
             ['LP','LP'],
@@ -50,8 +77,9 @@ class Model_FundLp extends Base_FundLp{
     public static function getInvestorTypeChoices() {
         return [
             ['专业','专业'],
-            ['非专业','非专业'],
-            ['不适用','不适用'],
+            ['普通','普通'],
+            ['当然合格投资者','当然合格投资者'],
+            ['其他','其他'],
         ];
     }
 

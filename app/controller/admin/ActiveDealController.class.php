@@ -37,10 +37,12 @@ class ActiveDealController extends Page_Admin_Base {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_Project::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'class'=>'keep-all']),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('_company_short'),'paramName'=>'short|company_id','foreignTable'=>'Model_Company','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('invest_currency'),'paramName'=>'invest_currency','choices'=>Model_Project::getCurrencyChoices(),'class'=>'keep-all']),
             new Page_Admin_ChoiceFilter(['name'=>Form_Project::getFieldViewName('deal_type'),'paramName'=>'deal_type','choices'=>Model_Project::getDealTypeChoices(),'class'=>'keep-all']),
-            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('manager'),'paramName'=>'name|manager','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('manager'),'paramName'=>'name|manager','foreignTable'=>'Model_Member','fusion'=>true]),
             new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('legal_person'),'paramName'=>'name|legal_person','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('finance_person'),'paramName'=>'name|finance_person','foreignTable'=>'Model_Member','fusion'=>true]),
+            new Page_Admin_TextForeignFilter(['name'=>Form_Project::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','foreignTable'=>'Model_Entity','fusion'=>true]),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('decision_date'),'paramName'=>'decision_date']),
             new Page_Admin_TimeRangeFilter(['name'=>Form_Project::getFieldViewName('expect_sign_date'),'paramName'=>'expect_sign_date']),
             new Page_Admin_ChoiceFilter(['name'=>'数据完整性','paramName'=>'_data_integrity','choices'=>[['member','项目成员空缺','and (`manager` = "" or `legal_person` = "" or `finance_person` = "")'],['decision_date','决策/启动日期','and (`decision_date` = 0 or `decision_date` = "" or `decision_date` is null)'],['expect_sign_date','预计签约日期','and (`expect_sign_date` = 0 or `expect_sign_date` is null or `expect_sign_date` = "")']]]),
@@ -89,6 +91,8 @@ class ActiveDealController extends Page_Admin_Base {
             Form_Project::getFieldViewName('_company_short') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
+            Form_Project::getFieldViewName('entity_id') => [],
+            Form_Project::getFieldViewName('exit_entity_id') => [],
             Form_Project::getFieldViewName('new_follow') => [],
             Form_Project::getFieldViewName('decision_date') => [],
             Form_Project::getFieldViewName('expect_sign_date') => [],
@@ -146,12 +150,13 @@ class ActiveDealController extends Page_Admin_Base {
 
         $this->model->addWhere('status', 'valid');
         WinRequest::mergeModel(array(
-            'tableWrap' => '3096px',
+            'tableWrap' => '4096px',
         ));
 
         $briefFields = [
             Form_Project::getFieldViewName('id') => [],
             Form_Project::getFieldViewName('_company_short') => [],
+            Form_Project::getFieldViewName('invest_currency') => [],
             Form_Project::getFieldViewName('turn_sub') => [],
             Form_Project::getFieldViewName('deal_type') => [],
             Form_Project::getFieldViewName('new_follow') => [],

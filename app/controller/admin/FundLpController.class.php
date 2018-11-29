@@ -28,6 +28,9 @@ class FundLpController extends Page_Admin_Base {
             ['label'=>'复制','action'=>function($model){
                 return '/admin/fundLp?action=clone&ex=gp_mailed,gp_mailed_detail,lp_mailed,lp_mailed_detail,gp_received,mail_receive_date,mailing_memo,create_time&id='.$model->mId;
             }],
+            ['label'=>'失效','action'=>function($model){
+                return '/admin/fundLp?action=delete&id='.$model->mId;
+            }],
         ];
 
         $this->single_actions_default = [
@@ -37,17 +40,41 @@ class FundLpController extends Page_Admin_Base {
     }
 
     private function _initMultiActions() {
-        $this->multi_actions=array(
-            array('label'=>'导出csv','required'=>false,'action'=>'/admin/fundLp/exportToCsv?__filter='.urlencode($this->_GET("__filter"))),
-        );
+        $this->multi_actions = [
+            ['label'=>'导出csv','required'=>false,'action'=>'/admin/fundLp/exportToCsv?__filter='.urlencode($this->_GET("__filter"))],
+            ['label'=>'回收站', 'required'=>false, 'action'=>'/admin/fundLp/recovery'],
+        ];
     }
 
     private function _initListFilter() {
         $this->list_filter=array(
             new Page_Admin_TextFilter(['name'=>Form_FundLp::getFieldViewName('id'),'paramName'=>'id','fusion'=>false,'in'=>true,'class'=>'keep-all']),
-            new Page_Admin_TextFilter(['name'=>Form_FundLp::getFieldViewName('entity_id'),'paramName'=>'entity_id','fusion'=>false,'class'=>'keep-all']),
-            new Page_Admin_TextForeignFilter(['name'=>'募资主体名称','paramName'=>'name|entity_id','fusion'=>false,'foreignTable'=>'Model_Entity','class'=>'keep-all']),
-            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('is_exit'),'paramName'=>'is_exit','choices'=>Model_FundLp::getIsExitChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_FundLp::getFieldViewName('entity_id'),'paramName'=>'name|entity_id','fusion'=>true,'foreignTable'=>'Model_Entity','class'=>'keep-all']),
+            new Page_Admin_TextFilter(['name'=>'募资主体ID','paramName'=>'entity_id','fusion'=>false]),
+            new Page_Admin_TextFilter(['name'=>Form_FundLp::getFieldViewName('subscriber'),'paramName'=>'subscriber','fusion'=>true,'class'=>'keep-all']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('subscribe_currency'),'paramName'=>'subscribe_currency','choices'=>Model_Project::getCurrencyChoices(),'class'=>'keep-all']),
+            new Page_Admin_TextForeignFilter(['name'=>Form_FundLp::getFieldViewName('subscriber_controller'),'paramName'=>'name|subscriber_controller','fusion'=>true,'foreignTable'=>'Model_ControllerActual']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('top_special'),'paramName'=>'top_special','choices'=>Model_FundLp::getYesNoChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('is_gov_capital'),'paramName'=>'is_gov_capital','choices'=>Model_FundLp::getYesNoChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('have_for_capital'),'paramName'=>'have_for_capital','choices'=>Model_FundLp::getYesNoChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('aic_pending'),'paramName'=>'aic_pending','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('undetermined'),'paramName'=>'undetermined','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('communication'),'paramName'=>'communication','choices'=>Model_FundLp::getYesNoChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('join_way'),'paramName'=>'join_way','choices'=>Model_FundLp::getJoinWayChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('share_transfer'),'paramName'=>'share_transfer','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('share_transfer_file'),'paramName'=>'share_transfer_file','choices'=>Model_FundLp::getCompleteChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('capital_reduce'),'paramName'=>'capital_reduce','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('capital_reduce_file'),'paramName'=>'capital_reduce_file','choices'=>Model_FundLp::getCompleteChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('subscribe_pdf'),'paramName'=>'subscribe_pdf','choices'=>Model_FundLp::getDocOptionChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('subscribe_doc'),'paramName'=>'subscribe_doc','choices'=>Model_FundLp::getCompleteChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('share_entrustment'),'paramName'=>'share_entrustment','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('is_exit'),'paramName'=>'is_exit','choices'=>Model_FundLp::getIsExitChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('side_letter'),'paramName'=>'side_letter','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('lpac'),'paramName'=>'lpac','choices'=>Model_FundLp::getHaveNotChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('kyc_file'),'paramName'=>'kyc_file','choices'=>Model_FundLp::getDocOptionChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('investor_type'),'paramName'=>'investor_type','choices'=>Model_FundLp::getInvestorTypeChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('compliance_check'),'paramName'=>'compliance_check','choices'=>Model_FundLp::getComplianceCheckChoices(),'class'=>'']),
+            new Page_Admin_ChoiceFilter(['name'=>Form_FundLp::getFieldViewName('filling_list_check'),'paramName'=>'filling_list_check','choices'=>Model_FundLp::getFillingListCheckChoices(),'class'=>'']),
         );
     }
 
@@ -57,12 +84,13 @@ class FundLpController extends Page_Admin_Base {
         $this->addInterceptor(new AdminAuthInterceptor());
 
         WinRequest::mergeModel(array(
-            'controllerText'=>"基金LP表",
+            'controllerText'=>"LP认购表",
             '_preview' => true,
             //'tableWrap' => '8192px',
         ));
 
         $this->model=new Model_FundLp();
+        $this->model->orderBy('id', 'DESC');
         if (!Model_AdminGroup::isCurrentAdminRoot()) {
             $persIds = Model_EntityPermission::getAdminPerm();
             if (!isset($persIds['all'])) {
@@ -77,6 +105,7 @@ class FundLpController extends Page_Admin_Base {
         $this->_initSingleActions();
         $this->_initMultiActions();
         $this->_initListFilter();
+        $this->model->addWhere('status', 'valid');
 
         WinRequest::mergeModel(array(
             'tableWrap' => '7000px',
@@ -96,18 +125,26 @@ class FundLpController extends Page_Admin_Base {
         $this->_initSingleActions();
         $this->_initMultiActions();
         $this->_initListFilter();
+        $this->model->addWhere('status', 'valid');
 
         WinRequest::mergeModel(array(
-            //'tableWrap' => '3064px',
+            'tableWrap' => '2560px',
         ));
 
         $briefFields = [
             Form_FundLp::getFieldViewName('id') => [],
-            Form_FundLp::getFieldViewName('entity_id') => [],
-            Form_FundLp::getFieldViewName('_entity_cate') => [],
-            Form_FundLp::getFieldViewName('_entity_currency') => [],
             Form_FundLp::getFieldViewName('subscriber') => [],
+            Form_FundLp::getFieldViewName('entity_id') => [],
+            Form_FundLp::getFieldViewName('subscribe_amount') => [],
+            Form_FundLp::getFieldViewName('_current_subscribe_amount') => [],
+            Form_FundLp::getFieldViewName('investor_type') => [],
             Form_FundLp::getFieldViewName('subscriber_code') => [],
+            Form_FundLp::getFieldViewName('subscriber_controller') => [],
+            Form_FundLp::getFieldViewName('_contact_info') => [],
+            Form_FundLp::getFieldViewName('sign_lpa_date') => [],
+            Form_FundLp::getFieldViewName('subscriber_delivery_date') => [],
+            Form_FundLp::getFieldViewName('subscribe_pdf') => [],
+            Form_FundLp::getFieldViewName('subscribe_doc') => [],
         ];
 
         $list_display = $this->list_display;
@@ -193,6 +230,189 @@ class FundLpController extends Page_Admin_Base {
             }
         }
         return $ret;
+    }
+
+    public function captableAction() {
+        $reqModel = WinRequest::getModel();
+        $reqModel['controllerText'] = '基金主体 > 认购情况汇总';
+        WinRequest::setModel($reqModel);
+
+        $object = New Model_Entity;
+        $object->addWhere('id', $_GET['entity_id']);
+        $objectList = $object->find();
+        $this->assign('objectDataList', $objectList);
+        
+        $lp = new Model_FundLp;
+        $lp->addWhere('entity_id', $_GET['entity_id']);
+        $lp->addWhere('status', 'valid');
+        $dataList = $lp->find();
+
+        $captableList = [];
+        $summary = [
+            'subscriber' => '合计',
+            'subscriber_controller' => '',
+            'join_way' => '',
+            'subscriber_delivery_date' => '',
+            'subscribe_amount' => [],
+            'share_transfer_amount' => [],
+            'capital_reduce_amount' => [],
+            'current_amount' => [],
+            'paid_amount' => [],
+        ];
+        foreach($dataList as $i => $dataItem) {
+            if ($dataItem->getData('subscriber')) {
+                $data = $dataItem->getData();
+                if(!isset($captableList[$data['id']])) {
+                    $captableList[$data['id']] = [
+                        'subscriber' => $data['subscriber'],
+                        'join_way' => $data['join_way'],
+                        'subscriber_controller' => $data['subscriber_controller'],
+                        'subscriber_delivery_date' => $data['subscriber_delivery_date'],
+                        'subscribe_amount' => [],
+                        'share_transfer_amount' => [],
+                        'capital_reduce_amount' => [],
+                        'current_amount' => [],
+                        'paid_amount' => [],
+                    ];
+                }
+                foreach(['subscribe' => 1,'share_transfer' => -1,'capital_reduce' => -1] as $fk => $fa) {
+                    $amount = ($fa * $data[$fk.'_amount']);
+                    $captableList[$data['id']][$fk.'_amount'][$data[$fk.'_currency']] += $amount;
+                    $captableList[$data['id']]['current_amount'][$data[$fk.'_currency']] += $amount;
+                    $summary[$fk.'_amount'][$data[$fk.'_currency']] += $amount;
+                    $summary['current_amount'][$data[$fk.'_currency']] += $amount;
+                }
+                $captableList[$data['id']]['paid_amount'][$data['paid_currency']] += $data['paid_amount'];
+                $summary['paid_amount'][$data['paid_currency']] += $data['paid_amount'];
+            }
+        }
+        $captableList['_total'] = &$summary;
+        $this->assign('captableDataList', $captableList);
+
+        $this->captable_display = [
+            ['label' => '认购人', 'field' => function($model) {
+                return $model['subscriber'];
+            }],
+            ['label' => '实际控制人', 'field' => function($model) {
+                if ($model['subscriber_controller']) {
+                    $actual = new Model_ControllerActual;
+                    $actual->addWhere('id', $model['subscriber_controller']);
+                    $actual->select();
+                    return $actual->mName;
+                }
+            }],
+            ['label' => '交割日期', 'field' => function($model) {
+                if ($model['subscriber_delivery_date']) {
+                    return date('Ymd', $model['subscriber_delivery_date']);
+                }
+            }],
+            ['label' => '进入方式', 'field' => function($model) {
+                return $model['join_way'];
+            }],
+            ['label' => '初始认缴金额', 'field' => function($model)use(&$summary) {
+                $output = '';
+                foreach($model['subscribe_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . number_format($amount) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '转让金额', 'field' => function($model)use(&$summary) {
+                $output = '';
+                foreach($model['share_transfer_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . number_format(-$amount) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '减资金额', 'field' => function($model)use(&$summary) {
+                $output = '';
+                foreach($model['capital_reduce_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . number_format(-$amount) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '当前认缴金额', 'field' => function($model) {
+                $currencys = array_unique($currencys);
+                $output = '';
+                foreach($model['current_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . number_format($amount) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '当前认缴比例', 'field' => function($model)use(&$summary) {
+                $output = '';
+                foreach($model['current_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . sprintf("%.2f%%", $amount/$summary['current_amount'][$currency] * 100) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '实缴金额', 'field' => function($model) {
+                $currencys = array_unique($currencys);
+                $output = '';
+                foreach($model['paid_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . number_format($amount) . "<br />";
+                }
+                return $output;
+            }],
+            ['label' => '实缴比例', 'field' => function($model)use(&$summary) {
+                $output = '';
+                foreach($model['paid_amount'] as $currency => $amount) {
+                    if (!$amount) continue;
+                    $output .= "$currency " . sprintf("%.2f%%", $amount/$summary['paid_amount'][$currency] * 100) . "<br />";
+                }
+                return $output;
+            }],
+        ];
+
+        $this->assign('pageAdmin',$this);
+
+        return ['admin/fund_lp/captable.html', $this->_assigned];
+    }
+
+    /*
+     * 重载_delete()方法，支持失效操作
+     */
+    public function _delete() {
+        $this->model
+            ->addWhere('id', $_REQUEST['id'])
+            ->setCols(['id','status'])
+            ->select()
+            ->setDataMerge(['status'=>'invalid'])
+            ->save();
+    }
+
+    public function recoveryAction() {
+        if (isset($_GET['id']) && !empty($_GET['id'])) {
+            $this->preMethod('index');
+            $this->model
+                ->addWhere('id', $_REQUEST['id'])
+                ->setCols(['id','status'])
+                ->select()
+                ->setDataMerge(['status'=>'valid'])
+                ->save();
+            return ['redirect: ' . dirname($_SERVER['SCRIPT_NAME'])];
+        }
+        $this->_initListDisplay();
+        $this->model->addWhere('status', 'invalid');
+        $this->hide_action_new = true;
+        $this->single_actions_default = ['edit'=>false,'delete'=>false];
+        $this->single_actions=[
+            ['label'=>'恢复','action'=>function($model){
+                return '/admin/fundLp/recovery?id='.$model->mId;
+            }],
+        ];
+        WinRequest::mergeModel(array(
+            'tableWrap' => '7000px',
+        ));
+        $reqModel = WinRequest::getModel();
+        $reqModel['controllerText'] = '交易记录 回收站';
+        WinRequest::setModel($reqModel);
+        return parent::indexAction();
     }
 }
 
