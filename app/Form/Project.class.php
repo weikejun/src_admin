@@ -322,6 +322,16 @@ class Form_Project extends Form {
                         return $model->getData('invest_currency') . ' ' . number_format($model->getData('pay_amount'), 2);
                     }
                 }],
+                ['name'=>'pay_memo','label'=>'源码支付备注','type'=>'message','class'=>'with_date','field'=>function($model) {
+                    $progs = json_decode($model->getData('pay_memo'));
+                    $progs = $progs ? $progs : [];
+                    $output = '';
+                    foreach($progs as $i => $prog) {
+                        if ($i > 2) continue;
+                        $output .= $prog . "<br />";
+                    }
+                    return $output;
+                }],
                 ['name'=>'amount_memo','label'=>'金额备注','type'=>'selectInput','choices'=>Model_Project::getStandardSelectInputChoices(),'required'=>false,'input'=>'textarea'],
                 ['name'=>'field-index-loan','label'=>'源码借款或源码CB','type'=>'seperator'],
                 ['name'=>'loan_cb','label'=>'源码借款或CB','type'=>'choice','choices'=>Model_Project::getStandardOptionChoices(),'required'=>false,],

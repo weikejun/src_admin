@@ -352,6 +352,7 @@ CREATE TABLE `project` (
     `stock_property` varchar(32) DEFAULT NULL COMMENT '本主体购买股权属性', 
     `pay_currency` varchar(16) DEFAULT NULL COMMENT '源码实际支付币种', 
     `pay_amount` text DEFAULT NULL COMMENT '源码实际支付投资金额', 
+    `pay_memo` text DEFAULT NULL COMMENT '源码支付备注', 
     `amount_memo` text DEFAULT NULL COMMENT '金额备注', 
     `committee_view` text DEFAULT NULL COMMENT '投决意见', 
     `loan_cb` varchar(32) DEFAULT NULL COMMENT '源码借款或CB', 

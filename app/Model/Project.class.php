@@ -101,8 +101,9 @@ class Model_Project extends Base_Project{
     public static function getEntityOdiChoices() {
         return [
             ['不涉及ODI','不涉及ODI'],
-            ['可能要做ODI','可能要做ODI'],
-            ['已做ODI','已做ODI'],
+            ['可能/待做ODI','可能/待做ODI'],
+            ['ODI申请中','ODI申请中'],
+            ['已完成ODI','已完成ODI'],
             ['其他','其他'],
         ];
     }
