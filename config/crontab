@@ -1,8 +1,8 @@
 # --源码后台系统定时任务集
 # 自动发邮件
-30 9,11,14,22,0 * * * cd /usr/local/apps/src_admin/;/usr/bin/php webroot/route.php script/CrontabGenerateMail.php >/dev/null
-* * * * * cd /usr/local/apps/src_admin/;/usr/bin/php webroot/route.php script/CrontabGenerateMailIm.php >/dev/null
-* * * * * cd /usr/local/apps/src_admin/;/usr/bin/php webroot/route.php script/CrontabSendMail.php >/dev/null
+30 9,11,14,22,0 * * * cd /usr/local/apps/sc_legal/;/usr/bin/php webroot/route.php script/CrontabGenerateMail.php >/dev/null
+* * * * * cd /usr/local/apps/sc_legal/;/usr/bin/php webroot/route.php script/CrontabGenerateMailIm.php >/dev/null
+* * * * * cd /usr/local/apps/sc_legal/;/usr/bin/php webroot/route.php script/CrontabSendMail.php >/dev/null
 # 线上日志清理
-1 1 1 * * cd /usr/local/apps/src_admin/log/;./log_bak.sh > /dev/null
+1 1 1 * * cd /usr/local/apps/sc_legal/log/;./log_bak.sh > /dev/null
 # --源码后台系统定时任务集
